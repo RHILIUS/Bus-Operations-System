@@ -12,9 +12,15 @@
   color: #1f2937; /* Default dark text */
 }
 
+.tabRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .tabs {
   display: flex;
-  margin-bottom: 1rem;
   gap: 0.5rem;
 }
 
@@ -40,6 +46,29 @@
 .tabIcon {
   width: 24px;
   height: 24px;
+}
+
+.quotaBox {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 800;
+  font-family: 'Open Sans', sans-serif;
+  color: #1f2937;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.quotaIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.quotaText {
+  font-size: 1rem;
 }
 
 .filterBar {
@@ -98,7 +127,8 @@
 .selectBlack {
   padding: 0.5rem;
   border-radius: 0.375rem;
-  color: rgb(255, 255, 255);
+  color: white;
+  background-color: transparent;
   border: 1px solid #ccc;
 }
 

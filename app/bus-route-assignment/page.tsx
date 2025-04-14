@@ -6,15 +6,21 @@ import styles from './bus-route-assignment.module.css';
 const BusRouteAssignmentPage: React.FC = () => {
   return (
     <div className={styles.container}>
-      {/* Tabs */}
-      <div className={styles.tabs}>
-        <button className={styles.tab}> 
-          <img src="/assets/images/assignedbus.png" alt="Bus Icon" className={styles.tabIcon} />
-          Assign Bus Driver/Conductor
-        </button>
-        <button className={`${styles.tab} ${styles.tabActive}`}>
-          <img src="/assets/images/assignedroute.png" alt="Route Icon" className={styles.tabIcon} />
-          Assign Bus to Route
+      {/* Tabs + Quota */}
+      <div className={styles.tabRow}>
+        <div className={styles.tabs}>
+          <button className={styles.tab}> 
+            <img src="/assets/images/assignedbus.png" alt="Bus Icon" className={styles.tabIcon} />
+            Assign Bus Driver/Conductor
+          </button>
+          <button className={`${styles.tab} ${styles.tabActive}`}>
+            <img src="/assets/images/assignedroute.png" alt="Route Icon" className={styles.tabIcon} />
+            Assign Bus to Route
+          </button>
+        </div>
+              <button className={styles.tab}>
+          <img src="/assets/images/philippine-peso.png" alt="Peso Icon" className={styles.tabIcon} />
+          Quota Count
         </button>
       </div>
 
