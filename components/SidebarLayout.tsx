@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import '../styles/style.css';  // Use relative import path from the component's location
+import React, { useRef, useEffect } from 'react';
+import Link from 'next/link';
 
-const SidebarLayout: React.FC = () => {
+const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
   const underlineRef = useRef<HTMLDivElement>(null);
 
   const toggleSubMenu = (id: string) => {
@@ -75,7 +75,6 @@ const SidebarLayout: React.FC = () => {
       if (activeLink) updateUnderline(activeLink);
     };
 
-    window.addEventListener('load', handleResize);
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -88,7 +87,7 @@ const SidebarLayout: React.FC = () => {
       <div className="sidebar" id="sidebar">
         <div>
           <div className="logo">
-            <img src="assets/images/agilalogo.png" alt="Agila Logo" />
+            <img src="/assets/images/agilalogo.png" alt="Agila Logo" />
           </div>
 
           <div className="nav-links">
@@ -97,51 +96,45 @@ const SidebarLayout: React.FC = () => {
               data-toggle-id="assignment-submenu"
               onClick={() => toggleSubMenu('assignment-submenu')}
             >
-              <img src="assets/images/assignmentbus.png" alt="Assignment" className="nav-icon" />
+              <img src="/assets/images/assignmentbus.png" alt="Assignment" className="nav-icon" />
               <span className="nav-text">Assignment</span>
             </div>
             <div id="assignment-submenu" className="sub-menu">
-              <a href="/bus-assignment" className="sub-item">
-                Bus Driver/Conductor Assignment
-              </a>
-              <a href="/bus-route-assignment" className="sub-item">
-                Bus Route Assignment
-              </a>
-              <a href="/qouta-assignment" className="sub-item">
-                Quota Assignment
-              </a>
+              <Link href="/bus-assignment" className="sub-item">Bus Driver/Conductor Assignment</Link>
+              <Link href="/bus-route-assignment" className="sub-item">Bus Route Assignment</Link>
+              <Link href="/qouta-assignment" className="sub-item">Quota Assignment</Link>
             </div>
 
-            <a href="/route-management" className="nav-item">
-              <img src="assets/images/routemanagement.png" alt="Route Management" className="nav-icon" />
+            <Link href="/route-management" className="nav-item">
+              <img src="/assets/images/routemanagement.png" alt="Route Management" className="nav-icon" />
               <span className="nav-text">Route Management</span>
-            </a>
+            </Link>
 
-            <a href="/gps" className="nav-item">
-              <img src="assets/images/GPS.png" alt="GPS" className="nav-icon" />
+            <Link href="/gps" className="nav-item">
+              <img src="/assets/images/GPS.png" alt="GPS" className="nav-icon" />
               <span className="nav-text">GPS</span>
-            </a>
+            </Link>
 
-            <a href="/bus-operation" className="nav-item">
-              <img src="assets/images/busoperation.png" alt="Bus Operation" className="nav-icon" />
+            <Link href="/bus-operation" className="nav-item">
+              <img src="/assets/images/busoperation.png" alt="Bus Operation" className="nav-icon" />
               <span className="nav-text">Bus Operation</span>
-            </a>
+            </Link>
 
-            <a href="/bus-rental" className="nav-item">
-              <img src="assets/images/busrental.png" alt="Bus Rental" className="nav-icon" />
+            <Link href="/bus-rental" className="nav-item">
+              <img src="/assets/images/busrental.png" alt="Bus Rental" className="nav-icon" />
               <span className="nav-text">Bus Rental</span>
-            </a>
+            </Link>
 
-            <a href="/performance-report" className="nav-item">
-              <img src="assets/images/performancereport.png" alt="Performance Report" className="nav-icon" />
+            <Link href="/performance-report" className="nav-item">
+              <img src="/assets/images/performancereport.png" alt="Performance Report" className="nav-icon" />
               <span className="nav-text">Performance Report</span>
-            </a>
+            </Link>
           </div>
         </div>
 
         <div className="logout">
           <a href="#">
-            <img src="assets/images/logout.png" alt="Logout" className="nav-icon" />
+            <img src="/assets/images/logout.png" alt="Logout" className="nav-icon" />
             <span className="nav-text">Logout</span>
           </a>
         </div>
@@ -162,9 +155,7 @@ const SidebarLayout: React.FC = () => {
           </div>
         </div>
         <div className="dashboard-content">
-          <div className="center-box">
-            <p>Page Content</p>
-          </div>
+          {children}
         </div>
       </div>
     </div>
