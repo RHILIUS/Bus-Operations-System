@@ -10,7 +10,7 @@
 
 body {
   font-family: 'Cooper Hewitt', 'Segoe UI', sans-serif;
-  display: flex;
+  /* display: flex; */
   height: 100vh;
   overflow: hidden;
 }
