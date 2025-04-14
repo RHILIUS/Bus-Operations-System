@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Quota_Policy {
+  QuotaPolicyID Int      @id @default(autoincrement())
+  StartDate     DateTime
+  EndDate       DateTime
+}
