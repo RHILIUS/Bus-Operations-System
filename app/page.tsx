@@ -84,11 +84,6 @@ const SidebarLayout: React.FC = () => {
   }, []);
 
   return (
-<<<<<<< HEAD
-    <main>
-      <h1>Hello world</h1>
-    </main>
-=======
     <div className="app-container">
       <div className="sidebar" id="sidebar">
         <div>
@@ -173,7 +168,6 @@ const SidebarLayout: React.FC = () => {
         </div>
       </div>
     </div>
->>>>>>> e5c9ee4920a806b0dcafe40c8ded84ef49a32cf7
   );
 };
 
