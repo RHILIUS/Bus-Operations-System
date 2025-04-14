@@ -1,103 +1,174 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useEffect, useRef } from 'react';
+import '../styles/style.css';  // Use relative import path from the component's location
+
+const SidebarLayout: React.FC = () => {
+  const underlineRef = useRef<HTMLDivElement>(null);
+
+  const toggleSubMenu = (id: string) => {
+    const submenu = document.getElementById(id);
+    if (submenu) {
+      submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.querySelectorAll('.nav-item.module').forEach((el) => {
+      const next = el.nextElementSibling as HTMLElement | null;
+      if (next && next.id !== id) {
+        el.classList.remove('active');
+        next.style.display = 'none';
+      }
+    });
+
+    const parent = document.querySelector(`[data-toggle-id="${id}"]`);
+    parent?.classList.toggle('active');
+  };
+
+  const toggleSidebar = () => {
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main-content');
+    const arrow = document.getElementById('arrow');
+
+    sidebar?.classList.toggle('collapsed');
+    main?.classList.toggle('expanded');
+    if (arrow && sidebar) {
+      arrow.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+    }
+  };
+
+  const updateUnderline = (el: HTMLElement) => {
+    if (underlineRef.current) {
+      underlineRef.current.style.left = `${el.offsetLeft}px`;
+      underlineRef.current.style.width = `${el.offsetWidth}px`;
+    }
+  };
+
+  useEffect(() => {
+    const subItems = document.querySelectorAll('.sub-item');
+    subItems.forEach((item) =>
+      item.addEventListener('click', () => {
+        subItems.forEach((i) => i.classList.remove('active'));
+        item.classList.add('active');
+      })
+    );
+
+    const navItems = document.querySelectorAll('.nav-links > a.nav-item');
+    navItems.forEach((item) =>
+      item.addEventListener('click', () => {
+        navItems.forEach((i) => i.classList.remove('active'));
+        item.classList.add('active');
+      })
+    );
+
+    const topLinks = document.querySelectorAll('.top-link');
+    topLinks.forEach((link) =>
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        topLinks.forEach((l) => l.classList.remove('active'));
+        link.classList.add('active');
+        updateUnderline(link as HTMLElement);
+      })
+    );
+
+    const handleResize = () => {
+      const activeLink = document.querySelector('.top-link.active') as HTMLElement;
+      if (activeLink) updateUnderline(activeLink);
+    };
+
+    window.addEventListener('load', handleResize);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="app-container">
+      <div className="sidebar" id="sidebar">
+        <div>
+          <div className="logo">
+            <img src="assets/images/agilalogo.png" alt="Agila Logo" />
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
+          <div className="nav-links">
+            <div
+              className="nav-item module"
+              data-toggle-id="assignment-submenu"
+              onClick={() => toggleSubMenu('assignment-submenu')}
+            >
+              <img src="assets/images/assignmentbus.png" alt="Assignment" className="nav-icon" />
+              <span className="nav-text">Assignment</span>
+            </div>
+            <div id="assignment-submenu" className="sub-menu">
+              <a href="BusAssignment.html" className="sub-item">
+                Bus Driver/Conductor Assignment
+              </a>
+              <a href="BusRouteAssignment.html" className="sub-item">
+                Bus Route Assignment
+              </a>
+              <a href="QoutaAssignment.html" className="sub-item">
+                Quota Assignment
+              </a>
+            </div>
+
+            <a href="RouteManagement.html" className="nav-item">
+              <img src="assets/images/routemanagement.png" alt="Route Management" className="nav-icon" />
+              <span className="nav-text">Route Management</span>
+            </a>
+
+            <a href="GPS.html" className="nav-item">
+              <img src="assets/images/GPS.png" alt="GPS" className="nav-icon" />
+              <span className="nav-text">GPS</span>
+            </a>
+
+            <a href="BusOperation.html" className="nav-item">
+              <img src="assets/images/busoperation.png" alt="Bus Operation" className="nav-icon" />
+              <span className="nav-text">Bus Operation</span>
+            </a>
+
+            <a href="BusRental.html" className="nav-item">
+              <img src="assets/images/busrental.png" alt="Bus Rental" className="nav-icon" />
+              <span className="nav-text">Bus Rental</span>
+            </a>
+
+            <a href="PerformanceReport.html" className="nav-item">
+              <img src="assets/images/performancereport.png" alt="Performance Report" className="nav-icon" />
+              <span className="nav-text">Performance Report</span>
+            </a>
+          </div>
+        </div>
+
+        <div className="logout">
+          <a href="#">
+            <img src="assets/images/logout.png" alt="Logout" className="nav-icon" />
+            <span className="nav-text">Logout</span>
           </a>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="toggle-btn" onClick={toggleSidebar}>
+          <span id="arrow">◀</span>
+        </div>
+      </div>
+
+      <div className="main-content" id="main-content">
+        <div className="top-bar">
+          <div className="top-links">
+            <a href="#" className="top-link active">Accounting</a>
+            <a href="#" className="top-link">Human Resource</a>
+            <a href="#" className="top-link">Inventory</a>
+            <a href="#" className="top-link">Operational</a>
+            <div className="link-underline" ref={underlineRef}></div>
+          </div>
+        </div>
+        <div className="dashboard-content">
+          <div className="center-box">
+            <p>Page Content</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default SidebarLayout;
