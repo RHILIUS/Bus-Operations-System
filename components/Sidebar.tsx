@@ -1,25 +1,30 @@
 'use client';
-import Link from 'next/link';
-import { useState } from 'react';
+
+import Link from 'next/link'; // Importing the `Link` component from Next.js for navigation, so you can link to different pages.
+import { useState } from 'react'; // Importing `useState` from React to manage component state.
 
 interface SidebarProps {
   isCollapsed: boolean;
   setIsCollapsed: (val: boolean) => void;
 }
 
+// This defines the type for the `Sidebar` component's props. It expects `isCollapsed` (boolean for sidebar state) and `setIsCollapsed` (function to update the state).
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
-  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
-  const [activeItem, setActiveItem] = useState<string | null>(null); // Track the active item
+  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);   // Declares the `openSubMenu` state variable, which tracks which submenu is open.
+  const [activeItem, setActiveItem] = useState<string | null>(null);   // Declares the `activeItem` state variable to track which menu item is currently active.
 
   const toggleSubMenu = (id: string) => {
     setOpenSubMenu(prev => (prev === id ? null : id));
   };
 
+  // Function to toggle the sidebar's collapsed state.
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
+
   return (
+    // This is the main `div` for the sidebar. It applies the `'collapsed'` class if the sidebar is collapsed.
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`} id="sidebar">
       <div>
         <div className="logo">
