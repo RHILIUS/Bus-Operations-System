@@ -3,7 +3,8 @@
 
 .container {
   background-color: #f4f3fa;
-  min-height: 100vh;
+  height: 100%;
+  width: 100%;
   font-family: 'Cooper Hewitt', 'Segoe UI', sans-serif;
   padding: 2rem;
   display: flex;
