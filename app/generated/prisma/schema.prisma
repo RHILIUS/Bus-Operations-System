@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Quota_Policy {
+  QuotaPolicyID Int      @id @default(autoincrement())
+  StartDate     DateTime
+  EndDate       DateTime
+
+  Fixed                 Fixed?
+  Percentage            Percentage?
+  RegularBusAssignments RegularBusAssignment[]
+}
+
+model Fixed {
+  FQuotaPolicyID Int   @id
+  Quota          Float
+
+  quotaPolicy Quota_Policy @relation(fields: [FQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)
+}
+
+model Percentage {
+  PQuotaPolicyID Int   @id
+  Percentage     Float
+
+  quotaPolicy Quota_Policy @relation(fields: [PQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)
+}
+
+model Stop {
+  StopID   Int    @id @default(autoincrement())
+  StopName String
+  Location String // You could split this into latitude & longitude if needed
+
+  routesAsStart Route[]     @relation("StartStop")
+  routesAsEnd   Route[]     @relation("EndStop")
+  RouteStops    RouteStop[]
+}
+
+model Route {
+  RouteID     Int    @id @default(autoincrement())
+  StartStopID Int
+  EndStopID   Int
+  RouteName   String
+
+  StartStop      Stop                 @relation("StartStop", fields: [StartStopID], references: [StopID])
+  EndStop        Stop                 @relation("EndStop", fields: [EndStopID], references: [StopID])
+  RouteStops     RouteStop[]
+  BusAssignments BusRouteAssignment[]
+}
+
+model RouteStop {
+  RouteStopID Int @id @default(autoincrement())
+  RouteID     Int
+  StopID      Int
+  StopOrder   Int
+
+  Route Route @relation(fields: [RouteID], references: [RouteID])
+  Stop  Stop  @relation(fields: [StopID], references: [StopID])
+
+  @@unique([RouteID, StopID]) // ensures no duplicate Stop in same Route
+}
+
+model BusAssignment {
+  BusAssignmentID Int      @id @default(autoincrement())
+  BusID           Int // Foreign key from API (no relation)
+  AssignmentDate  DateTime
+  Battery         Boolean
+  Lights          Boolean
+  Oil             Boolean
+  Water           Boolean
+  Break           Boolean
+  Air             Boolean
+  Gas             Boolean
+  Engine          Boolean
+  TireCondition   Boolean
+  Self            Boolean
+
+  RegularBusAssignment RegularBusAssignment?
+
+  @@index([BusID])
+}
+
+model RegularBusAssignment {
+  RegularBusAssignmentID Int   @id
+  DriverID               Int // From API
+  ConductorID            Int // From API
+  QuotaPolicyID          Int
+  Change                 Float
+  TripRevenue            Float
+
+  BusAssignment       BusAssignment        @relation(fields: [RegularBusAssignmentID], references: [BusAssignmentID])
+  quotaPolicy         Quota_Policy         @relation(fields: [QuotaPolicyID], references: [QuotaPolicyID])
+  BusRouteAssignments BusRouteAssignment[]
+
+  @@index([DriverID])
+  @@index([ConductorID])
+}
+
+model BusRouteAssignment {
+  BusRouteAssignmentID Int @id @default(autoincrement())
+  BusAssignmentID      Int
+  RouteID              Int
+
+  Route                Route                @relation(fields: [RouteID], references: [RouteID])
+  RegularBusAssignment RegularBusAssignment @relation(fields: [BusAssignmentID], references: [RegularBusAssignmentID])
+}
