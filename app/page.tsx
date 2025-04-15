@@ -1,8 +1,16 @@
-import Image from "next/image";
-
-
-export default function Home() {
+// app/dashboard/page.tsx
+export default function DashboardPage() {
   return (
-    <h1>PAGE CONTENT HERE</h1>
+    <div
+      style={{
+        fontFamily: 'Arial, sans-serif',
+        textAlign: 'center',
+        marginTop: '100px',
+        color: '#000'
+      }}
+      >
+      <h1>This is the Dashboard Page</h1>
+      {/* Just your page content */}
+    </div>
   );
 }
