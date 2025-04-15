@@ -123,14 +123,88 @@ exports.Prisma.Quota_PolicyScalarFieldEnum = {
   EndDate: 'EndDate'
 };
 
+exports.Prisma.FixedScalarFieldEnum = {
+  FQuotaPolicyID: 'FQuotaPolicyID',
+  Quota: 'Quota'
+};
+
+exports.Prisma.PercentageScalarFieldEnum = {
+  PQuotaPolicyID: 'PQuotaPolicyID',
+  Percentage: 'Percentage'
+};
+
+exports.Prisma.StopScalarFieldEnum = {
+  StopID: 'StopID',
+  StopName: 'StopName',
+  Location: 'Location'
+};
+
+exports.Prisma.RouteScalarFieldEnum = {
+  RouteID: 'RouteID',
+  StartStopID: 'StartStopID',
+  EndStopID: 'EndStopID',
+  RouteName: 'RouteName'
+};
+
+exports.Prisma.RouteStopScalarFieldEnum = {
+  RouteStopID: 'RouteStopID',
+  RouteID: 'RouteID',
+  StopID: 'StopID',
+  StopOrder: 'StopOrder'
+};
+
+exports.Prisma.BusAssignmentScalarFieldEnum = {
+  BusAssignmentID: 'BusAssignmentID',
+  BusID: 'BusID',
+  AssignmentDate: 'AssignmentDate',
+  Battery: 'Battery',
+  Lights: 'Lights',
+  Oil: 'Oil',
+  Water: 'Water',
+  Break: 'Break',
+  Air: 'Air',
+  Gas: 'Gas',
+  Engine: 'Engine',
+  TireCondition: 'TireCondition',
+  Self: 'Self'
+};
+
+exports.Prisma.RegularBusAssignmentScalarFieldEnum = {
+  RegularBusAssignmentID: 'RegularBusAssignmentID',
+  DriverID: 'DriverID',
+  ConductorID: 'ConductorID',
+  QuotaPolicyID: 'QuotaPolicyID',
+  Change: 'Change',
+  TripRevenue: 'TripRevenue'
+};
+
+exports.Prisma.BusRouteAssignmentScalarFieldEnum = {
+  BusRouteAssignmentID: 'BusRouteAssignmentID',
+  BusAssignmentID: 'BusAssignmentID',
+  RouteID: 'RouteID'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
 
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
 
 exports.Prisma.ModelName = {
-  Quota_Policy: 'Quota_Policy'
+  Quota_Policy: 'Quota_Policy',
+  Fixed: 'Fixed',
+  Percentage: 'Percentage',
+  Stop: 'Stop',
+  Route: 'Route',
+  RouteStop: 'RouteStop',
+  BusAssignment: 'BusAssignment',
+  RegularBusAssignment: 'RegularBusAssignment',
+  BusRouteAssignment: 'BusRouteAssignment'
 };
 
 /**
