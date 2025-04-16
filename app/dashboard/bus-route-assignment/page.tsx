@@ -1,9 +1,28 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './bus-route-assignment.module.css';
 
+interface BusRouteAssignment {
+  BusRouteAssignmentID: string;
+  BusAssignmentID: number;
+  RouteID: number;
+}
+
 const BusRouteAssignmentPage: React.FC = () => {
+  const [assignments, setAssignments] = useState<BusRouteAssignment[]>([]);
+
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      const response = await fetch('/api/bus-route-assignment');
+      const data = await response.json();
+      console.log('Fetched assignments:', data); // Debugging
+      setAssignments(data);
+    };
+
+    fetchAssignments();
+  }, []);
   return (
     <div className="dashboard-content">
       <div className="center-box">
@@ -69,20 +88,18 @@ const BusRouteAssignmentPage: React.FC = () => {
             <table className={styles.table}>
               <thead>
                 <tr className={styles.tableHeadRow}>
-                  <th>Bus Number</th>
-                  <th>Route</th>
-                  <th>From</th>
-                  <th>To</th>
+                  <th>Bus Route ID</th>
+                  <th>Bus Assignment ID</th>
+                  <th>Route ID</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {Array.from({ length: 5 }).map((_, idx) => (
-                  <tr key={idx} className={styles.tableRow}>
-                    <td>PQA-1004</td>
-                    <td>1</td>
-                    <td>PITX</td>
-                    <td>SAN JOSE</td>
+                {assignments.map((assignment) => (
+                  <tr key={assignment.BusRouteAssignmentID} className={styles.tableRow}>
+                    <td>{assignment.BusRouteAssignmentID}</td>
+                    <td>{assignment.BusAssignmentID}</td>
+                    <td>{assignment.RouteID}</td>
                     <td className={styles.actions}>
                       <button className={styles.editBtn}>
                         <img src="/assets/images/edit.png" alt="Edit" />

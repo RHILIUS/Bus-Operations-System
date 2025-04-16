@@ -189,7 +189,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Rj\\OneDrive\\ドキュメント\\Programs\\JS\\Bus-Operations-System\\app\\generated\\prisma",
+      "value": "C:\\Users\\JM Garces\\Desktop\\CAPSTONE SHIT\\Capstone_Real\\Bus-Operations-System\\app\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -203,7 +203,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Rj\\OneDrive\\ドキュメント\\Programs\\JS\\Bus-Operations-System\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\JM Garces\\Desktop\\CAPSTONE SHIT\\Capstone_Real\\Bus-Operations-System\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -217,11 +217,12 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "postgresql://postgres:password@localhost:5432/Bus_Operations"
+        "value": null
       }
     }
   },
