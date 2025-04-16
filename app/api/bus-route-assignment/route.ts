@@ -3,7 +3,35 @@ import prisma from '@/client'; // Importing the Prisma client instance to intera
 
 export async function GET() {
   try {
-    const assignments = await prisma.busRouteAssignment.findMany();
+    const assignments = await prisma.busRouteAssignment.findMany({
+      include: {
+        Route: {
+          select: {
+            RouteName: true,
+            StartStop: {
+              select: {
+                StopName: true,
+              }
+            },
+            EndStop: {
+              select: {
+                StopName: true,
+              }
+            },
+          }
+        },
+        RegularBusAssignment: {
+          select: {
+            BusAssignment: {
+              select: {
+                BusID: true,
+              }
+            }
+          }
+        }
+      }
+
+    });
     console.log('Assignments from database:', assignments); // Debugging
 
     // Dummy JSON data for testing only

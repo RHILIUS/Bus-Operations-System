@@ -6,11 +6,26 @@ import styles from './bus-route-assignment.module.css';
 interface BusRouteAssignment {
   BusRouteAssignmentID: string;
   BusAssignmentID: number;
-  RouteID: number;
+  Route: {
+    RouteName: string;
+    StartStop: {
+      StopName: string;
+    };
+    EndStop: {
+      StopName: string;
+    };
+  };
+  RegularBusAssignment: {
+    BusAssignment: {
+      BusID: number;
+    };
+  };
 }
 
 const BusRouteAssignmentPage: React.FC = () => {
   const [assignments, setAssignments] = useState<BusRouteAssignment[]>([]);
+  const [selectedBusAssignmentID, setSelectedBusAssignmentID] = useState<number | null>(null);
+  const [selectedRouteID, setSelectedRouteID] = useState<string | null>(null);
 
   // Fetch data from the API
   useEffect(() => {
@@ -63,18 +78,39 @@ const BusRouteAssignmentPage: React.FC = () => {
             <div className={styles.formSection}>
               <div className={styles.formGroup}>
                 <img src="/assets/images/assignedbus.png" alt="Bus Icon" className={styles.icon} />
-                <select className={styles.selectBlack}>
-                  <option>-- Select Bus --</option>
+                <p><strong>Selected Bus Assignment ID:</strong> {selectedBusAssignmentID ?? "None"}</p>
+                <select
+                  className={styles.selectBlack}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSelectedBusAssignmentID(value === "" ? null : parseInt(value));
+                  }}
+                >
+                  <option value="">-- Select Bus --</option>
+                  {/* Replace these with your actual options */}
+                  <option value="1">Bus 1</option>
+                  <option value="2">Bus 2</option>
                 </select>
               </div>
 
               <div className={styles.formGroup}>
                 <img src="/assets/images/assignedroute.png" alt="Route Icon" className={styles.icon} />
-                <select className={styles.selectBlack}>
-                  <option>-- Select Route --</option>
+                <p><strong>Selected Route ID:</strong> {selectedRouteID ?? "None"}</p>
+                <select
+                  className={styles.selectBlack}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSelectedRouteID(value === "" ? null : value);
+                  }}
+                >
+                  <option value="">-- Select Route --</option>
+                  {/* Replace these with your actual options */}
+                  <option value="route-1">Route A</option>
+                  <option value="route-2">Route B</option>
                 </select>
               </div>
             </div>
+
 
             {/* Action buttons */}
             <div className={styles.actionButtons}>
@@ -88,18 +124,20 @@ const BusRouteAssignmentPage: React.FC = () => {
             <table className={styles.table}>
               <thead>
                 <tr className={styles.tableHeadRow}>
-                  <th>Bus Route ID</th>
-                  <th>Bus Assignment ID</th>
-                  <th>Route ID</th>
+                  <th>Bus ID</th>
+                  <th>Route Name</th>
+                  <th>From</th>
+                  <th>To</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {assignments.map((assignment) => (
                   <tr key={assignment.BusRouteAssignmentID} className={styles.tableRow}>
-                    <td>{assignment.BusRouteAssignmentID}</td>
-                    <td>{assignment.BusAssignmentID}</td>
-                    <td>{assignment.RouteID}</td>
+                    <td>{assignment.RegularBusAssignment?.BusAssignment?.BusID}</td>
+                    <td>{assignment.Route?.RouteName}</td>
+                    <td>{assignment.Route?.StartStop?.StopName}</td>
+                    <td>{assignment.Route?.EndStop?.StopName}</td>
                     <td className={styles.actions}>
                       <button className={styles.editBtn}>
                         <img src="/assets/images/edit.png" alt="Edit" />
