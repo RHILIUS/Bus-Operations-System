@@ -1753,28 +1753,18 @@ export namespace Prisma {
 
   export type AggregateQuota_Policy = {
     _count: Quota_PolicyCountAggregateOutputType | null
-    _avg: Quota_PolicyAvgAggregateOutputType | null
-    _sum: Quota_PolicySumAggregateOutputType | null
     _min: Quota_PolicyMinAggregateOutputType | null
     _max: Quota_PolicyMaxAggregateOutputType | null
   }
 
-  export type Quota_PolicyAvgAggregateOutputType = {
-    QuotaPolicyID: number | null
-  }
-
-  export type Quota_PolicySumAggregateOutputType = {
-    QuotaPolicyID: number | null
-  }
-
   export type Quota_PolicyMinAggregateOutputType = {
-    QuotaPolicyID: number | null
+    QuotaPolicyID: string | null
     StartDate: Date | null
     EndDate: Date | null
   }
 
   export type Quota_PolicyMaxAggregateOutputType = {
-    QuotaPolicyID: number | null
+    QuotaPolicyID: string | null
     StartDate: Date | null
     EndDate: Date | null
   }
@@ -1786,14 +1776,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type Quota_PolicyAvgAggregateInputType = {
-    QuotaPolicyID?: true
-  }
-
-  export type Quota_PolicySumAggregateInputType = {
-    QuotaPolicyID?: true
-  }
 
   export type Quota_PolicyMinAggregateInputType = {
     QuotaPolicyID?: true
@@ -1852,18 +1834,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: Quota_PolicyAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: Quota_PolicySumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: Quota_PolicyMinAggregateInputType
@@ -1894,19 +1864,15 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: Quota_PolicyCountAggregateInputType | true
-    _avg?: Quota_PolicyAvgAggregateInputType
-    _sum?: Quota_PolicySumAggregateInputType
     _min?: Quota_PolicyMinAggregateInputType
     _max?: Quota_PolicyMaxAggregateInputType
   }
 
   export type Quota_PolicyGroupByOutputType = {
-    QuotaPolicyID: number
+    QuotaPolicyID: string
     StartDate: Date
     EndDate: Date
     _count: Quota_PolicyCountAggregateOutputType | null
-    _avg: Quota_PolicyAvgAggregateOutputType | null
-    _sum: Quota_PolicySumAggregateOutputType | null
     _min: Quota_PolicyMinAggregateOutputType | null
     _max: Quota_PolicyMaxAggregateOutputType | null
   }
@@ -1971,7 +1937,7 @@ export namespace Prisma {
       RegularBusAssignments: Prisma.$RegularBusAssignmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      QuotaPolicyID: number
+      QuotaPolicyID: string
       StartDate: Date
       EndDate: Date
     }, ExtArgs["result"]["quota_Policy"]>
@@ -2400,7 +2366,7 @@ export namespace Prisma {
    * Fields of the Quota_Policy model
    */
   interface Quota_PolicyFieldRefs {
-    readonly QuotaPolicyID: FieldRef<"Quota_Policy", 'Int'>
+    readonly QuotaPolicyID: FieldRef<"Quota_Policy", 'String'>
     readonly StartDate: FieldRef<"Quota_Policy", 'DateTime'>
     readonly EndDate: FieldRef<"Quota_Policy", 'DateTime'>
   }
@@ -2884,22 +2850,20 @@ export namespace Prisma {
   }
 
   export type FixedAvgAggregateOutputType = {
-    FQuotaPolicyID: number | null
     Quota: number | null
   }
 
   export type FixedSumAggregateOutputType = {
-    FQuotaPolicyID: number | null
     Quota: number | null
   }
 
   export type FixedMinAggregateOutputType = {
-    FQuotaPolicyID: number | null
+    FQuotaPolicyID: string | null
     Quota: number | null
   }
 
   export type FixedMaxAggregateOutputType = {
-    FQuotaPolicyID: number | null
+    FQuotaPolicyID: string | null
     Quota: number | null
   }
 
@@ -2911,12 +2875,10 @@ export namespace Prisma {
 
 
   export type FixedAvgAggregateInputType = {
-    FQuotaPolicyID?: true
     Quota?: true
   }
 
   export type FixedSumAggregateInputType = {
-    FQuotaPolicyID?: true
     Quota?: true
   }
 
@@ -3023,7 +2985,7 @@ export namespace Prisma {
   }
 
   export type FixedGroupByOutputType = {
-    FQuotaPolicyID: number
+    FQuotaPolicyID: string
     Quota: number
     _count: FixedCountAggregateOutputType | null
     _avg: FixedAvgAggregateOutputType | null
@@ -3086,7 +3048,7 @@ export namespace Prisma {
       quotaPolicy: Prisma.$Quota_PolicyPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      FQuotaPolicyID: number
+      FQuotaPolicyID: string
       Quota: number
     }, ExtArgs["result"]["fixed"]>
     composites: {}
@@ -3512,7 +3474,7 @@ export namespace Prisma {
    * Fields of the Fixed model
    */
   interface FixedFieldRefs {
-    readonly FQuotaPolicyID: FieldRef<"Fixed", 'Int'>
+    readonly FQuotaPolicyID: FieldRef<"Fixed", 'String'>
     readonly Quota: FieldRef<"Fixed", 'Float'>
   }
     
@@ -3941,22 +3903,20 @@ export namespace Prisma {
   }
 
   export type PercentageAvgAggregateOutputType = {
-    PQuotaPolicyID: number | null
     Percentage: number | null
   }
 
   export type PercentageSumAggregateOutputType = {
-    PQuotaPolicyID: number | null
     Percentage: number | null
   }
 
   export type PercentageMinAggregateOutputType = {
-    PQuotaPolicyID: number | null
+    PQuotaPolicyID: string | null
     Percentage: number | null
   }
 
   export type PercentageMaxAggregateOutputType = {
-    PQuotaPolicyID: number | null
+    PQuotaPolicyID: string | null
     Percentage: number | null
   }
 
@@ -3968,12 +3928,10 @@ export namespace Prisma {
 
 
   export type PercentageAvgAggregateInputType = {
-    PQuotaPolicyID?: true
     Percentage?: true
   }
 
   export type PercentageSumAggregateInputType = {
-    PQuotaPolicyID?: true
     Percentage?: true
   }
 
@@ -4080,7 +4038,7 @@ export namespace Prisma {
   }
 
   export type PercentageGroupByOutputType = {
-    PQuotaPolicyID: number
+    PQuotaPolicyID: string
     Percentage: number
     _count: PercentageCountAggregateOutputType | null
     _avg: PercentageAvgAggregateOutputType | null
@@ -4143,7 +4101,7 @@ export namespace Prisma {
       quotaPolicy: Prisma.$Quota_PolicyPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      PQuotaPolicyID: number
+      PQuotaPolicyID: string
       Percentage: number
     }, ExtArgs["result"]["percentage"]>
     composites: {}
@@ -4569,7 +4527,7 @@ export namespace Prisma {
    * Fields of the Percentage model
    */
   interface PercentageFieldRefs {
-    readonly PQuotaPolicyID: FieldRef<"Percentage", 'Int'>
+    readonly PQuotaPolicyID: FieldRef<"Percentage", 'String'>
     readonly Percentage: FieldRef<"Percentage", 'Float'>
   }
     
@@ -4991,28 +4949,18 @@ export namespace Prisma {
 
   export type AggregateStop = {
     _count: StopCountAggregateOutputType | null
-    _avg: StopAvgAggregateOutputType | null
-    _sum: StopSumAggregateOutputType | null
     _min: StopMinAggregateOutputType | null
     _max: StopMaxAggregateOutputType | null
   }
 
-  export type StopAvgAggregateOutputType = {
-    StopID: number | null
-  }
-
-  export type StopSumAggregateOutputType = {
-    StopID: number | null
-  }
-
   export type StopMinAggregateOutputType = {
-    StopID: number | null
+    StopID: string | null
     StopName: string | null
     Location: string | null
   }
 
   export type StopMaxAggregateOutputType = {
-    StopID: number | null
+    StopID: string | null
     StopName: string | null
     Location: string | null
   }
@@ -5024,14 +4972,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type StopAvgAggregateInputType = {
-    StopID?: true
-  }
-
-  export type StopSumAggregateInputType = {
-    StopID?: true
-  }
 
   export type StopMinAggregateInputType = {
     StopID?: true
@@ -5090,18 +5030,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: StopAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: StopSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: StopMinAggregateInputType
@@ -5132,19 +5060,15 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: StopCountAggregateInputType | true
-    _avg?: StopAvgAggregateInputType
-    _sum?: StopSumAggregateInputType
     _min?: StopMinAggregateInputType
     _max?: StopMaxAggregateInputType
   }
 
   export type StopGroupByOutputType = {
-    StopID: number
+    StopID: string
     StopName: string
     Location: string
     _count: StopCountAggregateOutputType | null
-    _avg: StopAvgAggregateOutputType | null
-    _sum: StopSumAggregateOutputType | null
     _min: StopMinAggregateOutputType | null
     _max: StopMaxAggregateOutputType | null
   }
@@ -5209,7 +5133,7 @@ export namespace Prisma {
       RouteStops: Prisma.$RouteStopPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      StopID: number
+      StopID: string
       StopName: string
       Location: string
     }, ExtArgs["result"]["stop"]>
@@ -5638,7 +5562,7 @@ export namespace Prisma {
    * Fields of the Stop model
    */
   interface StopFieldRefs {
-    readonly StopID: FieldRef<"Stop", 'Int'>
+    readonly StopID: FieldRef<"Stop", 'String'>
     readonly StopName: FieldRef<"Stop", 'String'>
     readonly Location: FieldRef<"Stop", 'String'>
   }
@@ -6125,35 +6049,21 @@ export namespace Prisma {
 
   export type AggregateRoute = {
     _count: RouteCountAggregateOutputType | null
-    _avg: RouteAvgAggregateOutputType | null
-    _sum: RouteSumAggregateOutputType | null
     _min: RouteMinAggregateOutputType | null
     _max: RouteMaxAggregateOutputType | null
   }
 
-  export type RouteAvgAggregateOutputType = {
-    RouteID: number | null
-    StartStopID: number | null
-    EndStopID: number | null
-  }
-
-  export type RouteSumAggregateOutputType = {
-    RouteID: number | null
-    StartStopID: number | null
-    EndStopID: number | null
-  }
-
   export type RouteMinAggregateOutputType = {
-    RouteID: number | null
-    StartStopID: number | null
-    EndStopID: number | null
+    RouteID: string | null
+    StartStopID: string | null
+    EndStopID: string | null
     RouteName: string | null
   }
 
   export type RouteMaxAggregateOutputType = {
-    RouteID: number | null
-    StartStopID: number | null
-    EndStopID: number | null
+    RouteID: string | null
+    StartStopID: string | null
+    EndStopID: string | null
     RouteName: string | null
   }
 
@@ -6165,18 +6075,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type RouteAvgAggregateInputType = {
-    RouteID?: true
-    StartStopID?: true
-    EndStopID?: true
-  }
-
-  export type RouteSumAggregateInputType = {
-    RouteID?: true
-    StartStopID?: true
-    EndStopID?: true
-  }
 
   export type RouteMinAggregateInputType = {
     RouteID?: true
@@ -6238,18 +6136,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: RouteAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: RouteSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: RouteMinAggregateInputType
@@ -6280,20 +6166,16 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: RouteCountAggregateInputType | true
-    _avg?: RouteAvgAggregateInputType
-    _sum?: RouteSumAggregateInputType
     _min?: RouteMinAggregateInputType
     _max?: RouteMaxAggregateInputType
   }
 
   export type RouteGroupByOutputType = {
-    RouteID: number
-    StartStopID: number
-    EndStopID: number
+    RouteID: string
+    StartStopID: string
+    EndStopID: string
     RouteName: string
     _count: RouteCountAggregateOutputType | null
-    _avg: RouteAvgAggregateOutputType | null
-    _sum: RouteSumAggregateOutputType | null
     _min: RouteMinAggregateOutputType | null
     _max: RouteMaxAggregateOutputType | null
   }
@@ -6375,9 +6257,9 @@ export namespace Prisma {
       BusAssignments: Prisma.$BusRouteAssignmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      RouteID: number
-      StartStopID: number
-      EndStopID: number
+      RouteID: string
+      StartStopID: string
+      EndStopID: string
       RouteName: string
     }, ExtArgs["result"]["route"]>
     composites: {}
@@ -6806,9 +6688,9 @@ export namespace Prisma {
    * Fields of the Route model
    */
   interface RouteFieldRefs {
-    readonly RouteID: FieldRef<"Route", 'Int'>
-    readonly StartStopID: FieldRef<"Route", 'Int'>
-    readonly EndStopID: FieldRef<"Route", 'Int'>
+    readonly RouteID: FieldRef<"Route", 'String'>
+    readonly StartStopID: FieldRef<"Route", 'String'>
+    readonly EndStopID: FieldRef<"Route", 'String'>
     readonly RouteName: FieldRef<"Route", 'String'>
   }
     
@@ -7285,30 +7167,24 @@ export namespace Prisma {
   }
 
   export type RouteStopAvgAggregateOutputType = {
-    RouteStopID: number | null
-    RouteID: number | null
-    StopID: number | null
     StopOrder: number | null
   }
 
   export type RouteStopSumAggregateOutputType = {
-    RouteStopID: number | null
-    RouteID: number | null
-    StopID: number | null
     StopOrder: number | null
   }
 
   export type RouteStopMinAggregateOutputType = {
-    RouteStopID: number | null
-    RouteID: number | null
-    StopID: number | null
+    RouteStopID: string | null
+    RouteID: string | null
+    StopID: string | null
     StopOrder: number | null
   }
 
   export type RouteStopMaxAggregateOutputType = {
-    RouteStopID: number | null
-    RouteID: number | null
-    StopID: number | null
+    RouteStopID: string | null
+    RouteID: string | null
+    StopID: string | null
     StopOrder: number | null
   }
 
@@ -7322,16 +7198,10 @@ export namespace Prisma {
 
 
   export type RouteStopAvgAggregateInputType = {
-    RouteStopID?: true
-    RouteID?: true
-    StopID?: true
     StopOrder?: true
   }
 
   export type RouteStopSumAggregateInputType = {
-    RouteStopID?: true
-    RouteID?: true
-    StopID?: true
     StopOrder?: true
   }
 
@@ -7444,9 +7314,9 @@ export namespace Prisma {
   }
 
   export type RouteStopGroupByOutputType = {
-    RouteStopID: number
-    RouteID: number
-    StopID: number
+    RouteStopID: string
+    RouteID: string
+    StopID: string
     StopOrder: number
     _count: RouteStopCountAggregateOutputType | null
     _avg: RouteStopAvgAggregateOutputType | null
@@ -7524,9 +7394,9 @@ export namespace Prisma {
       Stop: Prisma.$StopPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      RouteStopID: number
-      RouteID: number
-      StopID: number
+      RouteStopID: string
+      RouteID: string
+      StopID: string
       StopOrder: number
     }, ExtArgs["result"]["routeStop"]>
     composites: {}
@@ -7953,9 +7823,9 @@ export namespace Prisma {
    * Fields of the RouteStop model
    */
   interface RouteStopFieldRefs {
-    readonly RouteStopID: FieldRef<"RouteStop", 'Int'>
-    readonly RouteID: FieldRef<"RouteStop", 'Int'>
-    readonly StopID: FieldRef<"RouteStop", 'Int'>
+    readonly RouteStopID: FieldRef<"RouteStop", 'String'>
+    readonly RouteID: FieldRef<"RouteStop", 'String'>
+    readonly StopID: FieldRef<"RouteStop", 'String'>
     readonly StopOrder: FieldRef<"RouteStop", 'Int'>
   }
     
@@ -8377,25 +8247,13 @@ export namespace Prisma {
 
   export type AggregateBusAssignment = {
     _count: BusAssignmentCountAggregateOutputType | null
-    _avg: BusAssignmentAvgAggregateOutputType | null
-    _sum: BusAssignmentSumAggregateOutputType | null
     _min: BusAssignmentMinAggregateOutputType | null
     _max: BusAssignmentMaxAggregateOutputType | null
   }
 
-  export type BusAssignmentAvgAggregateOutputType = {
-    BusAssignmentID: number | null
-    BusID: number | null
-  }
-
-  export type BusAssignmentSumAggregateOutputType = {
-    BusAssignmentID: number | null
-    BusID: number | null
-  }
-
   export type BusAssignmentMinAggregateOutputType = {
-    BusAssignmentID: number | null
-    BusID: number | null
+    BusAssignmentID: string | null
+    BusID: string | null
     AssignmentDate: Date | null
     Battery: boolean | null
     Lights: boolean | null
@@ -8410,8 +8268,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentMaxAggregateOutputType = {
-    BusAssignmentID: number | null
-    BusID: number | null
+    BusAssignmentID: string | null
+    BusID: string | null
     AssignmentDate: Date | null
     Battery: boolean | null
     Lights: boolean | null
@@ -8442,16 +8300,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type BusAssignmentAvgAggregateInputType = {
-    BusAssignmentID?: true
-    BusID?: true
-  }
-
-  export type BusAssignmentSumAggregateInputType = {
-    BusAssignmentID?: true
-    BusID?: true
-  }
 
   export type BusAssignmentMinAggregateInputType = {
     BusAssignmentID?: true
@@ -8540,18 +8388,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: BusAssignmentAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: BusAssignmentSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: BusAssignmentMinAggregateInputType
@@ -8582,15 +8418,13 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: BusAssignmentCountAggregateInputType | true
-    _avg?: BusAssignmentAvgAggregateInputType
-    _sum?: BusAssignmentSumAggregateInputType
     _min?: BusAssignmentMinAggregateInputType
     _max?: BusAssignmentMaxAggregateInputType
   }
 
   export type BusAssignmentGroupByOutputType = {
-    BusAssignmentID: number
-    BusID: number
+    BusAssignmentID: string
+    BusID: string
     AssignmentDate: Date
     Battery: boolean
     Lights: boolean
@@ -8603,8 +8437,6 @@ export namespace Prisma {
     TireCondition: boolean
     Self: boolean
     _count: BusAssignmentCountAggregateOutputType | null
-    _avg: BusAssignmentAvgAggregateOutputType | null
-    _sum: BusAssignmentSumAggregateOutputType | null
     _min: BusAssignmentMinAggregateOutputType | null
     _max: BusAssignmentMaxAggregateOutputType | null
   }
@@ -8701,8 +8533,8 @@ export namespace Prisma {
       RegularBusAssignment: Prisma.$RegularBusAssignmentPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
-      BusAssignmentID: number
-      BusID: number
+      BusAssignmentID: string
+      BusID: string
       AssignmentDate: Date
       Battery: boolean
       Lights: boolean
@@ -9138,8 +8970,8 @@ export namespace Prisma {
    * Fields of the BusAssignment model
    */
   interface BusAssignmentFieldRefs {
-    readonly BusAssignmentID: FieldRef<"BusAssignment", 'Int'>
-    readonly BusID: FieldRef<"BusAssignment", 'Int'>
+    readonly BusAssignmentID: FieldRef<"BusAssignment", 'String'>
+    readonly BusID: FieldRef<"BusAssignment", 'String'>
     readonly AssignmentDate: FieldRef<"BusAssignment", 'DateTime'>
     readonly Battery: FieldRef<"BusAssignment", 'Boolean'>
     readonly Lights: FieldRef<"BusAssignment", 'Boolean'>
@@ -9589,37 +9421,29 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentAvgAggregateOutputType = {
-    RegularBusAssignmentID: number | null
-    DriverID: number | null
-    ConductorID: number | null
-    QuotaPolicyID: number | null
     Change: number | null
     TripRevenue: number | null
   }
 
   export type RegularBusAssignmentSumAggregateOutputType = {
-    RegularBusAssignmentID: number | null
-    DriverID: number | null
-    ConductorID: number | null
-    QuotaPolicyID: number | null
     Change: number | null
     TripRevenue: number | null
   }
 
   export type RegularBusAssignmentMinAggregateOutputType = {
-    RegularBusAssignmentID: number | null
-    DriverID: number | null
-    ConductorID: number | null
-    QuotaPolicyID: number | null
+    RegularBusAssignmentID: string | null
+    DriverID: string | null
+    ConductorID: string | null
+    QuotaPolicyID: string | null
     Change: number | null
     TripRevenue: number | null
   }
 
   export type RegularBusAssignmentMaxAggregateOutputType = {
-    RegularBusAssignmentID: number | null
-    DriverID: number | null
-    ConductorID: number | null
-    QuotaPolicyID: number | null
+    RegularBusAssignmentID: string | null
+    DriverID: string | null
+    ConductorID: string | null
+    QuotaPolicyID: string | null
     Change: number | null
     TripRevenue: number | null
   }
@@ -9636,19 +9460,11 @@ export namespace Prisma {
 
 
   export type RegularBusAssignmentAvgAggregateInputType = {
-    RegularBusAssignmentID?: true
-    DriverID?: true
-    ConductorID?: true
-    QuotaPolicyID?: true
     Change?: true
     TripRevenue?: true
   }
 
   export type RegularBusAssignmentSumAggregateInputType = {
-    RegularBusAssignmentID?: true
-    DriverID?: true
-    ConductorID?: true
-    QuotaPolicyID?: true
     Change?: true
     TripRevenue?: true
   }
@@ -9768,10 +9584,10 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentGroupByOutputType = {
-    RegularBusAssignmentID: number
-    DriverID: number
-    ConductorID: number
-    QuotaPolicyID: number
+    RegularBusAssignmentID: string
+    DriverID: string
+    ConductorID: string
+    QuotaPolicyID: string
     Change: number
     TripRevenue: number
     _count: RegularBusAssignmentCountAggregateOutputType | null
@@ -9863,10 +9679,10 @@ export namespace Prisma {
       BusRouteAssignments: Prisma.$BusRouteAssignmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      RegularBusAssignmentID: number
-      DriverID: number
-      ConductorID: number
-      QuotaPolicyID: number
+      RegularBusAssignmentID: string
+      DriverID: string
+      ConductorID: string
+      QuotaPolicyID: string
       Change: number
       TripRevenue: number
     }, ExtArgs["result"]["regularBusAssignment"]>
@@ -10295,10 +10111,10 @@ export namespace Prisma {
    * Fields of the RegularBusAssignment model
    */
   interface RegularBusAssignmentFieldRefs {
-    readonly RegularBusAssignmentID: FieldRef<"RegularBusAssignment", 'Int'>
-    readonly DriverID: FieldRef<"RegularBusAssignment", 'Int'>
-    readonly ConductorID: FieldRef<"RegularBusAssignment", 'Int'>
-    readonly QuotaPolicyID: FieldRef<"RegularBusAssignment", 'Int'>
+    readonly RegularBusAssignmentID: FieldRef<"RegularBusAssignment", 'String'>
+    readonly DriverID: FieldRef<"RegularBusAssignment", 'String'>
+    readonly ConductorID: FieldRef<"RegularBusAssignment", 'String'>
+    readonly QuotaPolicyID: FieldRef<"RegularBusAssignment", 'String'>
     readonly Change: FieldRef<"RegularBusAssignment", 'Float'>
     readonly TripRevenue: FieldRef<"RegularBusAssignment", 'Float'>
   }
@@ -10745,34 +10561,20 @@ export namespace Prisma {
 
   export type AggregateBusRouteAssignment = {
     _count: BusRouteAssignmentCountAggregateOutputType | null
-    _avg: BusRouteAssignmentAvgAggregateOutputType | null
-    _sum: BusRouteAssignmentSumAggregateOutputType | null
     _min: BusRouteAssignmentMinAggregateOutputType | null
     _max: BusRouteAssignmentMaxAggregateOutputType | null
   }
 
-  export type BusRouteAssignmentAvgAggregateOutputType = {
-    BusRouteAssignmentID: number | null
-    BusAssignmentID: number | null
-    RouteID: number | null
-  }
-
-  export type BusRouteAssignmentSumAggregateOutputType = {
-    BusRouteAssignmentID: number | null
-    BusAssignmentID: number | null
-    RouteID: number | null
-  }
-
   export type BusRouteAssignmentMinAggregateOutputType = {
-    BusRouteAssignmentID: number | null
-    BusAssignmentID: number | null
-    RouteID: number | null
+    BusRouteAssignmentID: string | null
+    BusAssignmentID: string | null
+    RouteID: string | null
   }
 
   export type BusRouteAssignmentMaxAggregateOutputType = {
-    BusRouteAssignmentID: number | null
-    BusAssignmentID: number | null
-    RouteID: number | null
+    BusRouteAssignmentID: string | null
+    BusAssignmentID: string | null
+    RouteID: string | null
   }
 
   export type BusRouteAssignmentCountAggregateOutputType = {
@@ -10782,18 +10584,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type BusRouteAssignmentAvgAggregateInputType = {
-    BusRouteAssignmentID?: true
-    BusAssignmentID?: true
-    RouteID?: true
-  }
-
-  export type BusRouteAssignmentSumAggregateInputType = {
-    BusRouteAssignmentID?: true
-    BusAssignmentID?: true
-    RouteID?: true
-  }
 
   export type BusRouteAssignmentMinAggregateInputType = {
     BusRouteAssignmentID?: true
@@ -10852,18 +10642,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: BusRouteAssignmentAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: BusRouteAssignmentSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: BusRouteAssignmentMinAggregateInputType
@@ -10894,19 +10672,15 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: BusRouteAssignmentCountAggregateInputType | true
-    _avg?: BusRouteAssignmentAvgAggregateInputType
-    _sum?: BusRouteAssignmentSumAggregateInputType
     _min?: BusRouteAssignmentMinAggregateInputType
     _max?: BusRouteAssignmentMaxAggregateInputType
   }
 
   export type BusRouteAssignmentGroupByOutputType = {
-    BusRouteAssignmentID: number
-    BusAssignmentID: number
-    RouteID: number
+    BusRouteAssignmentID: string
+    BusAssignmentID: string
+    RouteID: string
     _count: BusRouteAssignmentCountAggregateOutputType | null
-    _avg: BusRouteAssignmentAvgAggregateOutputType | null
-    _sum: BusRouteAssignmentSumAggregateOutputType | null
     _min: BusRouteAssignmentMinAggregateOutputType | null
     _max: BusRouteAssignmentMaxAggregateOutputType | null
   }
@@ -10976,9 +10750,9 @@ export namespace Prisma {
       RegularBusAssignment: Prisma.$RegularBusAssignmentPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      BusRouteAssignmentID: number
-      BusAssignmentID: number
-      RouteID: number
+      BusRouteAssignmentID: string
+      BusAssignmentID: string
+      RouteID: string
     }, ExtArgs["result"]["busRouteAssignment"]>
     composites: {}
   }
@@ -11404,9 +11178,9 @@ export namespace Prisma {
    * Fields of the BusRouteAssignment model
    */
   interface BusRouteAssignmentFieldRefs {
-    readonly BusRouteAssignmentID: FieldRef<"BusRouteAssignment", 'Int'>
-    readonly BusAssignmentID: FieldRef<"BusRouteAssignment", 'Int'>
-    readonly RouteID: FieldRef<"BusRouteAssignment", 'Int'>
+    readonly BusRouteAssignmentID: FieldRef<"BusRouteAssignment", 'String'>
+    readonly BusAssignmentID: FieldRef<"BusRouteAssignment", 'String'>
+    readonly RouteID: FieldRef<"BusRouteAssignment", 'String'>
   }
     
 
@@ -11951,16 +11725,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'String'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+  export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
     
 
 
   /**
-   * Reference to a field of type 'Int[]'
+   * Reference to a field of type 'String[]'
    */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+  export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
     
 
 
@@ -11993,16 +11767,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'String'
+   * Reference to a field of type 'Int'
    */
-  export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
   /**
-   * Reference to a field of type 'String[]'
+   * Reference to a field of type 'Int[]'
    */
-  export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -12020,7 +11794,7 @@ export namespace Prisma {
     AND?: Quota_PolicyWhereInput | Quota_PolicyWhereInput[]
     OR?: Quota_PolicyWhereInput[]
     NOT?: Quota_PolicyWhereInput | Quota_PolicyWhereInput[]
-    QuotaPolicyID?: IntFilter<"Quota_Policy"> | number
+    QuotaPolicyID?: StringFilter<"Quota_Policy"> | string
     StartDate?: DateTimeFilter<"Quota_Policy"> | Date | string
     EndDate?: DateTimeFilter<"Quota_Policy"> | Date | string
     Fixed?: XOR<FixedNullableScalarRelationFilter, FixedWhereInput> | null
@@ -12038,7 +11812,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyWhereUniqueInput = Prisma.AtLeast<{
-    QuotaPolicyID?: number
+    QuotaPolicyID?: string
     AND?: Quota_PolicyWhereInput | Quota_PolicyWhereInput[]
     OR?: Quota_PolicyWhereInput[]
     NOT?: Quota_PolicyWhereInput | Quota_PolicyWhereInput[]
@@ -12054,17 +11828,15 @@ export namespace Prisma {
     StartDate?: SortOrder
     EndDate?: SortOrder
     _count?: Quota_PolicyCountOrderByAggregateInput
-    _avg?: Quota_PolicyAvgOrderByAggregateInput
     _max?: Quota_PolicyMaxOrderByAggregateInput
     _min?: Quota_PolicyMinOrderByAggregateInput
-    _sum?: Quota_PolicySumOrderByAggregateInput
   }
 
   export type Quota_PolicyScalarWhereWithAggregatesInput = {
     AND?: Quota_PolicyScalarWhereWithAggregatesInput | Quota_PolicyScalarWhereWithAggregatesInput[]
     OR?: Quota_PolicyScalarWhereWithAggregatesInput[]
     NOT?: Quota_PolicyScalarWhereWithAggregatesInput | Quota_PolicyScalarWhereWithAggregatesInput[]
-    QuotaPolicyID?: IntWithAggregatesFilter<"Quota_Policy"> | number
+    QuotaPolicyID?: StringWithAggregatesFilter<"Quota_Policy"> | string
     StartDate?: DateTimeWithAggregatesFilter<"Quota_Policy"> | Date | string
     EndDate?: DateTimeWithAggregatesFilter<"Quota_Policy"> | Date | string
   }
@@ -12073,7 +11845,7 @@ export namespace Prisma {
     AND?: FixedWhereInput | FixedWhereInput[]
     OR?: FixedWhereInput[]
     NOT?: FixedWhereInput | FixedWhereInput[]
-    FQuotaPolicyID?: IntFilter<"Fixed"> | number
+    FQuotaPolicyID?: StringFilter<"Fixed"> | string
     Quota?: FloatFilter<"Fixed"> | number
     quotaPolicy?: XOR<Quota_PolicyScalarRelationFilter, Quota_PolicyWhereInput>
   }
@@ -12085,7 +11857,7 @@ export namespace Prisma {
   }
 
   export type FixedWhereUniqueInput = Prisma.AtLeast<{
-    FQuotaPolicyID?: number
+    FQuotaPolicyID?: string
     AND?: FixedWhereInput | FixedWhereInput[]
     OR?: FixedWhereInput[]
     NOT?: FixedWhereInput | FixedWhereInput[]
@@ -12107,7 +11879,7 @@ export namespace Prisma {
     AND?: FixedScalarWhereWithAggregatesInput | FixedScalarWhereWithAggregatesInput[]
     OR?: FixedScalarWhereWithAggregatesInput[]
     NOT?: FixedScalarWhereWithAggregatesInput | FixedScalarWhereWithAggregatesInput[]
-    FQuotaPolicyID?: IntWithAggregatesFilter<"Fixed"> | number
+    FQuotaPolicyID?: StringWithAggregatesFilter<"Fixed"> | string
     Quota?: FloatWithAggregatesFilter<"Fixed"> | number
   }
 
@@ -12115,7 +11887,7 @@ export namespace Prisma {
     AND?: PercentageWhereInput | PercentageWhereInput[]
     OR?: PercentageWhereInput[]
     NOT?: PercentageWhereInput | PercentageWhereInput[]
-    PQuotaPolicyID?: IntFilter<"Percentage"> | number
+    PQuotaPolicyID?: StringFilter<"Percentage"> | string
     Percentage?: FloatFilter<"Percentage"> | number
     quotaPolicy?: XOR<Quota_PolicyScalarRelationFilter, Quota_PolicyWhereInput>
   }
@@ -12127,7 +11899,7 @@ export namespace Prisma {
   }
 
   export type PercentageWhereUniqueInput = Prisma.AtLeast<{
-    PQuotaPolicyID?: number
+    PQuotaPolicyID?: string
     AND?: PercentageWhereInput | PercentageWhereInput[]
     OR?: PercentageWhereInput[]
     NOT?: PercentageWhereInput | PercentageWhereInput[]
@@ -12149,7 +11921,7 @@ export namespace Prisma {
     AND?: PercentageScalarWhereWithAggregatesInput | PercentageScalarWhereWithAggregatesInput[]
     OR?: PercentageScalarWhereWithAggregatesInput[]
     NOT?: PercentageScalarWhereWithAggregatesInput | PercentageScalarWhereWithAggregatesInput[]
-    PQuotaPolicyID?: IntWithAggregatesFilter<"Percentage"> | number
+    PQuotaPolicyID?: StringWithAggregatesFilter<"Percentage"> | string
     Percentage?: FloatWithAggregatesFilter<"Percentage"> | number
   }
 
@@ -12157,7 +11929,7 @@ export namespace Prisma {
     AND?: StopWhereInput | StopWhereInput[]
     OR?: StopWhereInput[]
     NOT?: StopWhereInput | StopWhereInput[]
-    StopID?: IntFilter<"Stop"> | number
+    StopID?: StringFilter<"Stop"> | string
     StopName?: StringFilter<"Stop"> | string
     Location?: StringFilter<"Stop"> | string
     routesAsStart?: RouteListRelationFilter
@@ -12175,7 +11947,7 @@ export namespace Prisma {
   }
 
   export type StopWhereUniqueInput = Prisma.AtLeast<{
-    StopID?: number
+    StopID?: string
     AND?: StopWhereInput | StopWhereInput[]
     OR?: StopWhereInput[]
     NOT?: StopWhereInput | StopWhereInput[]
@@ -12191,17 +11963,15 @@ export namespace Prisma {
     StopName?: SortOrder
     Location?: SortOrder
     _count?: StopCountOrderByAggregateInput
-    _avg?: StopAvgOrderByAggregateInput
     _max?: StopMaxOrderByAggregateInput
     _min?: StopMinOrderByAggregateInput
-    _sum?: StopSumOrderByAggregateInput
   }
 
   export type StopScalarWhereWithAggregatesInput = {
     AND?: StopScalarWhereWithAggregatesInput | StopScalarWhereWithAggregatesInput[]
     OR?: StopScalarWhereWithAggregatesInput[]
     NOT?: StopScalarWhereWithAggregatesInput | StopScalarWhereWithAggregatesInput[]
-    StopID?: IntWithAggregatesFilter<"Stop"> | number
+    StopID?: StringWithAggregatesFilter<"Stop"> | string
     StopName?: StringWithAggregatesFilter<"Stop"> | string
     Location?: StringWithAggregatesFilter<"Stop"> | string
   }
@@ -12210,9 +11980,9 @@ export namespace Prisma {
     AND?: RouteWhereInput | RouteWhereInput[]
     OR?: RouteWhereInput[]
     NOT?: RouteWhereInput | RouteWhereInput[]
-    RouteID?: IntFilter<"Route"> | number
-    StartStopID?: IntFilter<"Route"> | number
-    EndStopID?: IntFilter<"Route"> | number
+    RouteID?: StringFilter<"Route"> | string
+    StartStopID?: StringFilter<"Route"> | string
+    EndStopID?: StringFilter<"Route"> | string
     RouteName?: StringFilter<"Route"> | string
     StartStop?: XOR<StopScalarRelationFilter, StopWhereInput>
     EndStop?: XOR<StopScalarRelationFilter, StopWhereInput>
@@ -12232,12 +12002,12 @@ export namespace Prisma {
   }
 
   export type RouteWhereUniqueInput = Prisma.AtLeast<{
-    RouteID?: number
+    RouteID?: string
     AND?: RouteWhereInput | RouteWhereInput[]
     OR?: RouteWhereInput[]
     NOT?: RouteWhereInput | RouteWhereInput[]
-    StartStopID?: IntFilter<"Route"> | number
-    EndStopID?: IntFilter<"Route"> | number
+    StartStopID?: StringFilter<"Route"> | string
+    EndStopID?: StringFilter<"Route"> | string
     RouteName?: StringFilter<"Route"> | string
     StartStop?: XOR<StopScalarRelationFilter, StopWhereInput>
     EndStop?: XOR<StopScalarRelationFilter, StopWhereInput>
@@ -12251,19 +12021,17 @@ export namespace Prisma {
     EndStopID?: SortOrder
     RouteName?: SortOrder
     _count?: RouteCountOrderByAggregateInput
-    _avg?: RouteAvgOrderByAggregateInput
     _max?: RouteMaxOrderByAggregateInput
     _min?: RouteMinOrderByAggregateInput
-    _sum?: RouteSumOrderByAggregateInput
   }
 
   export type RouteScalarWhereWithAggregatesInput = {
     AND?: RouteScalarWhereWithAggregatesInput | RouteScalarWhereWithAggregatesInput[]
     OR?: RouteScalarWhereWithAggregatesInput[]
     NOT?: RouteScalarWhereWithAggregatesInput | RouteScalarWhereWithAggregatesInput[]
-    RouteID?: IntWithAggregatesFilter<"Route"> | number
-    StartStopID?: IntWithAggregatesFilter<"Route"> | number
-    EndStopID?: IntWithAggregatesFilter<"Route"> | number
+    RouteID?: StringWithAggregatesFilter<"Route"> | string
+    StartStopID?: StringWithAggregatesFilter<"Route"> | string
+    EndStopID?: StringWithAggregatesFilter<"Route"> | string
     RouteName?: StringWithAggregatesFilter<"Route"> | string
   }
 
@@ -12271,9 +12039,9 @@ export namespace Prisma {
     AND?: RouteStopWhereInput | RouteStopWhereInput[]
     OR?: RouteStopWhereInput[]
     NOT?: RouteStopWhereInput | RouteStopWhereInput[]
-    RouteStopID?: IntFilter<"RouteStop"> | number
-    RouteID?: IntFilter<"RouteStop"> | number
-    StopID?: IntFilter<"RouteStop"> | number
+    RouteStopID?: StringFilter<"RouteStop"> | string
+    RouteID?: StringFilter<"RouteStop"> | string
+    StopID?: StringFilter<"RouteStop"> | string
     StopOrder?: IntFilter<"RouteStop"> | number
     Route?: XOR<RouteScalarRelationFilter, RouteWhereInput>
     Stop?: XOR<StopScalarRelationFilter, StopWhereInput>
@@ -12289,13 +12057,13 @@ export namespace Prisma {
   }
 
   export type RouteStopWhereUniqueInput = Prisma.AtLeast<{
-    RouteStopID?: number
+    RouteStopID?: string
     RouteID_StopID?: RouteStopRouteIDStopIDCompoundUniqueInput
     AND?: RouteStopWhereInput | RouteStopWhereInput[]
     OR?: RouteStopWhereInput[]
     NOT?: RouteStopWhereInput | RouteStopWhereInput[]
-    RouteID?: IntFilter<"RouteStop"> | number
-    StopID?: IntFilter<"RouteStop"> | number
+    RouteID?: StringFilter<"RouteStop"> | string
+    StopID?: StringFilter<"RouteStop"> | string
     StopOrder?: IntFilter<"RouteStop"> | number
     Route?: XOR<RouteScalarRelationFilter, RouteWhereInput>
     Stop?: XOR<StopScalarRelationFilter, StopWhereInput>
@@ -12317,9 +12085,9 @@ export namespace Prisma {
     AND?: RouteStopScalarWhereWithAggregatesInput | RouteStopScalarWhereWithAggregatesInput[]
     OR?: RouteStopScalarWhereWithAggregatesInput[]
     NOT?: RouteStopScalarWhereWithAggregatesInput | RouteStopScalarWhereWithAggregatesInput[]
-    RouteStopID?: IntWithAggregatesFilter<"RouteStop"> | number
-    RouteID?: IntWithAggregatesFilter<"RouteStop"> | number
-    StopID?: IntWithAggregatesFilter<"RouteStop"> | number
+    RouteStopID?: StringWithAggregatesFilter<"RouteStop"> | string
+    RouteID?: StringWithAggregatesFilter<"RouteStop"> | string
+    StopID?: StringWithAggregatesFilter<"RouteStop"> | string
     StopOrder?: IntWithAggregatesFilter<"RouteStop"> | number
   }
 
@@ -12327,8 +12095,8 @@ export namespace Prisma {
     AND?: BusAssignmentWhereInput | BusAssignmentWhereInput[]
     OR?: BusAssignmentWhereInput[]
     NOT?: BusAssignmentWhereInput | BusAssignmentWhereInput[]
-    BusAssignmentID?: IntFilter<"BusAssignment"> | number
-    BusID?: IntFilter<"BusAssignment"> | number
+    BusAssignmentID?: StringFilter<"BusAssignment"> | string
+    BusID?: StringFilter<"BusAssignment"> | string
     AssignmentDate?: DateTimeFilter<"BusAssignment"> | Date | string
     Battery?: BoolFilter<"BusAssignment"> | boolean
     Lights?: BoolFilter<"BusAssignment"> | boolean
@@ -12361,11 +12129,11 @@ export namespace Prisma {
   }
 
   export type BusAssignmentWhereUniqueInput = Prisma.AtLeast<{
-    BusAssignmentID?: number
+    BusAssignmentID?: string
     AND?: BusAssignmentWhereInput | BusAssignmentWhereInput[]
     OR?: BusAssignmentWhereInput[]
     NOT?: BusAssignmentWhereInput | BusAssignmentWhereInput[]
-    BusID?: IntFilter<"BusAssignment"> | number
+    BusID?: StringFilter<"BusAssignment"> | string
     AssignmentDate?: DateTimeFilter<"BusAssignment"> | Date | string
     Battery?: BoolFilter<"BusAssignment"> | boolean
     Lights?: BoolFilter<"BusAssignment"> | boolean
@@ -12395,18 +12163,16 @@ export namespace Prisma {
     TireCondition?: SortOrder
     Self?: SortOrder
     _count?: BusAssignmentCountOrderByAggregateInput
-    _avg?: BusAssignmentAvgOrderByAggregateInput
     _max?: BusAssignmentMaxOrderByAggregateInput
     _min?: BusAssignmentMinOrderByAggregateInput
-    _sum?: BusAssignmentSumOrderByAggregateInput
   }
 
   export type BusAssignmentScalarWhereWithAggregatesInput = {
     AND?: BusAssignmentScalarWhereWithAggregatesInput | BusAssignmentScalarWhereWithAggregatesInput[]
     OR?: BusAssignmentScalarWhereWithAggregatesInput[]
     NOT?: BusAssignmentScalarWhereWithAggregatesInput | BusAssignmentScalarWhereWithAggregatesInput[]
-    BusAssignmentID?: IntWithAggregatesFilter<"BusAssignment"> | number
-    BusID?: IntWithAggregatesFilter<"BusAssignment"> | number
+    BusAssignmentID?: StringWithAggregatesFilter<"BusAssignment"> | string
+    BusID?: StringWithAggregatesFilter<"BusAssignment"> | string
     AssignmentDate?: DateTimeWithAggregatesFilter<"BusAssignment"> | Date | string
     Battery?: BoolWithAggregatesFilter<"BusAssignment"> | boolean
     Lights?: BoolWithAggregatesFilter<"BusAssignment"> | boolean
@@ -12424,10 +12190,10 @@ export namespace Prisma {
     AND?: RegularBusAssignmentWhereInput | RegularBusAssignmentWhereInput[]
     OR?: RegularBusAssignmentWhereInput[]
     NOT?: RegularBusAssignmentWhereInput | RegularBusAssignmentWhereInput[]
-    RegularBusAssignmentID?: IntFilter<"RegularBusAssignment"> | number
-    DriverID?: IntFilter<"RegularBusAssignment"> | number
-    ConductorID?: IntFilter<"RegularBusAssignment"> | number
-    QuotaPolicyID?: IntFilter<"RegularBusAssignment"> | number
+    RegularBusAssignmentID?: StringFilter<"RegularBusAssignment"> | string
+    DriverID?: StringFilter<"RegularBusAssignment"> | string
+    ConductorID?: StringFilter<"RegularBusAssignment"> | string
+    QuotaPolicyID?: StringFilter<"RegularBusAssignment"> | string
     Change?: FloatFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatFilter<"RegularBusAssignment"> | number
     BusAssignment?: XOR<BusAssignmentScalarRelationFilter, BusAssignmentWhereInput>
@@ -12448,13 +12214,13 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentWhereUniqueInput = Prisma.AtLeast<{
-    RegularBusAssignmentID?: number
+    RegularBusAssignmentID?: string
     AND?: RegularBusAssignmentWhereInput | RegularBusAssignmentWhereInput[]
     OR?: RegularBusAssignmentWhereInput[]
     NOT?: RegularBusAssignmentWhereInput | RegularBusAssignmentWhereInput[]
-    DriverID?: IntFilter<"RegularBusAssignment"> | number
-    ConductorID?: IntFilter<"RegularBusAssignment"> | number
-    QuotaPolicyID?: IntFilter<"RegularBusAssignment"> | number
+    DriverID?: StringFilter<"RegularBusAssignment"> | string
+    ConductorID?: StringFilter<"RegularBusAssignment"> | string
+    QuotaPolicyID?: StringFilter<"RegularBusAssignment"> | string
     Change?: FloatFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatFilter<"RegularBusAssignment"> | number
     BusAssignment?: XOR<BusAssignmentScalarRelationFilter, BusAssignmentWhereInput>
@@ -12480,10 +12246,10 @@ export namespace Prisma {
     AND?: RegularBusAssignmentScalarWhereWithAggregatesInput | RegularBusAssignmentScalarWhereWithAggregatesInput[]
     OR?: RegularBusAssignmentScalarWhereWithAggregatesInput[]
     NOT?: RegularBusAssignmentScalarWhereWithAggregatesInput | RegularBusAssignmentScalarWhereWithAggregatesInput[]
-    RegularBusAssignmentID?: IntWithAggregatesFilter<"RegularBusAssignment"> | number
-    DriverID?: IntWithAggregatesFilter<"RegularBusAssignment"> | number
-    ConductorID?: IntWithAggregatesFilter<"RegularBusAssignment"> | number
-    QuotaPolicyID?: IntWithAggregatesFilter<"RegularBusAssignment"> | number
+    RegularBusAssignmentID?: StringWithAggregatesFilter<"RegularBusAssignment"> | string
+    DriverID?: StringWithAggregatesFilter<"RegularBusAssignment"> | string
+    ConductorID?: StringWithAggregatesFilter<"RegularBusAssignment"> | string
+    QuotaPolicyID?: StringWithAggregatesFilter<"RegularBusAssignment"> | string
     Change?: FloatWithAggregatesFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatWithAggregatesFilter<"RegularBusAssignment"> | number
   }
@@ -12492,9 +12258,9 @@ export namespace Prisma {
     AND?: BusRouteAssignmentWhereInput | BusRouteAssignmentWhereInput[]
     OR?: BusRouteAssignmentWhereInput[]
     NOT?: BusRouteAssignmentWhereInput | BusRouteAssignmentWhereInput[]
-    BusRouteAssignmentID?: IntFilter<"BusRouteAssignment"> | number
-    BusAssignmentID?: IntFilter<"BusRouteAssignment"> | number
-    RouteID?: IntFilter<"BusRouteAssignment"> | number
+    BusRouteAssignmentID?: StringFilter<"BusRouteAssignment"> | string
+    BusAssignmentID?: StringFilter<"BusRouteAssignment"> | string
+    RouteID?: StringFilter<"BusRouteAssignment"> | string
     Route?: XOR<RouteScalarRelationFilter, RouteWhereInput>
     RegularBusAssignment?: XOR<RegularBusAssignmentScalarRelationFilter, RegularBusAssignmentWhereInput>
   }
@@ -12508,12 +12274,12 @@ export namespace Prisma {
   }
 
   export type BusRouteAssignmentWhereUniqueInput = Prisma.AtLeast<{
-    BusRouteAssignmentID?: number
+    BusRouteAssignmentID?: string
     AND?: BusRouteAssignmentWhereInput | BusRouteAssignmentWhereInput[]
     OR?: BusRouteAssignmentWhereInput[]
     NOT?: BusRouteAssignmentWhereInput | BusRouteAssignmentWhereInput[]
-    BusAssignmentID?: IntFilter<"BusRouteAssignment"> | number
-    RouteID?: IntFilter<"BusRouteAssignment"> | number
+    BusAssignmentID?: StringFilter<"BusRouteAssignment"> | string
+    RouteID?: StringFilter<"BusRouteAssignment"> | string
     Route?: XOR<RouteScalarRelationFilter, RouteWhereInput>
     RegularBusAssignment?: XOR<RegularBusAssignmentScalarRelationFilter, RegularBusAssignmentWhereInput>
   }, "BusRouteAssignmentID">
@@ -12523,22 +12289,21 @@ export namespace Prisma {
     BusAssignmentID?: SortOrder
     RouteID?: SortOrder
     _count?: BusRouteAssignmentCountOrderByAggregateInput
-    _avg?: BusRouteAssignmentAvgOrderByAggregateInput
     _max?: BusRouteAssignmentMaxOrderByAggregateInput
     _min?: BusRouteAssignmentMinOrderByAggregateInput
-    _sum?: BusRouteAssignmentSumOrderByAggregateInput
   }
 
   export type BusRouteAssignmentScalarWhereWithAggregatesInput = {
     AND?: BusRouteAssignmentScalarWhereWithAggregatesInput | BusRouteAssignmentScalarWhereWithAggregatesInput[]
     OR?: BusRouteAssignmentScalarWhereWithAggregatesInput[]
     NOT?: BusRouteAssignmentScalarWhereWithAggregatesInput | BusRouteAssignmentScalarWhereWithAggregatesInput[]
-    BusRouteAssignmentID?: IntWithAggregatesFilter<"BusRouteAssignment"> | number
-    BusAssignmentID?: IntWithAggregatesFilter<"BusRouteAssignment"> | number
-    RouteID?: IntWithAggregatesFilter<"BusRouteAssignment"> | number
+    BusRouteAssignmentID?: StringWithAggregatesFilter<"BusRouteAssignment"> | string
+    BusAssignmentID?: StringWithAggregatesFilter<"BusRouteAssignment"> | string
+    RouteID?: StringWithAggregatesFilter<"BusRouteAssignment"> | string
   }
 
   export type Quota_PolicyCreateInput = {
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
     Fixed?: FixedCreateNestedOneWithoutQuotaPolicyInput
@@ -12547,7 +12312,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUncheckedCreateInput = {
-    QuotaPolicyID?: number
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
     Fixed?: FixedUncheckedCreateNestedOneWithoutQuotaPolicyInput
@@ -12556,6 +12321,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUpdateInput = {
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Fixed?: FixedUpdateOneWithoutQuotaPolicyNestedInput
@@ -12564,7 +12330,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUncheckedUpdateInput = {
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Fixed?: FixedUncheckedUpdateOneWithoutQuotaPolicyNestedInput
@@ -12573,18 +12339,19 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyCreateManyInput = {
-    QuotaPolicyID?: number
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
   }
 
   export type Quota_PolicyUpdateManyMutationInput = {
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type Quota_PolicyUncheckedUpdateManyInput = {
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12595,7 +12362,7 @@ export namespace Prisma {
   }
 
   export type FixedUncheckedCreateInput = {
-    FQuotaPolicyID: number
+    FQuotaPolicyID: string
     Quota: number
   }
 
@@ -12605,12 +12372,12 @@ export namespace Prisma {
   }
 
   export type FixedUncheckedUpdateInput = {
-    FQuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    FQuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Quota?: FloatFieldUpdateOperationsInput | number
   }
 
   export type FixedCreateManyInput = {
-    FQuotaPolicyID: number
+    FQuotaPolicyID: string
     Quota: number
   }
 
@@ -12619,7 +12386,7 @@ export namespace Prisma {
   }
 
   export type FixedUncheckedUpdateManyInput = {
-    FQuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    FQuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Quota?: FloatFieldUpdateOperationsInput | number
   }
 
@@ -12629,7 +12396,7 @@ export namespace Prisma {
   }
 
   export type PercentageUncheckedCreateInput = {
-    PQuotaPolicyID: number
+    PQuotaPolicyID: string
     Percentage: number
   }
 
@@ -12639,12 +12406,12 @@ export namespace Prisma {
   }
 
   export type PercentageUncheckedUpdateInput = {
-    PQuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    PQuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Percentage?: FloatFieldUpdateOperationsInput | number
   }
 
   export type PercentageCreateManyInput = {
-    PQuotaPolicyID: number
+    PQuotaPolicyID: string
     Percentage: number
   }
 
@@ -12653,11 +12420,12 @@ export namespace Prisma {
   }
 
   export type PercentageUncheckedUpdateManyInput = {
-    PQuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    PQuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Percentage?: FloatFieldUpdateOperationsInput | number
   }
 
   export type StopCreateInput = {
+    StopID: string
     StopName: string
     Location: string
     routesAsStart?: RouteCreateNestedManyWithoutStartStopInput
@@ -12666,7 +12434,7 @@ export namespace Prisma {
   }
 
   export type StopUncheckedCreateInput = {
-    StopID?: number
+    StopID: string
     StopName: string
     Location: string
     routesAsStart?: RouteUncheckedCreateNestedManyWithoutStartStopInput
@@ -12675,6 +12443,7 @@ export namespace Prisma {
   }
 
   export type StopUpdateInput = {
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
     routesAsStart?: RouteUpdateManyWithoutStartStopNestedInput
@@ -12683,7 +12452,7 @@ export namespace Prisma {
   }
 
   export type StopUncheckedUpdateInput = {
-    StopID?: IntFieldUpdateOperationsInput | number
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
     routesAsStart?: RouteUncheckedUpdateManyWithoutStartStopNestedInput
@@ -12692,23 +12461,25 @@ export namespace Prisma {
   }
 
   export type StopCreateManyInput = {
-    StopID?: number
+    StopID: string
     StopName: string
     Location: string
   }
 
   export type StopUpdateManyMutationInput = {
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
   }
 
   export type StopUncheckedUpdateManyInput = {
-    StopID?: IntFieldUpdateOperationsInput | number
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
   }
 
   export type RouteCreateInput = {
+    RouteID: string
     RouteName: string
     StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
     EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
@@ -12717,15 +12488,16 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedCreateInput = {
-    RouteID?: number
-    StartStopID: number
-    EndStopID: number
+    RouteID: string
+    StartStopID: string
+    EndStopID: string
     RouteName: string
     RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
     BusAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput
   }
 
   export type RouteUpdateInput = {
+    RouteID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
     EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
@@ -12734,78 +12506,83 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedUpdateInput = {
-    RouteID?: IntFieldUpdateOperationsInput | number
-    StartStopID?: IntFieldUpdateOperationsInput | number
-    EndStopID?: IntFieldUpdateOperationsInput | number
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StartStopID?: StringFieldUpdateOperationsInput | string
+    EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
     BusAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteCreateManyInput = {
-    RouteID?: number
-    StartStopID: number
-    EndStopID: number
+    RouteID: string
+    StartStopID: string
+    EndStopID: string
     RouteName: string
   }
 
   export type RouteUpdateManyMutationInput = {
+    RouteID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
   }
 
   export type RouteUncheckedUpdateManyInput = {
-    RouteID?: IntFieldUpdateOperationsInput | number
-    StartStopID?: IntFieldUpdateOperationsInput | number
-    EndStopID?: IntFieldUpdateOperationsInput | number
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StartStopID?: StringFieldUpdateOperationsInput | string
+    EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
   }
 
   export type RouteStopCreateInput = {
+    RouteStopID: string
     StopOrder: number
     Route: RouteCreateNestedOneWithoutRouteStopsInput
     Stop: StopCreateNestedOneWithoutRouteStopsInput
   }
 
   export type RouteStopUncheckedCreateInput = {
-    RouteStopID?: number
-    RouteID: number
-    StopID: number
+    RouteStopID: string
+    RouteID: string
+    StopID: string
     StopOrder: number
   }
 
   export type RouteStopUpdateInput = {
+    RouteStopID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
     Route?: RouteUpdateOneRequiredWithoutRouteStopsNestedInput
     Stop?: StopUpdateOneRequiredWithoutRouteStopsNestedInput
   }
 
   export type RouteStopUncheckedUpdateInput = {
-    RouteStopID?: IntFieldUpdateOperationsInput | number
-    RouteID?: IntFieldUpdateOperationsInput | number
-    StopID?: IntFieldUpdateOperationsInput | number
+    RouteStopID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StopID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
   }
 
   export type RouteStopCreateManyInput = {
-    RouteStopID?: number
-    RouteID: number
-    StopID: number
+    RouteStopID: string
+    RouteID: string
+    StopID: string
     StopOrder: number
   }
 
   export type RouteStopUpdateManyMutationInput = {
+    RouteStopID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
   }
 
   export type RouteStopUncheckedUpdateManyInput = {
-    RouteStopID?: IntFieldUpdateOperationsInput | number
-    RouteID?: IntFieldUpdateOperationsInput | number
-    StopID?: IntFieldUpdateOperationsInput | number
+    RouteStopID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StopID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
   }
 
   export type BusAssignmentCreateInput = {
-    BusID: number
+    BusAssignmentID: string
+    BusID: string
     AssignmentDate: Date | string
     Battery: boolean
     Lights: boolean
@@ -12821,8 +12598,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentUncheckedCreateInput = {
-    BusAssignmentID?: number
-    BusID: number
+    BusAssignmentID: string
+    BusID: string
     AssignmentDate: Date | string
     Battery: boolean
     Lights: boolean
@@ -12838,7 +12615,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentUpdateInput = {
-    BusID?: IntFieldUpdateOperationsInput | number
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -12854,8 +12632,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentUncheckedUpdateInput = {
-    BusAssignmentID?: IntFieldUpdateOperationsInput | number
-    BusID?: IntFieldUpdateOperationsInput | number
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -12871,8 +12649,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentCreateManyInput = {
-    BusAssignmentID?: number
-    BusID: number
+    BusAssignmentID: string
+    BusID: string
     AssignmentDate: Date | string
     Battery: boolean
     Lights: boolean
@@ -12887,7 +12665,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentUpdateManyMutationInput = {
-    BusID?: IntFieldUpdateOperationsInput | number
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -12902,8 +12681,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentUncheckedUpdateManyInput = {
-    BusAssignmentID?: IntFieldUpdateOperationsInput | number
-    BusID?: IntFieldUpdateOperationsInput | number
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -12918,8 +12697,8 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentCreateInput = {
-    DriverID: number
-    ConductorID: number
+    DriverID: string
+    ConductorID: string
     Change: number
     TripRevenue: number
     BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
@@ -12928,18 +12707,18 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUncheckedCreateInput = {
-    RegularBusAssignmentID: number
-    DriverID: number
-    ConductorID: number
-    QuotaPolicyID: number
+    RegularBusAssignmentID: string
+    DriverID: string
+    ConductorID: string
+    QuotaPolicyID: string
     Change: number
     TripRevenue: number
     BusRouteAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRegularBusAssignmentInput
   }
 
   export type RegularBusAssignmentUpdateInput = {
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
     BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
@@ -12948,87 +12727,93 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUncheckedUpdateInput = {
-    RegularBusAssignmentID?: IntFieldUpdateOperationsInput | number
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    RegularBusAssignmentID?: StringFieldUpdateOperationsInput | string
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
     BusRouteAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput
   }
 
   export type RegularBusAssignmentCreateManyInput = {
-    RegularBusAssignmentID: number
-    DriverID: number
-    ConductorID: number
-    QuotaPolicyID: number
+    RegularBusAssignmentID: string
+    DriverID: string
+    ConductorID: string
+    QuotaPolicyID: string
     Change: number
     TripRevenue: number
   }
 
   export type RegularBusAssignmentUpdateManyMutationInput = {
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
   }
 
   export type RegularBusAssignmentUncheckedUpdateManyInput = {
-    RegularBusAssignmentID?: IntFieldUpdateOperationsInput | number
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    RegularBusAssignmentID?: StringFieldUpdateOperationsInput | string
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
   }
 
   export type BusRouteAssignmentCreateInput = {
+    BusRouteAssignmentID: string
     Route: RouteCreateNestedOneWithoutBusAssignmentsInput
     RegularBusAssignment: RegularBusAssignmentCreateNestedOneWithoutBusRouteAssignmentsInput
   }
 
   export type BusRouteAssignmentUncheckedCreateInput = {
-    BusRouteAssignmentID?: number
-    BusAssignmentID: number
-    RouteID: number
+    BusRouteAssignmentID: string
+    BusAssignmentID: string
+    RouteID: string
   }
 
   export type BusRouteAssignmentUpdateInput = {
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
     Route?: RouteUpdateOneRequiredWithoutBusAssignmentsNestedInput
     RegularBusAssignment?: RegularBusAssignmentUpdateOneRequiredWithoutBusRouteAssignmentsNestedInput
   }
 
   export type BusRouteAssignmentUncheckedUpdateInput = {
-    BusRouteAssignmentID?: IntFieldUpdateOperationsInput | number
-    BusAssignmentID?: IntFieldUpdateOperationsInput | number
-    RouteID?: IntFieldUpdateOperationsInput | number
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
   }
 
   export type BusRouteAssignmentCreateManyInput = {
-    BusRouteAssignmentID?: number
-    BusAssignmentID: number
-    RouteID: number
+    BusRouteAssignmentID: string
+    BusAssignmentID: string
+    RouteID: string
   }
 
   export type BusRouteAssignmentUpdateManyMutationInput = {
-
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
   }
 
   export type BusRouteAssignmentUncheckedUpdateManyInput = {
-    BusRouteAssignmentID?: IntFieldUpdateOperationsInput | number
-    BusAssignmentID?: IntFieldUpdateOperationsInput | number
-    RouteID?: IntFieldUpdateOperationsInput | number
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+  export type StringFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -13068,10 +12853,6 @@ export namespace Prisma {
     EndDate?: SortOrder
   }
 
-  export type Quota_PolicyAvgOrderByAggregateInput = {
-    QuotaPolicyID?: SortOrder
-  }
-
   export type Quota_PolicyMaxOrderByAggregateInput = {
     QuotaPolicyID?: SortOrder
     StartDate?: SortOrder
@@ -13084,24 +12865,22 @@ export namespace Prisma {
     EndDate?: SortOrder
   }
 
-  export type Quota_PolicySumOrderByAggregateInput = {
-    QuotaPolicyID?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+  export type StringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -13140,7 +12919,6 @@ export namespace Prisma {
   }
 
   export type FixedAvgOrderByAggregateInput = {
-    FQuotaPolicyID?: SortOrder
     Quota?: SortOrder
   }
 
@@ -13155,7 +12933,6 @@ export namespace Prisma {
   }
 
   export type FixedSumOrderByAggregateInput = {
-    FQuotaPolicyID?: SortOrder
     Quota?: SortOrder
   }
 
@@ -13181,7 +12958,6 @@ export namespace Prisma {
   }
 
   export type PercentageAvgOrderByAggregateInput = {
-    PQuotaPolicyID?: SortOrder
     Percentage?: SortOrder
   }
 
@@ -13196,23 +12972,7 @@ export namespace Prisma {
   }
 
   export type PercentageSumOrderByAggregateInput = {
-    PQuotaPolicyID?: SortOrder
     Percentage?: SortOrder
-  }
-
-  export type StringFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type RouteListRelationFilter = {
@@ -13241,10 +13001,6 @@ export namespace Prisma {
     Location?: SortOrder
   }
 
-  export type StopAvgOrderByAggregateInput = {
-    StopID?: SortOrder
-  }
-
   export type StopMaxOrderByAggregateInput = {
     StopID?: SortOrder
     StopName?: SortOrder
@@ -13255,28 +13011,6 @@ export namespace Prisma {
     StopID?: SortOrder
     StopName?: SortOrder
     Location?: SortOrder
-  }
-
-  export type StopSumOrderByAggregateInput = {
-    StopID?: SortOrder
-  }
-
-  export type StringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
   }
 
   export type StopScalarRelationFilter = {
@@ -13301,12 +13035,6 @@ export namespace Prisma {
     RouteName?: SortOrder
   }
 
-  export type RouteAvgOrderByAggregateInput = {
-    RouteID?: SortOrder
-    StartStopID?: SortOrder
-    EndStopID?: SortOrder
-  }
-
   export type RouteMaxOrderByAggregateInput = {
     RouteID?: SortOrder
     StartStopID?: SortOrder
@@ -13321,10 +13049,15 @@ export namespace Prisma {
     RouteName?: SortOrder
   }
 
-  export type RouteSumOrderByAggregateInput = {
-    RouteID?: SortOrder
-    StartStopID?: SortOrder
-    EndStopID?: SortOrder
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type RouteScalarRelationFilter = {
@@ -13333,8 +13066,8 @@ export namespace Prisma {
   }
 
   export type RouteStopRouteIDStopIDCompoundUniqueInput = {
-    RouteID: number
-    StopID: number
+    RouteID: string
+    StopID: string
   }
 
   export type RouteStopCountOrderByAggregateInput = {
@@ -13345,9 +13078,6 @@ export namespace Prisma {
   }
 
   export type RouteStopAvgOrderByAggregateInput = {
-    RouteStopID?: SortOrder
-    RouteID?: SortOrder
-    StopID?: SortOrder
     StopOrder?: SortOrder
   }
 
@@ -13366,10 +13096,23 @@ export namespace Prisma {
   }
 
   export type RouteStopSumOrderByAggregateInput = {
-    RouteStopID?: SortOrder
-    RouteID?: SortOrder
-    StopID?: SortOrder
     StopOrder?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -13396,11 +13139,6 @@ export namespace Prisma {
     Engine?: SortOrder
     TireCondition?: SortOrder
     Self?: SortOrder
-  }
-
-  export type BusAssignmentAvgOrderByAggregateInput = {
-    BusAssignmentID?: SortOrder
-    BusID?: SortOrder
   }
 
   export type BusAssignmentMaxOrderByAggregateInput = {
@@ -13435,11 +13173,6 @@ export namespace Prisma {
     Self?: SortOrder
   }
 
-  export type BusAssignmentSumOrderByAggregateInput = {
-    BusAssignmentID?: SortOrder
-    BusID?: SortOrder
-  }
-
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -13463,10 +13196,6 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentAvgOrderByAggregateInput = {
-    RegularBusAssignmentID?: SortOrder
-    DriverID?: SortOrder
-    ConductorID?: SortOrder
-    QuotaPolicyID?: SortOrder
     Change?: SortOrder
     TripRevenue?: SortOrder
   }
@@ -13490,10 +13219,6 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentSumOrderByAggregateInput = {
-    RegularBusAssignmentID?: SortOrder
-    DriverID?: SortOrder
-    ConductorID?: SortOrder
-    QuotaPolicyID?: SortOrder
     Change?: SortOrder
     TripRevenue?: SortOrder
   }
@@ -13509,12 +13234,6 @@ export namespace Prisma {
     RouteID?: SortOrder
   }
 
-  export type BusRouteAssignmentAvgOrderByAggregateInput = {
-    BusRouteAssignmentID?: SortOrder
-    BusAssignmentID?: SortOrder
-    RouteID?: SortOrder
-  }
-
   export type BusRouteAssignmentMaxOrderByAggregateInput = {
     BusRouteAssignmentID?: SortOrder
     BusAssignmentID?: SortOrder
@@ -13522,12 +13241,6 @@ export namespace Prisma {
   }
 
   export type BusRouteAssignmentMinOrderByAggregateInput = {
-    BusRouteAssignmentID?: SortOrder
-    BusAssignmentID?: SortOrder
-    RouteID?: SortOrder
-  }
-
-  export type BusRouteAssignmentSumOrderByAggregateInput = {
     BusRouteAssignmentID?: SortOrder
     BusAssignmentID?: SortOrder
     RouteID?: SortOrder
@@ -13571,6 +13284,10 @@ export namespace Prisma {
     connect?: RegularBusAssignmentWhereUniqueInput | RegularBusAssignmentWhereUniqueInput[]
   }
 
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -13607,14 +13324,6 @@ export namespace Prisma {
     update?: RegularBusAssignmentUpdateWithWhereUniqueWithoutQuotaPolicyInput | RegularBusAssignmentUpdateWithWhereUniqueWithoutQuotaPolicyInput[]
     updateMany?: RegularBusAssignmentUpdateManyWithWhereWithoutQuotaPolicyInput | RegularBusAssignmentUpdateManyWithWhereWithoutQuotaPolicyInput[]
     deleteMany?: RegularBusAssignmentScalarWhereInput | RegularBusAssignmentScalarWhereInput[]
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type FixedUncheckedUpdateOneWithoutQuotaPolicyNestedInput = {
@@ -13727,10 +13436,6 @@ export namespace Prisma {
     connectOrCreate?: RouteStopCreateOrConnectWithoutStopInput | RouteStopCreateOrConnectWithoutStopInput[]
     createMany?: RouteStopCreateManyStopInputEnvelope
     connect?: RouteStopWhereUniqueInput | RouteStopWhereUniqueInput[]
-  }
-
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
   }
 
   export type RouteUpdateManyWithoutStartStopNestedInput = {
@@ -13941,6 +13646,14 @@ export namespace Prisma {
     connect?: StopWhereUniqueInput
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type RouteUpdateOneRequiredWithoutRouteStopsNestedInput = {
     create?: XOR<RouteCreateWithoutRouteStopsInput, RouteUncheckedCreateWithoutRouteStopsInput>
     connectOrCreate?: RouteCreateOrConnectWithoutRouteStopsInput
@@ -14091,15 +13804,18 @@ export namespace Prisma {
     update?: XOR<XOR<RegularBusAssignmentUpdateToOneWithWhereWithoutBusRouteAssignmentsInput, RegularBusAssignmentUpdateWithoutBusRouteAssignmentsInput>, RegularBusAssignmentUncheckedUpdateWithoutBusRouteAssignmentsInput>
   }
 
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+  export type NestedStringFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -14113,7 +13829,24 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+  export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -14121,23 +13854,7 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -14152,6 +13869,17 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -14170,35 +13898,20 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type NestedStringFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringFilter<$PrismaModel> | string
-  }
-
-  export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -14241,8 +13954,8 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentCreateWithoutQuotaPolicyInput = {
-    DriverID: number
-    ConductorID: number
+    DriverID: string
+    ConductorID: string
     Change: number
     TripRevenue: number
     BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
@@ -14250,9 +13963,9 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUncheckedCreateWithoutQuotaPolicyInput = {
-    RegularBusAssignmentID: number
-    DriverID: number
-    ConductorID: number
+    RegularBusAssignmentID: string
+    DriverID: string
+    ConductorID: string
     Change: number
     TripRevenue: number
     BusRouteAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRegularBusAssignmentInput
@@ -14326,15 +14039,16 @@ export namespace Prisma {
     AND?: RegularBusAssignmentScalarWhereInput | RegularBusAssignmentScalarWhereInput[]
     OR?: RegularBusAssignmentScalarWhereInput[]
     NOT?: RegularBusAssignmentScalarWhereInput | RegularBusAssignmentScalarWhereInput[]
-    RegularBusAssignmentID?: IntFilter<"RegularBusAssignment"> | number
-    DriverID?: IntFilter<"RegularBusAssignment"> | number
-    ConductorID?: IntFilter<"RegularBusAssignment"> | number
-    QuotaPolicyID?: IntFilter<"RegularBusAssignment"> | number
+    RegularBusAssignmentID?: StringFilter<"RegularBusAssignment"> | string
+    DriverID?: StringFilter<"RegularBusAssignment"> | string
+    ConductorID?: StringFilter<"RegularBusAssignment"> | string
+    QuotaPolicyID?: StringFilter<"RegularBusAssignment"> | string
     Change?: FloatFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatFilter<"RegularBusAssignment"> | number
   }
 
   export type Quota_PolicyCreateWithoutFixedInput = {
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
     Percentage?: PercentageCreateNestedOneWithoutQuotaPolicyInput
@@ -14342,7 +14056,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUncheckedCreateWithoutFixedInput = {
-    QuotaPolicyID?: number
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
     Percentage?: PercentageUncheckedCreateNestedOneWithoutQuotaPolicyInput
@@ -14366,6 +14080,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUpdateWithoutFixedInput = {
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Percentage?: PercentageUpdateOneWithoutQuotaPolicyNestedInput
@@ -14373,7 +14088,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUncheckedUpdateWithoutFixedInput = {
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Percentage?: PercentageUncheckedUpdateOneWithoutQuotaPolicyNestedInput
@@ -14381,6 +14096,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyCreateWithoutPercentageInput = {
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
     Fixed?: FixedCreateNestedOneWithoutQuotaPolicyInput
@@ -14388,7 +14104,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUncheckedCreateWithoutPercentageInput = {
-    QuotaPolicyID?: number
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
     Fixed?: FixedUncheckedCreateNestedOneWithoutQuotaPolicyInput
@@ -14412,6 +14128,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUpdateWithoutPercentageInput = {
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Fixed?: FixedUpdateOneWithoutQuotaPolicyNestedInput
@@ -14419,7 +14136,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUncheckedUpdateWithoutPercentageInput = {
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Fixed?: FixedUncheckedUpdateOneWithoutQuotaPolicyNestedInput
@@ -14427,6 +14144,7 @@ export namespace Prisma {
   }
 
   export type RouteCreateWithoutStartStopInput = {
+    RouteID: string
     RouteName: string
     EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
     RouteStops?: RouteStopCreateNestedManyWithoutRouteInput
@@ -14434,8 +14152,8 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedCreateWithoutStartStopInput = {
-    RouteID?: number
-    EndStopID: number
+    RouteID: string
+    EndStopID: string
     RouteName: string
     RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
     BusAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput
@@ -14452,6 +14170,7 @@ export namespace Prisma {
   }
 
   export type RouteCreateWithoutEndStopInput = {
+    RouteID: string
     RouteName: string
     StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
     RouteStops?: RouteStopCreateNestedManyWithoutRouteInput
@@ -14459,8 +14178,8 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedCreateWithoutEndStopInput = {
-    RouteID?: number
-    StartStopID: number
+    RouteID: string
+    StartStopID: string
     RouteName: string
     RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
     BusAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput
@@ -14477,13 +14196,14 @@ export namespace Prisma {
   }
 
   export type RouteStopCreateWithoutStopInput = {
+    RouteStopID: string
     StopOrder: number
     Route: RouteCreateNestedOneWithoutRouteStopsInput
   }
 
   export type RouteStopUncheckedCreateWithoutStopInput = {
-    RouteStopID?: number
-    RouteID: number
+    RouteStopID: string
+    RouteID: string
     StopOrder: number
   }
 
@@ -14517,9 +14237,9 @@ export namespace Prisma {
     AND?: RouteScalarWhereInput | RouteScalarWhereInput[]
     OR?: RouteScalarWhereInput[]
     NOT?: RouteScalarWhereInput | RouteScalarWhereInput[]
-    RouteID?: IntFilter<"Route"> | number
-    StartStopID?: IntFilter<"Route"> | number
-    EndStopID?: IntFilter<"Route"> | number
+    RouteID?: StringFilter<"Route"> | string
+    StartStopID?: StringFilter<"Route"> | string
+    EndStopID?: StringFilter<"Route"> | string
     RouteName?: StringFilter<"Route"> | string
   }
 
@@ -14559,13 +14279,14 @@ export namespace Prisma {
     AND?: RouteStopScalarWhereInput | RouteStopScalarWhereInput[]
     OR?: RouteStopScalarWhereInput[]
     NOT?: RouteStopScalarWhereInput | RouteStopScalarWhereInput[]
-    RouteStopID?: IntFilter<"RouteStop"> | number
-    RouteID?: IntFilter<"RouteStop"> | number
-    StopID?: IntFilter<"RouteStop"> | number
+    RouteStopID?: StringFilter<"RouteStop"> | string
+    RouteID?: StringFilter<"RouteStop"> | string
+    StopID?: StringFilter<"RouteStop"> | string
     StopOrder?: IntFilter<"RouteStop"> | number
   }
 
   export type StopCreateWithoutRoutesAsStartInput = {
+    StopID: string
     StopName: string
     Location: string
     routesAsEnd?: RouteCreateNestedManyWithoutEndStopInput
@@ -14573,7 +14294,7 @@ export namespace Prisma {
   }
 
   export type StopUncheckedCreateWithoutRoutesAsStartInput = {
-    StopID?: number
+    StopID: string
     StopName: string
     Location: string
     routesAsEnd?: RouteUncheckedCreateNestedManyWithoutEndStopInput
@@ -14586,6 +14307,7 @@ export namespace Prisma {
   }
 
   export type StopCreateWithoutRoutesAsEndInput = {
+    StopID: string
     StopName: string
     Location: string
     routesAsStart?: RouteCreateNestedManyWithoutStartStopInput
@@ -14593,7 +14315,7 @@ export namespace Prisma {
   }
 
   export type StopUncheckedCreateWithoutRoutesAsEndInput = {
-    StopID?: number
+    StopID: string
     StopName: string
     Location: string
     routesAsStart?: RouteUncheckedCreateNestedManyWithoutStartStopInput
@@ -14606,13 +14328,14 @@ export namespace Prisma {
   }
 
   export type RouteStopCreateWithoutRouteInput = {
+    RouteStopID: string
     StopOrder: number
     Stop: StopCreateNestedOneWithoutRouteStopsInput
   }
 
   export type RouteStopUncheckedCreateWithoutRouteInput = {
-    RouteStopID?: number
-    StopID: number
+    RouteStopID: string
+    StopID: string
     StopOrder: number
   }
 
@@ -14627,12 +14350,13 @@ export namespace Prisma {
   }
 
   export type BusRouteAssignmentCreateWithoutRouteInput = {
+    BusRouteAssignmentID: string
     RegularBusAssignment: RegularBusAssignmentCreateNestedOneWithoutBusRouteAssignmentsInput
   }
 
   export type BusRouteAssignmentUncheckedCreateWithoutRouteInput = {
-    BusRouteAssignmentID?: number
-    BusAssignmentID: number
+    BusRouteAssignmentID: string
+    BusAssignmentID: string
   }
 
   export type BusRouteAssignmentCreateOrConnectWithoutRouteInput = {
@@ -14657,6 +14381,7 @@ export namespace Prisma {
   }
 
   export type StopUpdateWithoutRoutesAsStartInput = {
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
     routesAsEnd?: RouteUpdateManyWithoutEndStopNestedInput
@@ -14664,7 +14389,7 @@ export namespace Prisma {
   }
 
   export type StopUncheckedUpdateWithoutRoutesAsStartInput = {
-    StopID?: IntFieldUpdateOperationsInput | number
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
     routesAsEnd?: RouteUncheckedUpdateManyWithoutEndStopNestedInput
@@ -14683,6 +14408,7 @@ export namespace Prisma {
   }
 
   export type StopUpdateWithoutRoutesAsEndInput = {
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
     routesAsStart?: RouteUpdateManyWithoutStartStopNestedInput
@@ -14690,7 +14416,7 @@ export namespace Prisma {
   }
 
   export type StopUncheckedUpdateWithoutRoutesAsEndInput = {
-    StopID?: IntFieldUpdateOperationsInput | number
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
     routesAsStart?: RouteUncheckedUpdateManyWithoutStartStopNestedInput
@@ -14733,12 +14459,13 @@ export namespace Prisma {
     AND?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
     OR?: BusRouteAssignmentScalarWhereInput[]
     NOT?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
-    BusRouteAssignmentID?: IntFilter<"BusRouteAssignment"> | number
-    BusAssignmentID?: IntFilter<"BusRouteAssignment"> | number
-    RouteID?: IntFilter<"BusRouteAssignment"> | number
+    BusRouteAssignmentID?: StringFilter<"BusRouteAssignment"> | string
+    BusAssignmentID?: StringFilter<"BusRouteAssignment"> | string
+    RouteID?: StringFilter<"BusRouteAssignment"> | string
   }
 
   export type RouteCreateWithoutRouteStopsInput = {
+    RouteID: string
     RouteName: string
     StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
     EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
@@ -14746,9 +14473,9 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedCreateWithoutRouteStopsInput = {
-    RouteID?: number
-    StartStopID: number
-    EndStopID: number
+    RouteID: string
+    StartStopID: string
+    EndStopID: string
     RouteName: string
     BusAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput
   }
@@ -14759,6 +14486,7 @@ export namespace Prisma {
   }
 
   export type StopCreateWithoutRouteStopsInput = {
+    StopID: string
     StopName: string
     Location: string
     routesAsStart?: RouteCreateNestedManyWithoutStartStopInput
@@ -14766,7 +14494,7 @@ export namespace Prisma {
   }
 
   export type StopUncheckedCreateWithoutRouteStopsInput = {
-    StopID?: number
+    StopID: string
     StopName: string
     Location: string
     routesAsStart?: RouteUncheckedCreateNestedManyWithoutStartStopInput
@@ -14790,6 +14518,7 @@ export namespace Prisma {
   }
 
   export type RouteUpdateWithoutRouteStopsInput = {
+    RouteID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
     EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
@@ -14797,9 +14526,9 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedUpdateWithoutRouteStopsInput = {
-    RouteID?: IntFieldUpdateOperationsInput | number
-    StartStopID?: IntFieldUpdateOperationsInput | number
-    EndStopID?: IntFieldUpdateOperationsInput | number
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StartStopID?: StringFieldUpdateOperationsInput | string
+    EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     BusAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput
   }
@@ -14816,6 +14545,7 @@ export namespace Prisma {
   }
 
   export type StopUpdateWithoutRouteStopsInput = {
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
     routesAsStart?: RouteUpdateManyWithoutStartStopNestedInput
@@ -14823,7 +14553,7 @@ export namespace Prisma {
   }
 
   export type StopUncheckedUpdateWithoutRouteStopsInput = {
-    StopID?: IntFieldUpdateOperationsInput | number
+    StopID?: StringFieldUpdateOperationsInput | string
     StopName?: StringFieldUpdateOperationsInput | string
     Location?: StringFieldUpdateOperationsInput | string
     routesAsStart?: RouteUncheckedUpdateManyWithoutStartStopNestedInput
@@ -14831,8 +14561,8 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentCreateWithoutBusAssignmentInput = {
-    DriverID: number
-    ConductorID: number
+    DriverID: string
+    ConductorID: string
     Change: number
     TripRevenue: number
     quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
@@ -14840,9 +14570,9 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUncheckedCreateWithoutBusAssignmentInput = {
-    DriverID: number
-    ConductorID: number
-    QuotaPolicyID: number
+    DriverID: string
+    ConductorID: string
+    QuotaPolicyID: string
     Change: number
     TripRevenue: number
     BusRouteAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRegularBusAssignmentInput
@@ -14865,8 +14595,8 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUpdateWithoutBusAssignmentInput = {
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
     quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
@@ -14874,16 +14604,17 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUncheckedUpdateWithoutBusAssignmentInput = {
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
     BusRouteAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput
   }
 
   export type BusAssignmentCreateWithoutRegularBusAssignmentInput = {
-    BusID: number
+    BusAssignmentID: string
+    BusID: string
     AssignmentDate: Date | string
     Battery: boolean
     Lights: boolean
@@ -14898,8 +14629,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput = {
-    BusAssignmentID?: number
-    BusID: number
+    BusAssignmentID: string
+    BusID: string
     AssignmentDate: Date | string
     Battery: boolean
     Lights: boolean
@@ -14919,6 +14650,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyCreateWithoutRegularBusAssignmentsInput = {
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
     Fixed?: FixedCreateNestedOneWithoutQuotaPolicyInput
@@ -14926,7 +14658,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput = {
-    QuotaPolicyID?: number
+    QuotaPolicyID: string
     StartDate: Date | string
     EndDate: Date | string
     Fixed?: FixedUncheckedCreateNestedOneWithoutQuotaPolicyInput
@@ -14939,12 +14671,13 @@ export namespace Prisma {
   }
 
   export type BusRouteAssignmentCreateWithoutRegularBusAssignmentInput = {
+    BusRouteAssignmentID: string
     Route: RouteCreateNestedOneWithoutBusAssignmentsInput
   }
 
   export type BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID?: number
-    RouteID: number
+    BusRouteAssignmentID: string
+    RouteID: string
   }
 
   export type BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput = {
@@ -14969,7 +14702,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentUpdateWithoutRegularBusAssignmentInput = {
-    BusID?: IntFieldUpdateOperationsInput | number
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -14984,8 +14718,8 @@ export namespace Prisma {
   }
 
   export type BusAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput = {
-    BusAssignmentID?: IntFieldUpdateOperationsInput | number
-    BusID?: IntFieldUpdateOperationsInput | number
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -15011,6 +14745,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUpdateWithoutRegularBusAssignmentsInput = {
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Fixed?: FixedUpdateOneWithoutQuotaPolicyNestedInput
@@ -15018,7 +14753,7 @@ export namespace Prisma {
   }
 
   export type Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput = {
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
     EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Fixed?: FixedUncheckedUpdateOneWithoutQuotaPolicyNestedInput
@@ -15042,6 +14777,7 @@ export namespace Prisma {
   }
 
   export type RouteCreateWithoutBusAssignmentsInput = {
+    RouteID: string
     RouteName: string
     StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
     EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
@@ -15049,9 +14785,9 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedCreateWithoutBusAssignmentsInput = {
-    RouteID?: number
-    StartStopID: number
-    EndStopID: number
+    RouteID: string
+    StartStopID: string
+    EndStopID: string
     RouteName: string
     RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
   }
@@ -15062,8 +14798,8 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentCreateWithoutBusRouteAssignmentsInput = {
-    DriverID: number
-    ConductorID: number
+    DriverID: string
+    ConductorID: string
     Change: number
     TripRevenue: number
     BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
@@ -15071,10 +14807,10 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUncheckedCreateWithoutBusRouteAssignmentsInput = {
-    RegularBusAssignmentID: number
-    DriverID: number
-    ConductorID: number
-    QuotaPolicyID: number
+    RegularBusAssignmentID: string
+    DriverID: string
+    ConductorID: string
+    QuotaPolicyID: string
     Change: number
     TripRevenue: number
   }
@@ -15096,6 +14832,7 @@ export namespace Prisma {
   }
 
   export type RouteUpdateWithoutBusAssignmentsInput = {
+    RouteID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
     EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
@@ -15103,9 +14840,9 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedUpdateWithoutBusAssignmentsInput = {
-    RouteID?: IntFieldUpdateOperationsInput | number
-    StartStopID?: IntFieldUpdateOperationsInput | number
-    EndStopID?: IntFieldUpdateOperationsInput | number
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StartStopID?: StringFieldUpdateOperationsInput | string
+    EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
   }
@@ -15122,8 +14859,8 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUpdateWithoutBusRouteAssignmentsInput = {
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
     BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
@@ -15131,25 +14868,25 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUncheckedUpdateWithoutBusRouteAssignmentsInput = {
-    RegularBusAssignmentID?: IntFieldUpdateOperationsInput | number
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
-    QuotaPolicyID?: IntFieldUpdateOperationsInput | number
+    RegularBusAssignmentID?: StringFieldUpdateOperationsInput | string
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
   }
 
   export type RegularBusAssignmentCreateManyQuotaPolicyInput = {
-    RegularBusAssignmentID: number
-    DriverID: number
-    ConductorID: number
+    RegularBusAssignmentID: string
+    DriverID: string
+    ConductorID: string
     Change: number
     TripRevenue: number
   }
 
   export type RegularBusAssignmentUpdateWithoutQuotaPolicyInput = {
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
     BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
@@ -15157,41 +14894,42 @@ export namespace Prisma {
   }
 
   export type RegularBusAssignmentUncheckedUpdateWithoutQuotaPolicyInput = {
-    RegularBusAssignmentID?: IntFieldUpdateOperationsInput | number
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
+    RegularBusAssignmentID?: StringFieldUpdateOperationsInput | string
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
     BusRouteAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput
   }
 
   export type RegularBusAssignmentUncheckedUpdateManyWithoutQuotaPolicyInput = {
-    RegularBusAssignmentID?: IntFieldUpdateOperationsInput | number
-    DriverID?: IntFieldUpdateOperationsInput | number
-    ConductorID?: IntFieldUpdateOperationsInput | number
+    RegularBusAssignmentID?: StringFieldUpdateOperationsInput | string
+    DriverID?: StringFieldUpdateOperationsInput | string
+    ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
   }
 
   export type RouteCreateManyStartStopInput = {
-    RouteID?: number
-    EndStopID: number
+    RouteID: string
+    EndStopID: string
     RouteName: string
   }
 
   export type RouteCreateManyEndStopInput = {
-    RouteID?: number
-    StartStopID: number
+    RouteID: string
+    StartStopID: string
     RouteName: string
   }
 
   export type RouteStopCreateManyStopInput = {
-    RouteStopID?: number
-    RouteID: number
+    RouteStopID: string
+    RouteID: string
     StopOrder: number
   }
 
   export type RouteUpdateWithoutStartStopInput = {
+    RouteID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
     RouteStops?: RouteStopUpdateManyWithoutRouteNestedInput
@@ -15199,20 +14937,21 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedUpdateWithoutStartStopInput = {
-    RouteID?: IntFieldUpdateOperationsInput | number
-    EndStopID?: IntFieldUpdateOperationsInput | number
+    RouteID?: StringFieldUpdateOperationsInput | string
+    EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
     BusAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteUncheckedUpdateManyWithoutStartStopInput = {
-    RouteID?: IntFieldUpdateOperationsInput | number
-    EndStopID?: IntFieldUpdateOperationsInput | number
+    RouteID?: StringFieldUpdateOperationsInput | string
+    EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
   }
 
   export type RouteUpdateWithoutEndStopInput = {
+    RouteID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
     RouteStops?: RouteStopUpdateManyWithoutRouteNestedInput
@@ -15220,95 +14959,99 @@ export namespace Prisma {
   }
 
   export type RouteUncheckedUpdateWithoutEndStopInput = {
-    RouteID?: IntFieldUpdateOperationsInput | number
-    StartStopID?: IntFieldUpdateOperationsInput | number
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StartStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
     BusAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteUncheckedUpdateManyWithoutEndStopInput = {
-    RouteID?: IntFieldUpdateOperationsInput | number
-    StartStopID?: IntFieldUpdateOperationsInput | number
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StartStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
   }
 
   export type RouteStopUpdateWithoutStopInput = {
+    RouteStopID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
     Route?: RouteUpdateOneRequiredWithoutRouteStopsNestedInput
   }
 
   export type RouteStopUncheckedUpdateWithoutStopInput = {
-    RouteStopID?: IntFieldUpdateOperationsInput | number
-    RouteID?: IntFieldUpdateOperationsInput | number
+    RouteStopID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
   }
 
   export type RouteStopUncheckedUpdateManyWithoutStopInput = {
-    RouteStopID?: IntFieldUpdateOperationsInput | number
-    RouteID?: IntFieldUpdateOperationsInput | number
+    RouteStopID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
   }
 
   export type RouteStopCreateManyRouteInput = {
-    RouteStopID?: number
-    StopID: number
+    RouteStopID: string
+    StopID: string
     StopOrder: number
   }
 
   export type BusRouteAssignmentCreateManyRouteInput = {
-    BusRouteAssignmentID?: number
-    BusAssignmentID: number
+    BusRouteAssignmentID: string
+    BusAssignmentID: string
   }
 
   export type RouteStopUpdateWithoutRouteInput = {
+    RouteStopID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
     Stop?: StopUpdateOneRequiredWithoutRouteStopsNestedInput
   }
 
   export type RouteStopUncheckedUpdateWithoutRouteInput = {
-    RouteStopID?: IntFieldUpdateOperationsInput | number
-    StopID?: IntFieldUpdateOperationsInput | number
+    RouteStopID?: StringFieldUpdateOperationsInput | string
+    StopID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
   }
 
   export type RouteStopUncheckedUpdateManyWithoutRouteInput = {
-    RouteStopID?: IntFieldUpdateOperationsInput | number
-    StopID?: IntFieldUpdateOperationsInput | number
+    RouteStopID?: StringFieldUpdateOperationsInput | string
+    StopID?: StringFieldUpdateOperationsInput | string
     StopOrder?: IntFieldUpdateOperationsInput | number
   }
 
   export type BusRouteAssignmentUpdateWithoutRouteInput = {
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
     RegularBusAssignment?: RegularBusAssignmentUpdateOneRequiredWithoutBusRouteAssignmentsNestedInput
   }
 
   export type BusRouteAssignmentUncheckedUpdateWithoutRouteInput = {
-    BusRouteAssignmentID?: IntFieldUpdateOperationsInput | number
-    BusAssignmentID?: IntFieldUpdateOperationsInput | number
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
   }
 
   export type BusRouteAssignmentUncheckedUpdateManyWithoutRouteInput = {
-    BusRouteAssignmentID?: IntFieldUpdateOperationsInput | number
-    BusAssignmentID?: IntFieldUpdateOperationsInput | number
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
   }
 
   export type BusRouteAssignmentCreateManyRegularBusAssignmentInput = {
-    BusRouteAssignmentID?: number
-    RouteID: number
+    BusRouteAssignmentID: string
+    RouteID: string
   }
 
   export type BusRouteAssignmentUpdateWithoutRegularBusAssignmentInput = {
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
     Route?: RouteUpdateOneRequiredWithoutBusAssignmentsNestedInput
   }
 
   export type BusRouteAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID?: IntFieldUpdateOperationsInput | number
-    RouteID?: IntFieldUpdateOperationsInput | number
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
   }
 
   export type BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID?: IntFieldUpdateOperationsInput | number
-    RouteID?: IntFieldUpdateOperationsInput | number
+    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
   }
 
 
