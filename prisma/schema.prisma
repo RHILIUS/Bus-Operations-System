@@ -51,9 +51,6 @@ model Route {
   EndStop       Stop               @relation("EndStop", fields: [EndStopID], references: [StopID])
   RouteStops    RouteStop[]
   BusAssignments BusRouteAssignment[]
-  EndStop        Stop                 @relation("EndStop", fields: [EndStopID], references: [StopID])
-  StartStop      Stop                 @relation("StartStop", fields: [StartStopID], references: [StopID])
-  RouteStops     RouteStop[]
 }
 
 model RouteStop {

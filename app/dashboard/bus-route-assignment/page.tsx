@@ -5,7 +5,7 @@ import styles from './bus-route-assignment.module.css';
 
 interface BusRouteAssignment {
   BusRouteAssignmentID: string;
-  BusAssignmentID: number;
+  BusAssignmentID: string;
   Route: {
     RouteName: string;
     StartStop: {
@@ -17,7 +17,7 @@ interface BusRouteAssignment {
   };
   RegularBusAssignment: {
     BusAssignment: {
-      BusID: number;
+      BusID: string;
     };
   };
 }
