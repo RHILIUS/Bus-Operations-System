@@ -9618,9 +9618,9 @@ export namespace Prisma {
     QuotaPolicyID?: boolean
     Change?: boolean
     TripRevenue?: boolean
-    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
-    quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
     BusRouteAssignments?: boolean | RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs>
+    quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
+    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
     _count?: boolean | RegularBusAssignmentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["regularBusAssignment"]>
 
@@ -9631,8 +9631,8 @@ export namespace Prisma {
     QuotaPolicyID?: boolean
     Change?: boolean
     TripRevenue?: boolean
-    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
     quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
+    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["regularBusAssignment"]>
 
   export type RegularBusAssignmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9642,8 +9642,8 @@ export namespace Prisma {
     QuotaPolicyID?: boolean
     Change?: boolean
     TripRevenue?: boolean
-    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
     quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
+    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["regularBusAssignment"]>
 
   export type RegularBusAssignmentSelectScalar = {
@@ -9657,26 +9657,26 @@ export namespace Prisma {
 
   export type RegularBusAssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"RegularBusAssignmentID" | "DriverID" | "ConductorID" | "QuotaPolicyID" | "Change" | "TripRevenue", ExtArgs["result"]["regularBusAssignment"]>
   export type RegularBusAssignmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
-    quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
     BusRouteAssignments?: boolean | RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs>
+    quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
+    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
     _count?: boolean | RegularBusAssignmentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RegularBusAssignmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
     quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
+    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
   }
   export type RegularBusAssignmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
     quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
+    BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
   }
 
   export type $RegularBusAssignmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "RegularBusAssignment"
     objects: {
-      BusAssignment: Prisma.$BusAssignmentPayload<ExtArgs>
-      quotaPolicy: Prisma.$Quota_PolicyPayload<ExtArgs>
       BusRouteAssignments: Prisma.$BusRouteAssignmentPayload<ExtArgs>[]
+      quotaPolicy: Prisma.$Quota_PolicyPayload<ExtArgs>
+      BusAssignment: Prisma.$BusAssignmentPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       RegularBusAssignmentID: string
@@ -10079,9 +10079,9 @@ export namespace Prisma {
    */
   export interface Prisma__RegularBusAssignmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    BusAssignment<T extends BusAssignmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BusAssignmentDefaultArgs<ExtArgs>>): Prisma__BusAssignmentClient<$Result.GetResult<Prisma.$BusAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    quotaPolicy<T extends Quota_PolicyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, Quota_PolicyDefaultArgs<ExtArgs>>): Prisma__Quota_PolicyClient<$Result.GetResult<Prisma.$Quota_PolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     BusRouteAssignments<T extends RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    quotaPolicy<T extends Quota_PolicyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, Quota_PolicyDefaultArgs<ExtArgs>>): Prisma__Quota_PolicyClient<$Result.GetResult<Prisma.$Quota_PolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    BusAssignment<T extends BusAssignmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BusAssignmentDefaultArgs<ExtArgs>>): Prisma__BusAssignmentClient<$Result.GetResult<Prisma.$BusAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12196,9 +12196,9 @@ export namespace Prisma {
     QuotaPolicyID?: StringFilter<"RegularBusAssignment"> | string
     Change?: FloatFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatFilter<"RegularBusAssignment"> | number
-    BusAssignment?: XOR<BusAssignmentScalarRelationFilter, BusAssignmentWhereInput>
-    quotaPolicy?: XOR<Quota_PolicyScalarRelationFilter, Quota_PolicyWhereInput>
     BusRouteAssignments?: BusRouteAssignmentListRelationFilter
+    quotaPolicy?: XOR<Quota_PolicyScalarRelationFilter, Quota_PolicyWhereInput>
+    BusAssignment?: XOR<BusAssignmentScalarRelationFilter, BusAssignmentWhereInput>
   }
 
   export type RegularBusAssignmentOrderByWithRelationInput = {
@@ -12208,9 +12208,9 @@ export namespace Prisma {
     QuotaPolicyID?: SortOrder
     Change?: SortOrder
     TripRevenue?: SortOrder
-    BusAssignment?: BusAssignmentOrderByWithRelationInput
-    quotaPolicy?: Quota_PolicyOrderByWithRelationInput
     BusRouteAssignments?: BusRouteAssignmentOrderByRelationAggregateInput
+    quotaPolicy?: Quota_PolicyOrderByWithRelationInput
+    BusAssignment?: BusAssignmentOrderByWithRelationInput
   }
 
   export type RegularBusAssignmentWhereUniqueInput = Prisma.AtLeast<{
@@ -12223,9 +12223,9 @@ export namespace Prisma {
     QuotaPolicyID?: StringFilter<"RegularBusAssignment"> | string
     Change?: FloatFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatFilter<"RegularBusAssignment"> | number
-    BusAssignment?: XOR<BusAssignmentScalarRelationFilter, BusAssignmentWhereInput>
-    quotaPolicy?: XOR<Quota_PolicyScalarRelationFilter, Quota_PolicyWhereInput>
     BusRouteAssignments?: BusRouteAssignmentListRelationFilter
+    quotaPolicy?: XOR<Quota_PolicyScalarRelationFilter, Quota_PolicyWhereInput>
+    BusAssignment?: XOR<BusAssignmentScalarRelationFilter, BusAssignmentWhereInput>
   }, "RegularBusAssignmentID">
 
   export type RegularBusAssignmentOrderByWithAggregationInput = {
@@ -12701,9 +12701,9 @@ export namespace Prisma {
     ConductorID: string
     Change: number
     TripRevenue: number
-    BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
-    quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
     BusRouteAssignments?: BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput
+    quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
+    BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
   }
 
   export type RegularBusAssignmentUncheckedCreateInput = {
@@ -12721,9 +12721,9 @@ export namespace Prisma {
     ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
-    quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
     BusRouteAssignments?: BusRouteAssignmentUpdateManyWithoutRegularBusAssignmentNestedInput
+    quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
+    BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
   }
 
   export type RegularBusAssignmentUncheckedUpdateInput = {
@@ -13706,10 +13706,11 @@ export namespace Prisma {
     update?: XOR<XOR<RegularBusAssignmentUpdateToOneWithWhereWithoutBusAssignmentInput, RegularBusAssignmentUpdateWithoutBusAssignmentInput>, RegularBusAssignmentUncheckedUpdateWithoutBusAssignmentInput>
   }
 
-  export type BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput = {
-    create?: XOR<BusAssignmentCreateWithoutRegularBusAssignmentInput, BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
-    connectOrCreate?: BusAssignmentCreateOrConnectWithoutRegularBusAssignmentInput
-    connect?: BusAssignmentWhereUniqueInput
+  export type BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput = {
+    create?: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput> | BusRouteAssignmentCreateWithoutRegularBusAssignmentInput[] | BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput[]
+    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput | BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput[]
+    createMany?: BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope
+    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
   }
 
   export type Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput = {
@@ -13718,11 +13719,10 @@ export namespace Prisma {
     connect?: Quota_PolicyWhereUniqueInput
   }
 
-  export type BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput> | BusRouteAssignmentCreateWithoutRegularBusAssignmentInput[] | BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput | BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput[]
-    createMany?: BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
+  export type BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput = {
+    create?: XOR<BusAssignmentCreateWithoutRegularBusAssignmentInput, BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
+    connectOrCreate?: BusAssignmentCreateOrConnectWithoutRegularBusAssignmentInput
+    connect?: BusAssignmentWhereUniqueInput
   }
 
   export type BusRouteAssignmentUncheckedCreateNestedManyWithoutRegularBusAssignmentInput = {
@@ -13730,22 +13730,6 @@ export namespace Prisma {
     connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput | BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput[]
     createMany?: BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope
     connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-  }
-
-  export type BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput = {
-    create?: XOR<BusAssignmentCreateWithoutRegularBusAssignmentInput, BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
-    connectOrCreate?: BusAssignmentCreateOrConnectWithoutRegularBusAssignmentInput
-    upsert?: BusAssignmentUpsertWithoutRegularBusAssignmentInput
-    connect?: BusAssignmentWhereUniqueInput
-    update?: XOR<XOR<BusAssignmentUpdateToOneWithWhereWithoutRegularBusAssignmentInput, BusAssignmentUpdateWithoutRegularBusAssignmentInput>, BusAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
-  }
-
-  export type Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput = {
-    create?: XOR<Quota_PolicyCreateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput>
-    connectOrCreate?: Quota_PolicyCreateOrConnectWithoutRegularBusAssignmentsInput
-    upsert?: Quota_PolicyUpsertWithoutRegularBusAssignmentsInput
-    connect?: Quota_PolicyWhereUniqueInput
-    update?: XOR<XOR<Quota_PolicyUpdateToOneWithWhereWithoutRegularBusAssignmentsInput, Quota_PolicyUpdateWithoutRegularBusAssignmentsInput>, Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput>
   }
 
   export type BusRouteAssignmentUpdateManyWithoutRegularBusAssignmentNestedInput = {
@@ -13760,6 +13744,22 @@ export namespace Prisma {
     update?: BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput | BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput[]
     updateMany?: BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput | BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput[]
     deleteMany?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
+  }
+
+  export type Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput = {
+    create?: XOR<Quota_PolicyCreateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput>
+    connectOrCreate?: Quota_PolicyCreateOrConnectWithoutRegularBusAssignmentsInput
+    upsert?: Quota_PolicyUpsertWithoutRegularBusAssignmentsInput
+    connect?: Quota_PolicyWhereUniqueInput
+    update?: XOR<XOR<Quota_PolicyUpdateToOneWithWhereWithoutRegularBusAssignmentsInput, Quota_PolicyUpdateWithoutRegularBusAssignmentsInput>, Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput>
+  }
+
+  export type BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput = {
+    create?: XOR<BusAssignmentCreateWithoutRegularBusAssignmentInput, BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
+    connectOrCreate?: BusAssignmentCreateOrConnectWithoutRegularBusAssignmentInput
+    upsert?: BusAssignmentUpsertWithoutRegularBusAssignmentInput
+    connect?: BusAssignmentWhereUniqueInput
+    update?: XOR<XOR<BusAssignmentUpdateToOneWithWhereWithoutRegularBusAssignmentInput, BusAssignmentUpdateWithoutRegularBusAssignmentInput>, BusAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
   }
 
   export type BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput = {
@@ -13958,8 +13958,8 @@ export namespace Prisma {
     ConductorID: string
     Change: number
     TripRevenue: number
-    BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
     BusRouteAssignments?: BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput
+    BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
   }
 
   export type RegularBusAssignmentUncheckedCreateWithoutQuotaPolicyInput = {
@@ -14565,8 +14565,8 @@ export namespace Prisma {
     ConductorID: string
     Change: number
     TripRevenue: number
-    quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
     BusRouteAssignments?: BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput
+    quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
   }
 
   export type RegularBusAssignmentUncheckedCreateWithoutBusAssignmentInput = {
@@ -14599,8 +14599,8 @@ export namespace Prisma {
     ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
     BusRouteAssignments?: BusRouteAssignmentUpdateManyWithoutRegularBusAssignmentNestedInput
+    quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
   }
 
   export type RegularBusAssignmentUncheckedUpdateWithoutBusAssignmentInput = {
@@ -14610,6 +14610,47 @@ export namespace Prisma {
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
     BusRouteAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput
+  }
+
+  export type BusRouteAssignmentCreateWithoutRegularBusAssignmentInput = {
+    BusRouteAssignmentID: string
+    Route: RouteCreateNestedOneWithoutBusAssignmentsInput
+  }
+
+  export type BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput = {
+    BusRouteAssignmentID: string
+    RouteID: string
+  }
+
+  export type BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput = {
+    where: BusRouteAssignmentWhereUniqueInput
+    create: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
+  }
+
+  export type BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope = {
+    data: BusRouteAssignmentCreateManyRegularBusAssignmentInput | BusRouteAssignmentCreateManyRegularBusAssignmentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type Quota_PolicyCreateWithoutRegularBusAssignmentsInput = {
+    QuotaPolicyID: string
+    StartDate: Date | string
+    EndDate: Date | string
+    Fixed?: FixedCreateNestedOneWithoutQuotaPolicyInput
+    Percentage?: PercentageCreateNestedOneWithoutQuotaPolicyInput
+  }
+
+  export type Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput = {
+    QuotaPolicyID: string
+    StartDate: Date | string
+    EndDate: Date | string
+    Fixed?: FixedUncheckedCreateNestedOneWithoutQuotaPolicyInput
+    Percentage?: PercentageUncheckedCreateNestedOneWithoutQuotaPolicyInput
+  }
+
+  export type Quota_PolicyCreateOrConnectWithoutRegularBusAssignmentsInput = {
+    where: Quota_PolicyWhereUniqueInput
+    create: XOR<Quota_PolicyCreateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput>
   }
 
   export type BusAssignmentCreateWithoutRegularBusAssignmentInput = {
@@ -14649,45 +14690,47 @@ export namespace Prisma {
     create: XOR<BusAssignmentCreateWithoutRegularBusAssignmentInput, BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
   }
 
-  export type Quota_PolicyCreateWithoutRegularBusAssignmentsInput = {
-    QuotaPolicyID: string
-    StartDate: Date | string
-    EndDate: Date | string
-    Fixed?: FixedCreateNestedOneWithoutQuotaPolicyInput
-    Percentage?: PercentageCreateNestedOneWithoutQuotaPolicyInput
-  }
-
-  export type Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput = {
-    QuotaPolicyID: string
-    StartDate: Date | string
-    EndDate: Date | string
-    Fixed?: FixedUncheckedCreateNestedOneWithoutQuotaPolicyInput
-    Percentage?: PercentageUncheckedCreateNestedOneWithoutQuotaPolicyInput
-  }
-
-  export type Quota_PolicyCreateOrConnectWithoutRegularBusAssignmentsInput = {
-    where: Quota_PolicyWhereUniqueInput
-    create: XOR<Quota_PolicyCreateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput>
-  }
-
-  export type BusRouteAssignmentCreateWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID: string
-    Route: RouteCreateNestedOneWithoutBusAssignmentsInput
-  }
-
-  export type BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID: string
-    RouteID: string
-  }
-
-  export type BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput = {
+  export type BusRouteAssignmentUpsertWithWhereUniqueWithoutRegularBusAssignmentInput = {
     where: BusRouteAssignmentWhereUniqueInput
+    update: XOR<BusRouteAssignmentUpdateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
     create: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
   }
 
-  export type BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope = {
-    data: BusRouteAssignmentCreateManyRegularBusAssignmentInput | BusRouteAssignmentCreateManyRegularBusAssignmentInput[]
-    skipDuplicates?: boolean
+  export type BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput = {
+    where: BusRouteAssignmentWhereUniqueInput
+    data: XOR<BusRouteAssignmentUpdateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
+  }
+
+  export type BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput = {
+    where: BusRouteAssignmentScalarWhereInput
+    data: XOR<BusRouteAssignmentUpdateManyMutationInput, BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentInput>
+  }
+
+  export type Quota_PolicyUpsertWithoutRegularBusAssignmentsInput = {
+    update: XOR<Quota_PolicyUpdateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput>
+    create: XOR<Quota_PolicyCreateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput>
+    where?: Quota_PolicyWhereInput
+  }
+
+  export type Quota_PolicyUpdateToOneWithWhereWithoutRegularBusAssignmentsInput = {
+    where?: Quota_PolicyWhereInput
+    data: XOR<Quota_PolicyUpdateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput>
+  }
+
+  export type Quota_PolicyUpdateWithoutRegularBusAssignmentsInput = {
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
+    StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    Fixed?: FixedUpdateOneWithoutQuotaPolicyNestedInput
+    Percentage?: PercentageUpdateOneWithoutQuotaPolicyNestedInput
+  }
+
+  export type Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput = {
+    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
+    StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    Fixed?: FixedUncheckedUpdateOneWithoutQuotaPolicyNestedInput
+    Percentage?: PercentageUncheckedUpdateOneWithoutQuotaPolicyNestedInput
   }
 
   export type BusAssignmentUpsertWithoutRegularBusAssignmentInput = {
@@ -14733,49 +14776,6 @@ export namespace Prisma {
     Self?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type Quota_PolicyUpsertWithoutRegularBusAssignmentsInput = {
-    update: XOR<Quota_PolicyUpdateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput>
-    create: XOR<Quota_PolicyCreateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput>
-    where?: Quota_PolicyWhereInput
-  }
-
-  export type Quota_PolicyUpdateToOneWithWhereWithoutRegularBusAssignmentsInput = {
-    where?: Quota_PolicyWhereInput
-    data: XOR<Quota_PolicyUpdateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput>
-  }
-
-  export type Quota_PolicyUpdateWithoutRegularBusAssignmentsInput = {
-    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
-    StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    Fixed?: FixedUpdateOneWithoutQuotaPolicyNestedInput
-    Percentage?: PercentageUpdateOneWithoutQuotaPolicyNestedInput
-  }
-
-  export type Quota_PolicyUncheckedUpdateWithoutRegularBusAssignmentsInput = {
-    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
-    StartDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    EndDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    Fixed?: FixedUncheckedUpdateOneWithoutQuotaPolicyNestedInput
-    Percentage?: PercentageUncheckedUpdateOneWithoutQuotaPolicyNestedInput
-  }
-
-  export type BusRouteAssignmentUpsertWithWhereUniqueWithoutRegularBusAssignmentInput = {
-    where: BusRouteAssignmentWhereUniqueInput
-    update: XOR<BusRouteAssignmentUpdateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
-    create: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
-  }
-
-  export type BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput = {
-    where: BusRouteAssignmentWhereUniqueInput
-    data: XOR<BusRouteAssignmentUpdateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
-  }
-
-  export type BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput = {
-    where: BusRouteAssignmentScalarWhereInput
-    data: XOR<BusRouteAssignmentUpdateManyMutationInput, BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentInput>
-  }
-
   export type RouteCreateWithoutBusAssignmentsInput = {
     RouteID: string
     RouteName: string
@@ -14802,8 +14802,8 @@ export namespace Prisma {
     ConductorID: string
     Change: number
     TripRevenue: number
-    BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
     quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
+    BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
   }
 
   export type RegularBusAssignmentUncheckedCreateWithoutBusRouteAssignmentsInput = {
@@ -14863,8 +14863,8 @@ export namespace Prisma {
     ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
     quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
+    BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
   }
 
   export type RegularBusAssignmentUncheckedUpdateWithoutBusRouteAssignmentsInput = {
@@ -14889,8 +14889,8 @@ export namespace Prisma {
     ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
     BusRouteAssignments?: BusRouteAssignmentUpdateManyWithoutRegularBusAssignmentNestedInput
+    BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
   }
 
   export type RegularBusAssignmentUncheckedUpdateWithoutQuotaPolicyInput = {

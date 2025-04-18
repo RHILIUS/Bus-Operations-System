@@ -28,8 +28,7 @@ model Fixed {
 model Percentage {
   PQuotaPolicyID String @id
   Percentage     Float
-
-  quotaPolicy Quota_Policy @relation(fields: [PQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)
+  quotaPolicy    Quota_Policy @relation(fields: [PQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)
 }
 
 model Stop {
@@ -59,11 +58,10 @@ model RouteStop {
   RouteID     String 
   StopID      String
   StopOrder   Int
-
   Route       Route @relation(fields: [RouteID], references: [RouteID])
   Stop        Stop  @relation(fields: [StopID], references: [StopID])
 
-  @@unique([RouteID, StopID]) // ensures no duplicate Stop in same Route
+  @@unique([RouteID, StopID])
 }
 
 model BusAssignment {
@@ -93,10 +91,9 @@ model RegularBusAssignment {
   QuotaPolicyID          String 
   Change                 Float
   TripRevenue            Float
-
-  BusAssignment BusAssignment @relation(fields: [RegularBusAssignmentID], references: [BusAssignmentID])
-  quotaPolicy          Quota_Policy         @relation(fields: [QuotaPolicyID], references: [QuotaPolicyID])
   BusRouteAssignments    BusRouteAssignment[]
+  quotaPolicy            Quota_Policy         @relation(fields: [QuotaPolicyID], references: [QuotaPolicyID])
+  BusAssignment          BusAssignment        @relation(fields: [RegularBusAssignmentID], references: [BusAssignmentID])
 
   @@index([DriverID])
   @@index([ConductorID])
