@@ -1,6 +1,31 @@
 -- CreateTable
+CREATE TABLE "Quota_Policy" (
+    "QuotaPolicyID" TEXT NOT NULL,
+    "StartDate" TIMESTAMP(3) NOT NULL,
+    "EndDate" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Quota_Policy_pkey" PRIMARY KEY ("QuotaPolicyID")
+);
+
+-- CreateTable
+CREATE TABLE "Fixed" (
+    "FQuotaPolicyID" TEXT NOT NULL,
+    "Quota" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "Fixed_pkey" PRIMARY KEY ("FQuotaPolicyID")
+);
+
+-- CreateTable
+CREATE TABLE "Percentage" (
+    "PQuotaPolicyID" TEXT NOT NULL,
+    "Percentage" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "Percentage_pkey" PRIMARY KEY ("PQuotaPolicyID")
+);
+
+-- CreateTable
 CREATE TABLE "Stop" (
-    "StopID" SERIAL NOT NULL,
+    "StopID" TEXT NOT NULL,
     "StopName" TEXT NOT NULL,
     "Location" TEXT NOT NULL,
 
@@ -9,9 +34,9 @@ CREATE TABLE "Stop" (
 
 -- CreateTable
 CREATE TABLE "Route" (
-    "RouteID" SERIAL NOT NULL,
-    "StartStopID" INTEGER NOT NULL,
-    "EndStopID" INTEGER NOT NULL,
+    "RouteID" TEXT NOT NULL,
+    "StartStopID" TEXT NOT NULL,
+    "EndStopID" TEXT NOT NULL,
     "RouteName" TEXT NOT NULL,
 
     CONSTRAINT "Route_pkey" PRIMARY KEY ("RouteID")
@@ -19,9 +44,9 @@ CREATE TABLE "Route" (
 
 -- CreateTable
 CREATE TABLE "RouteStop" (
-    "RouteStopID" SERIAL NOT NULL,
-    "RouteID" INTEGER NOT NULL,
-    "StopID" INTEGER NOT NULL,
+    "RouteStopID" TEXT NOT NULL,
+    "RouteID" TEXT NOT NULL,
+    "StopID" TEXT NOT NULL,
     "StopOrder" INTEGER NOT NULL,
 
     CONSTRAINT "RouteStop_pkey" PRIMARY KEY ("RouteStopID")
@@ -29,8 +54,8 @@ CREATE TABLE "RouteStop" (
 
 -- CreateTable
 CREATE TABLE "BusAssignment" (
-    "BusAssignmentID" SERIAL NOT NULL,
-    "BusID" INTEGER NOT NULL,
+    "BusAssignmentID" TEXT NOT NULL,
+    "BusID" TEXT NOT NULL,
     "AssignmentDate" TIMESTAMP(3) NOT NULL,
     "Battery" BOOLEAN NOT NULL,
     "Lights" BOOLEAN NOT NULL,
@@ -48,10 +73,10 @@ CREATE TABLE "BusAssignment" (
 
 -- CreateTable
 CREATE TABLE "RegularBusAssignment" (
-    "RegularBusAssignmentID" INTEGER NOT NULL,
-    "DriverID" INTEGER NOT NULL,
-    "ConductorID" INTEGER NOT NULL,
-    "QuotaPolicyID" INTEGER NOT NULL,
+    "RegularBusAssignmentID" TEXT NOT NULL,
+    "DriverID" TEXT NOT NULL,
+    "ConductorID" TEXT NOT NULL,
+    "QuotaPolicyID" TEXT NOT NULL,
     "Change" DOUBLE PRECISION NOT NULL,
     "TripRevenue" DOUBLE PRECISION NOT NULL,
 
@@ -60,9 +85,9 @@ CREATE TABLE "RegularBusAssignment" (
 
 -- CreateTable
 CREATE TABLE "BusRouteAssignment" (
-    "BusRouteAssignmentID" SERIAL NOT NULL,
-    "BusAssignmentID" INTEGER NOT NULL,
-    "RouteID" INTEGER NOT NULL,
+    "BusRouteAssignmentID" TEXT NOT NULL,
+    "BusAssignmentID" TEXT NOT NULL,
+    "RouteID" TEXT NOT NULL,
 
     CONSTRAINT "BusRouteAssignment_pkey" PRIMARY KEY ("BusRouteAssignmentID")
 );
@@ -78,6 +103,12 @@ CREATE INDEX "RegularBusAssignment_DriverID_idx" ON "RegularBusAssignment"("Driv
 
 -- CreateIndex
 CREATE INDEX "RegularBusAssignment_ConductorID_idx" ON "RegularBusAssignment"("ConductorID");
+
+-- AddForeignKey
+ALTER TABLE "Fixed" ADD CONSTRAINT "Fixed_FQuotaPolicyID_fkey" FOREIGN KEY ("FQuotaPolicyID") REFERENCES "Quota_Policy"("QuotaPolicyID") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Percentage" ADD CONSTRAINT "Percentage_PQuotaPolicyID_fkey" FOREIGN KEY ("PQuotaPolicyID") REFERENCES "Quota_Policy"("QuotaPolicyID") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Route" ADD CONSTRAINT "Route_StartStopID_fkey" FOREIGN KEY ("StartStopID") REFERENCES "Stop"("StopID") ON DELETE RESTRICT ON UPDATE CASCADE;
