@@ -23,21 +23,28 @@ interface BusRouteAssignment {
 }
 
 const BusRouteAssignmentPage: React.FC = () => {
-  const [assignments, setAssignments] = useState<BusRouteAssignment[]>([]);
+  const [busRouteAssignments, setAssignments] = useState<BusRouteAssignment[]>([]);
   const [selectedBusAssignmentID, setSelectedBusAssignmentID] = useState<number | null>(null);
   const [selectedRouteID, setSelectedRouteID] = useState<string | null>(null);
 
-  // Fetch data from the API
   useEffect(() => {
     const fetchAssignments = async () => {
-      const response = await fetch('/api/bus-route-assignment');
-      const data = await response.json();
-      console.log('Fetched assignments:', data); // Debugging
-      setAssignments(data);
+      try {
+        const response = await fetch('/api/bus-route-assignment');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch assignments: ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log('Fetched assignments:', data); // Debugging
+        setAssignments(data);
+      } catch (error) {
+        console.error('Error fetching assignments:', error);
+      }
     };
-
+  
     fetchAssignments();
   }, []);
+
   return (
     <div className="dashboard-content">
       <div className="center-box">
@@ -132,12 +139,12 @@ const BusRouteAssignmentPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {assignments.map((assignment) => (
-                  <tr key={assignment.BusRouteAssignmentID} className={styles.tableRow}>
-                    <td>{assignment.RegularBusAssignment?.BusAssignment?.BusID}</td>
-                    <td>{assignment.Route?.RouteName}</td>
-                    <td>{assignment.Route?.StartStop?.StopName}</td>
-                    <td>{assignment.Route?.EndStop?.StopName}</td>
+                {busRouteAssignments.map((busRouteAssignments) => (
+                  <tr key={busRouteAssignments.BusRouteAssignmentID} className={styles.tableRow}>
+                    <td>{busRouteAssignments.RegularBusAssignment?.BusAssignment?.BusID}</td>
+                    <td>{busRouteAssignments.Route?.RouteName}</td>
+                    <td>{busRouteAssignments.Route?.StartStop?.StopName}</td>
+                    <td>{busRouteAssignments.Route?.EndStop?.StopName}</td>
                     <td className={styles.actions}>
                       <button className={styles.editBtn}>
                         <img src="/assets/images/edit.png" alt="Edit" />
