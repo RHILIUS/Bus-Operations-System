@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
 import '@/styles/style.css';
+import './globals.css'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
