@@ -29,23 +29,29 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
   
   ];
 
+  
+  const [filteredBuses, setFilteredBuses] = useState(buses); // use state for filter function
+
   const dropdownItems = [
     {
       name: 'Alphabetical',
       action: () => {
-
+        const sorted = [...filteredBuses].sort((a, b) => a.busId.localeCompare(b.busId));
+        setFilteredBuses(sorted);
       },
     },
     {
       name: 'Aircon',
       action: () => {
-
+        const airconOnly = buses.filter(bus => bus.type === 'Aircon');
+        setFilteredBuses(airconOnly);
       },
     },
     {
       name: 'Non-Aircon',
       action: () => {
-
+        const nonAirconOnly = buses.filter(bus => bus.type === 'Non-Aircon');
+        setFilteredBuses(nonAirconOnly);
       },
     },
   ];
@@ -70,7 +76,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-        {buses.map((bus, index) => (
+        {filteredBuses.map((bus, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
