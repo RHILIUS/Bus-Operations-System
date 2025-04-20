@@ -4,26 +4,45 @@ import Image from 'next/image';
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
+import { useEffect} from 'react';
+import { fetchDrivers } from '../../lib/fetchDrivers';
 
+interface Driver {
+  name: string;
+  job: string;
+  contact_no: string;
+  address: string;
+  image: string | null; 
+}
 
 const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
 
-  // Sample data
-  const drivers = [  
-    { name: 'John Mark Garces', job: 'Driver', contactNo: '09123456789' ,address: '#1 JP Rizal St. Bagong Silang Caloocan City', image: null},
-    { name: 'Rhian Jolius Baldomar', job: 'Driver', contactNo: '09987654321' ,address: '#1 JP Rizal St. Bagong Silangan Quezon City', image: null},
-    { name: 'Yuan Exequiel Evangelista', job: 'Driver', contactNo: '09786389221' ,address: '#1 JP Rizal St. Holy Spirit Quezon City', image: null},
-    { name: 'Richard Jason Aquino', job: 'Driver', contactNo: '09786565432' ,address: '#1 Don Fabian St. Commonwealth Quezon City', image: null},
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [filteredDrivers, setFilteredDrivers] = useState<Driver[]>([]);
 
-    
-  ];
+  useEffect(() => {
+    const loadDrivers = async () => {
+      try {
+        const data = await fetchDrivers();
+        setDrivers(data);
+        setFilteredDrivers(data);
+      } catch (error) {
+        console.error('Error fetching drivers:', error);
+      }
+    };
+
+    loadDrivers();
+  }, []);
+
+  const sortAlphabetically = () => {
+    const sorted = [...drivers].sort((a, b) => a.name.localeCompare(b.name));
+    setFilteredDrivers(sorted);
+  };
 
   const dropdownItems = [
     {
       name: 'Alphabetical',
-      action: () => {
-
-      },
+      action: sortAlphabetically,
     },
   ];
   
@@ -47,7 +66,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-        {drivers.map((driver, index) => (
+      {filteredDrivers.map((driver, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
@@ -67,8 +86,8 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
                   <div>{driver.name}</div>
                   <div className="text-sm text-gray-400">{driver.job}</div>
                 </div>
-                <div className="text-sm text-gray-400">{driver.contactNo}</div>
-                <div className="text-sm text-gray-400">{`${driver.address} seats`}</div>
+                <div className="text-sm text-gray-400">{driver.contact_no}</div>
+                <div className="text-sm text-gray-400">{`${driver.address}`}</div>
               </div>
             </div>
 

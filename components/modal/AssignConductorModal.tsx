@@ -1,32 +1,51 @@
 'use client';
-import React, {useState} from 'react';
 import Image from 'next/image';
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
+import { useEffect, useState } from 'react';
+import { fetchConductors } from '../../lib/fetchConductors';
 
+interface Conductor {
+  conductor_id: string;
+  name: string;
+  job: string;
+  contact_no: string;
+  address: string;
+  image: string | null;
+}
 
 const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
 
-  // Sample data
-  const conductors = [  
-    { name: 'John Mark Garces', job: 'Conductor', contactNo: '09123456789' ,address: '#1 JP Rizal St. Bagong Silang Caloocan City', image: null},
-    { name: 'Rhian Jolius Baldomar', job: 'Conductor', contactNo: '09987654321' ,address: '#1 JP Rizal St. Bagong Silangan Quezon City', image: null},
-    { name: 'Yuan Exequiel Evangelista', job: 'Conductor', contactNo: '09786389221' ,address: '#1 JP Rizal St. Holy Spirit Quezon City', image: null},
-    { name: 'Richard Jason Aquino', job: 'Conductor', contactNo: '09786565432' ,address: '#1 Don Fabian St. Commonwealth Quezon City', image: null},
+  const [conductors, setConductors] = useState<Conductor[]>([]);
+  const [filteredConductors, setFilteredConductors] = useState<Conductor[]>([]);
 
-    
-  ];
+  useEffect(() => {
+    const loadConductors = async () => {
+      try {
+        const data = await fetchConductors();
+        setConductors(data);
+        setFilteredConductors(data);
+      } catch (error) {
+        console.error('Error fetching conductors:', error);
+      }
+    };
+
+    loadConductors();
+  }, []);
+
+  const sortAlphabetically = () => {
+    const sorted = [...conductors].sort((a, b) => a.name.localeCompare(b.name));
+    setFilteredConductors(sorted);
+  };
 
   const dropdownItems = [
     {
       name: 'Alphabetical',
-      action: () => {
-
-      },
+      action: sortAlphabetically,
     },
   ];
-  
+
   return (
     // Modal
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
@@ -47,7 +66,7 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-        {conductors.map((conductor, index) => (
+         {filteredConductors.map((conductor, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
@@ -67,8 +86,8 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
                   <div>{conductor.name}</div>
                   <div className="text-sm text-gray-400">{conductor.job}</div>
                 </div>
-                <div className="text-sm text-gray-400">{conductor.contactNo}</div>
-                <div className="text-sm text-gray-400">{`${conductor.address} seats`}</div>
+                <div className="text-sm text-gray-400">{conductor.contact_no}</div>
+                <div className="text-sm text-gray-400">{`${conductor.address}`}</div>
               </div>
             </div>
 

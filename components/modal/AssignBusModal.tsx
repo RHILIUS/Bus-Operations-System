@@ -1,51 +1,58 @@
 'use client';
-import React, {useState} from 'react';
 import Image from 'next/image';
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
+import { useEffect, useState } from 'react';
+import { fetchBuses } from '../../lib/fetchBuses';
 
+interface Bus {
+  bus_id: string;
+  route: string;
+  type: string;
+  capacity: number;
+  image: string | null;
+}
 
 const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
 
-  // Sample data
-  const buses = [  
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null},
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null},
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null},
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null},
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null},
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null},
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null},
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null},
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null},
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null},
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null},
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null},
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null},
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null},
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null},
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null},
+  const [buses, setBuses] = useState<Bus[]>([]);
+  const [filteredBuses, setFilteredBuses] = useState<Bus[]>([]);
+
+  useEffect(() => {
+    const loadBuses = async () => {
+      try {
+        const data = await fetchBuses();
+        setBuses(data);
+        setFilteredBuses(data); 
+      } catch (error) {
+        console.error('Error fetching buses:', error);
+      }
+    };
   
-  ];
+    loadBuses();
+  }, []);
 
   const dropdownItems = [
     {
       name: 'Alphabetical',
       action: () => {
-
+        const sorted = [...buses].sort((a, b) => a.bus_id.localeCompare(b.bus_id));
+        setFilteredBuses(sorted);
       },
     },
     {
       name: 'Aircon',
       action: () => {
-
+        const filtered = buses.filter((bus) => bus.type.toLowerCase() === ('aircon'));
+        setFilteredBuses(filtered);
       },
     },
     {
       name: 'Non-Aircon',
       action: () => {
-
+        const filtered = buses.filter((bus) => bus.type.toLowerCase().includes('non'));
+        setFilteredBuses(filtered);
       },
     },
   ];
@@ -70,7 +77,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-        {buses.map((bus, index) => (
+      {filteredBuses.map((bus, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
@@ -87,7 +94,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
               {/* Bus Details */}
               <div>
                 <div className="flex gap-2 items-center">
-                  <div>{bus.busId}</div>
+                  <div>{bus.bus_id}</div>
                   <div className="text-sm text-gray-400">{bus.route}</div>
                 </div>
                 <div className="text-sm text-gray-400">{bus.type}</div>
