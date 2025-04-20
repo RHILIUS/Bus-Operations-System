@@ -15,14 +15,15 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
     { name: 'Yuan Exequiel Evangelista', job: 'Conductor', contactNo: '09786389221' ,address: '#1 JP Rizal St. Holy Spirit Quezon City', image: null},
     { name: 'Richard Jason Aquino', job: 'Conductor', contactNo: '09786565432' ,address: '#1 Don Fabian St. Commonwealth Quezon City', image: null},
 
-    
   ];
 
+  const [filteredConductors, setFilteredConductors] = useState(conductors)
   const dropdownItems = [
     {
       name: 'Alphabetical',
       action: () => {
-
+        const sorted = [...filteredConductors].sort((a, b) => a.name.localeCompare(b.name));
+        setFilteredConductors(sorted);
       },
     },
   ];
@@ -47,7 +48,7 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-        {conductors.map((conductor, index) => (
+        {filteredConductors.map((conductor, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}

@@ -18,11 +18,13 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
     
   ];
 
+  const [filteredDrivers, setFilteredDrivers] = useState(drivers);
   const dropdownItems = [
     {
       name: 'Alphabetical',
       action: () => {
-
+        const sorted = [...filteredDrivers].sort((a, b) => a.name.localeCompare(b.name));
+        setFilteredDrivers(sorted);
       },
     },
   ];
@@ -47,7 +49,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-        {drivers.map((driver, index) => (
+        {filteredDrivers.map((driver, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
