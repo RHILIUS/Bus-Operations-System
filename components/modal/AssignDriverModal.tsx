@@ -19,6 +19,8 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
   ];
 
   const [filteredDrivers, setFilteredDrivers] = useState(drivers);
+  const [searchTerm, setSearchTerm] = useState(''); // use state for search function
+
   const dropdownItems = [
     {
       name: 'Alphabetical',
@@ -34,7 +36,26 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
       {/*  Search Bar */}
       <header className='mb-4'>  
-        <SearchBar placeholder='Search Bus' ></SearchBar>
+        <SearchBar placeholder='Search Bus' 
+          value={searchTerm}
+          onChange = {(e) => {
+            const text = e.target.value;
+            setSearchTerm(text);
+
+            // Filter buses
+            const filtered = drivers.filter((driver) =>
+              driver.name.toLowerCase().includes(text.toLowerCase()) ||
+              driver.job.toLowerCase().includes(text.toLowerCase()) ||
+              driver.contactNo.toLowerCase().includes(text.toLowerCase()) ||
+              driver.address.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredDrivers(filtered);
+
+            
+          }}
+        
+        
+        ></SearchBar>
       </header>
 
       {/* Title and Filter section */}
@@ -70,7 +91,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
                   <div className="text-sm text-gray-400">{driver.job}</div>
                 </div>
                 <div className="text-sm text-gray-400">{driver.contactNo}</div>
-                <div className="text-sm text-gray-400">{`${driver.address} seats`}</div>
+                <div className="text-sm text-gray-400">{`${driver.address}`}</div>
               </div>
             </div>
 
