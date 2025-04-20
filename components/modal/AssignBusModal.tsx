@@ -31,6 +31,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
 
   
   const [filteredBuses, setFilteredBuses] = useState(buses); // use state for filter function
+  const [searchTerm, setSearchTerm] = useState(''); // use state for search function
 
   const dropdownItems = [
     {
@@ -61,7 +62,22 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
       {/*  Search Bar */}
       <header className='mb-4'>  
-        <SearchBar placeholder='Search Bus' ></SearchBar>
+        <SearchBar 
+          placeholder='Search Bus' 
+          value={searchTerm}
+          onChange={(e) => {
+            const text = e.target.value;
+            setSearchTerm(text);
+        
+            // Filter buses
+            const filtered = buses.filter((bus) =>
+              bus.busId.toLowerCase().includes(text.toLowerCase()) ||
+              bus.route.toLowerCase().includes(text.toLowerCase()) ||
+              bus.type.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredBuses(filtered);
+          }}
+        ></SearchBar>
       </header>
 
       {/* Title and Filter section */}

@@ -17,7 +17,10 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
 
   ];
 
-  const [filteredConductors, setFilteredConductors] = useState(conductors)
+  const [filteredConductors, setFilteredConductors] = useState(conductors);
+  const [searchTerm, setSearchTerm] = useState(''); // use state for search function
+
+
   const dropdownItems = [
     {
       name: 'Alphabetical',
@@ -33,7 +36,25 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
       {/*  Search Bar */}
       <header className='mb-4'>  
-        <SearchBar placeholder='Search Bus' ></SearchBar>
+        <SearchBar placeholder='Search Bus'
+          value={searchTerm}
+          onChange = {(e) => {
+            const text = e.target.value;
+            setSearchTerm(text);
+
+            // Filter buses
+            const filtered = conductors.filter((conductor) =>
+              conductor.name.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.job.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.contactNo.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.address.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredConductors(filtered);
+
+            
+          }}
+        
+        ></SearchBar>
       </header>
 
       {/* Title and Filter section */}
@@ -69,7 +90,7 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
                   <div className="text-sm text-gray-400">{conductor.job}</div>
                 </div>
                 <div className="text-sm text-gray-400">{conductor.contactNo}</div>
-                <div className="text-sm text-gray-400">{`${conductor.address} seats`}</div>
+                <div className="text-sm text-gray-400">{`${conductor.address}`}</div>
               </div>
             </div>
 

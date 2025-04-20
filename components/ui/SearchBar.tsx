@@ -2,7 +2,15 @@
 import React from 'react';
 import Image from 'next/image';
 
-const SearchBar = ({placeholder='Search',className='', onChange=()=>{}}) => {
+type SearchBarProps = {
+  placeholder?: string;
+  className?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+
+const SearchBar = ({placeholder='Search',className='', value = '', onChange} :SearchBarProps) => {
   return (
     <div className={`${className} relative`}>
       {/* Search Bar */}
