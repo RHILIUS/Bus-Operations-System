@@ -12,8 +12,4 @@ const BusOperationPage: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
 export default BusOperationPage;
-=======
-export default BusOperationPage;
->>>>>>> main
