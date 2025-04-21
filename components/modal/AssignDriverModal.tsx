@@ -39,10 +39,16 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
     setFilteredDrivers(sorted);
   };
 
+  const [filteredDrivers, setFilteredDrivers] = useState(drivers);
+  const [searchTerm, setSearchTerm] = useState(''); // use state for search function
+
   const dropdownItems = [
     {
       name: 'Alphabetical',
-      action: sortAlphabetically,
+      action: () => {
+        const sorted = [...filteredDrivers].sort((a, b) => a.name.localeCompare(b.name));
+        setFilteredDrivers(sorted);
+      },
     },
   ];
   
@@ -51,7 +57,26 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
       {/*  Search Bar */}
       <header className='mb-4'>  
-        <SearchBar placeholder='Search Bus' ></SearchBar>
+        <SearchBar placeholder='Search Bus' 
+          value={searchTerm}
+          onChange = {(e) => {
+            const text = e.target.value;
+            setSearchTerm(text);
+
+            // Filter buses
+            const filtered = drivers.filter((driver) =>
+              driver.name.toLowerCase().includes(text.toLowerCase()) ||
+              driver.job.toLowerCase().includes(text.toLowerCase()) ||
+              driver.contactNo.toLowerCase().includes(text.toLowerCase()) ||
+              driver.address.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredDrivers(filtered);
+
+            
+          }}
+        
+        
+        ></SearchBar>
       </header>
 
       {/* Title and Filter section */}
@@ -66,7 +91,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-      {filteredDrivers.map((driver, index) => (
+        {filteredDrivers.map((driver, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
@@ -86,7 +111,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
                   <div>{driver.name}</div>
                   <div className="text-sm text-gray-400">{driver.job}</div>
                 </div>
-                <div className="text-sm text-gray-400">{driver.contact_no}</div>
+                <div className="text-sm text-gray-400">{driver.contactNo}</div>
                 <div className="text-sm text-gray-400">{`${driver.address}`}</div>
               </div>
             </div>

@@ -39,10 +39,17 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
     setFilteredConductors(sorted);
   };
 
+  const [filteredConductors, setFilteredConductors] = useState(conductors);
+  const [searchTerm, setSearchTerm] = useState(''); // use state for search function
+
   const dropdownItems = [
     {
       name: 'Alphabetical',
-      action: sortAlphabetically,
+
+      action: () => {
+        const sorted = [...filteredConductors].sort((a, b) => a.name.localeCompare(b.name));
+        setFilteredConductors(sorted);
+      },
     },
   ];
 
@@ -51,7 +58,25 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
       {/*  Search Bar */}
       <header className='mb-4'>  
-        <SearchBar placeholder='Search Bus' ></SearchBar>
+        <SearchBar placeholder='Search Bus'
+          value={searchTerm}
+          onChange = {(e) => {
+            const text = e.target.value;
+            setSearchTerm(text);
+
+            // Filter buses
+            const filtered = conductors.filter((conductor) =>
+              conductor.name.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.job.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.contactNo.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.address.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredConductors(filtered);
+
+            
+          }}
+        
+        ></SearchBar>
       </header>
 
       {/* Title and Filter section */}
@@ -66,7 +91,7 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-         {filteredConductors.map((conductor, index) => (
+        {filteredConductors.map((conductor, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
@@ -86,7 +111,8 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
                   <div>{conductor.name}</div>
                   <div className="text-sm text-gray-400">{conductor.job}</div>
                 </div>
-                <div className="text-sm text-gray-400">{conductor.contact_no}</div>
+
+                <div className="text-sm text-gray-400">{conductor.contactNo}</div>
                 <div className="text-sm text-gray-400">{`${conductor.address}`}</div>
               </div>
             </div>

@@ -1,15 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cooper+Hewitt&display=swap');
 
+/* Flex container for the top part */
+.top-part {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Each item in the top part */
+  .top-item {
+    width: 100px;
+    height: 100px;
+  }
+
 .container {
   background-color: #f4f3fa;
   height: 100%;
   width: 100%;
   font-family: 'Cooper Hewitt', 'Segoe UI', sans-serif;
   padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   color: #1f2937; /* Default dark text */
 }
 

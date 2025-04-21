@@ -33,26 +33,30 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
     loadBuses();
   }, []);
 
+  
+  const [filteredBuses, setFilteredBuses] = useState(buses); // use state for filter function
+  const [searchTerm, setSearchTerm] = useState(''); // use state for search function
+
   const dropdownItems = [
     {
       name: 'Alphabetical',
       action: () => {
-        const sorted = [...buses].sort((a, b) => a.bus_id.localeCompare(b.bus_id));
+        const sorted = [...filteredBuses].sort((a, b) => a.busId.localeCompare(b.busId));
         setFilteredBuses(sorted);
       },
     },
     {
       name: 'Aircon',
       action: () => {
-        const filtered = buses.filter((bus) => bus.type.toLowerCase() === ('aircon'));
-        setFilteredBuses(filtered);
+        const airconOnly = buses.filter(bus => bus.type === 'Aircon');
+        setFilteredBuses(airconOnly);
       },
     },
     {
       name: 'Non-Aircon',
       action: () => {
-        const filtered = buses.filter((bus) => bus.type.toLowerCase().includes('non'));
-        setFilteredBuses(filtered);
+        const nonAirconOnly = buses.filter(bus => bus.type === 'Non-Aircon');
+        setFilteredBuses(nonAirconOnly);
       },
     },
   ];
@@ -62,7 +66,22 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
       {/*  Search Bar */}
       <header className='mb-4'>  
-        <SearchBar placeholder='Search Bus' ></SearchBar>
+        <SearchBar 
+          placeholder='Search Bus' 
+          value={searchTerm}
+          onChange={(e) => {
+            const text = e.target.value;
+            setSearchTerm(text);
+        
+            // Filter buses
+            const filtered = buses.filter((bus) =>
+              bus.busId.toLowerCase().includes(text.toLowerCase()) ||
+              bus.route.toLowerCase().includes(text.toLowerCase()) ||
+              bus.type.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredBuses(filtered);
+          }}
+        ></SearchBar>
       </header>
 
       {/* Title and Filter section */}
@@ -77,7 +96,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-      {filteredBuses.map((bus, index) => (
+        {filteredBuses.map((bus, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
