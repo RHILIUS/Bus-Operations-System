@@ -118,7 +118,6 @@ const BusRouteAssignmentPage: React.FC = () => {
               </div>
             </div>
 
-
             {/* Action buttons */}
             <div className={styles.actionButtons}>
               <button className={styles.clearButton}>CLEAR</button>
