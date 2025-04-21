@@ -1,9 +1,50 @@
 'use client';
 
+<<<<<<< HEAD
 import React from 'react';
 import styles from './bus-route-assignment.module.css';
 
 const BusRouteAssignmentPage: React.FC = () => {
+=======
+import React, { useEffect, useState } from 'react';
+import styles from './bus-route-assignment.module.css';
+
+interface BusRouteAssignment {
+  BusRouteAssignmentID: string;
+  BusAssignmentID: string;
+  Route: {
+    RouteName: string;
+    StartStop: {
+      StopName: string;
+    };
+    EndStop: {
+      StopName: string;
+    };
+  };
+  RegularBusAssignment: {
+    BusAssignment: {
+      BusID: string;
+    };
+  };
+}
+
+const BusRouteAssignmentPage: React.FC = () => {
+  const [assignments, setAssignments] = useState<BusRouteAssignment[]>([]);
+  const [selectedBusAssignmentID, setSelectedBusAssignmentID] = useState<number | null>(null);
+  const [selectedRouteID, setSelectedRouteID] = useState<string | null>(null);
+
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      const response = await fetch('/api/bus-route-assignment');
+      const data = await response.json();
+      console.log('Fetched assignments:', data); // Debugging
+      setAssignments(data);
+    };
+
+    fetchAssignments();
+  }, []);
+>>>>>>> main
   return (
     <div className="dashboard-content">
       <div className="center-box">
@@ -44,19 +85,53 @@ const BusRouteAssignmentPage: React.FC = () => {
             <div className={styles.formSection}>
               <div className={styles.formGroup}>
                 <img src="/assets/images/assignedbus.png" alt="Bus Icon" className={styles.icon} />
+<<<<<<< HEAD
                 <select className={styles.selectBlack}>
                   <option>-- Select Bus --</option>
+=======
+                <p><strong>Selected Bus Assignment ID:</strong> {selectedBusAssignmentID ?? "None"}</p>
+                <select
+                  className={styles.selectBlack}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSelectedBusAssignmentID(value === "" ? null : parseInt(value));
+                  }}
+                >
+                  <option value="">-- Select Bus --</option>
+                  {/* Replace these with your actual options */}
+                  <option value="1">Bus 1</option>
+                  <option value="2">Bus 2</option>
+>>>>>>> main
                 </select>
               </div>
 
               <div className={styles.formGroup}>
                 <img src="/assets/images/assignedroute.png" alt="Route Icon" className={styles.icon} />
+<<<<<<< HEAD
                 <select className={styles.selectBlack}>
                   <option>-- Select Route --</option>
+=======
+                <p><strong>Selected Route ID:</strong> {selectedRouteID ?? "None"}</p>
+                <select
+                  className={styles.selectBlack}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSelectedRouteID(value === "" ? null : value);
+                  }}
+                >
+                  <option value="">-- Select Route --</option>
+                  {/* Replace these with your actual options */}
+                  <option value="route-1">Route A</option>
+                  <option value="route-2">Route B</option>
+>>>>>>> main
                 </select>
               </div>
             </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
             {/* Action buttons */}
             <div className={styles.actionButtons}>
               <button className={styles.clearButton}>CLEAR</button>
@@ -69,20 +144,34 @@ const BusRouteAssignmentPage: React.FC = () => {
             <table className={styles.table}>
               <thead>
                 <tr className={styles.tableHeadRow}>
+<<<<<<< HEAD
                   <th>Bus Number</th>
                   <th>Route</th>
+=======
+                  <th>Bus ID</th>
+                  <th>Route Name</th>
+>>>>>>> main
                   <th>From</th>
                   <th>To</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
+<<<<<<< HEAD
                 {Array.from({ length: 5 }).map((_, idx) => (
                   <tr key={idx} className={styles.tableRow}>
                     <td>PQA-1004</td>
                     <td>1</td>
                     <td>PITX</td>
                     <td>SAN JOSE</td>
+=======
+                {assignments.map((assignment) => (
+                  <tr key={assignment.BusRouteAssignmentID} className={styles.tableRow}>
+                    <td>{assignment.RegularBusAssignment?.BusAssignment?.BusID}</td>
+                    <td>{assignment.Route?.RouteName}</td>
+                    <td>{assignment.Route?.StartStop?.StopName}</td>
+                    <td>{assignment.Route?.EndStop?.StopName}</td>
+>>>>>>> main
                     <td className={styles.actions}>
                       <button className={styles.editBtn}>
                         <img src="/assets/images/edit.png" alt="Edit" />
@@ -102,4 +191,8 @@ const BusRouteAssignmentPage: React.FC = () => {
   );
 };
 
+<<<<<<< HEAD
 export default BusRouteAssignmentPage;
+=======
+export default BusRouteAssignmentPage;
+>>>>>>> main

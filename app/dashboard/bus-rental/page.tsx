@@ -12,4 +12,8 @@ const BusRentalPage: React.FC = () => {
   );
 };
 
+<<<<<<< HEAD
 export default BusRentalPage;
+=======
+export default BusRentalPage;
+>>>>>>> main

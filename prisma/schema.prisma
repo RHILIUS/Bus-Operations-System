@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Quota_Policy {
-  QuotaPolicyID Int      @id @default(autoincrement())
+  QuotaPolicyID String @id
   StartDate     DateTime
   EndDate       DateTime
 
@@ -19,21 +19,20 @@ model Quota_Policy {
 }
 
 model Fixed {
-  FQuotaPolicyID Int @id 
+  FQuotaPolicyID String @id
   Quota Float 
 
   quotaPolicy Quota_Policy @relation(fields: [FQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)  
 }
 
 model Percentage {
-  PQuotaPolicyID Int      @id
+  PQuotaPolicyID String @id
   Percentage     Float
-
-  quotaPolicy Quota_Policy @relation(fields: [PQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)
+  quotaPolicy    Quota_Policy @relation(fields: [PQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)
 }
 
 model Stop {
-  StopID     Int           @id @default(autoincrement())
+  StopID     String @id
   StopName   String
   Location   String        // You could split this into latitude & longitude if needed
 
@@ -43,9 +42,9 @@ model Stop {
 }
 
 model Route {
-  RouteID       Int                 @id @default(autoincrement())
-  StartStopID   Int
-  EndStopID     Int
+  RouteID       String @id
+  StartStopID   String 
+  EndStopID     String 
   RouteName     String
 
   StartStop     Stop               @relation("StartStop", fields: [StartStopID], references: [StopID])
@@ -55,20 +54,19 @@ model Route {
 }
 
 model RouteStop {
-  RouteStopID Int  @id @default(autoincrement())
-  RouteID     Int
-  StopID      Int
+  RouteStopID String @id
+  RouteID     String 
+  StopID      String
   StopOrder   Int
-
   Route       Route @relation(fields: [RouteID], references: [RouteID])
   Stop        Stop  @relation(fields: [StopID], references: [StopID])
 
-  @@unique([RouteID, StopID]) // ensures no duplicate Stop in same Route
+  @@unique([RouteID, StopID])
 }
 
 model BusAssignment {
-  BusAssignmentID Int      @id @default(autoincrement())
-  BusID           Int      // Foreign key from API (no relation)
+  BusAssignmentID String @id
+  BusID           String 
   AssignmentDate  DateTime
   Battery         Boolean
   Lights          Boolean
@@ -87,25 +85,24 @@ model BusAssignment {
 }
 
 model RegularBusAssignment {
-  RegularBusAssignmentID Int  @id
-  DriverID               Int  // From API
-  ConductorID            Int  // From API
-  QuotaPolicyID          Int
+  RegularBusAssignmentID String @id
+  DriverID               String 
+  ConductorID            String 
+  QuotaPolicyID          String 
   Change                 Float
   TripRevenue            Float
-
-  BusAssignment BusAssignment @relation(fields: [RegularBusAssignmentID], references: [BusAssignmentID])
-  quotaPolicy          Quota_Policy         @relation(fields: [QuotaPolicyID], references: [QuotaPolicyID])
   BusRouteAssignments    BusRouteAssignment[]
+  quotaPolicy            Quota_Policy         @relation(fields: [QuotaPolicyID], references: [QuotaPolicyID])
+  BusAssignment          BusAssignment        @relation(fields: [RegularBusAssignmentID], references: [BusAssignmentID])
 
   @@index([DriverID])
   @@index([ConductorID])
 }
 
 model BusRouteAssignment {
-  BusRouteAssignmentID Int  @id @default(autoincrement())
-  BusAssignmentID       Int
-  RouteID               Int
+  BusRouteAssignmentID String @id
+  BusAssignmentID       String
+  RouteID               String
 
   Route                Route                 @relation(fields: [RouteID], references: [RouteID])
   RegularBusAssignment RegularBusAssignment  @relation(fields: [BusAssignmentID], references: [RegularBusAssignmentID])
