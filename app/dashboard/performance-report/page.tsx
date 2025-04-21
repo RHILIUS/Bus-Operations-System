@@ -12,8 +12,4 @@ const PerformanceReportPage: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
 export default PerformanceReportPage;
-=======
-export default PerformanceReportPage;
->>>>>>> main

@@ -1,16 +1,5 @@
 'use client';
 
-<<<<<<< HEAD
-import React from 'react';
-
-const BusAssignmentPage: React.FC = () => {
-  return (
-    <div className="dashboard-content">
-      <div className="center-box">
-        This is dedicated for BUS ASSIGNMENT
-      </div>
-    </div>
-=======
 import React, { useState } from 'react';
 import AssignBusModal from '@/components/modal/AssignBusModal';
 import AssignDriverModal from '@/components/modal/AssignDriverModal';
@@ -67,12 +56,7 @@ const BusAssignmentPage: React.FC = () => {
 
 
   </div>
->>>>>>> main
   );
 };
 
 export default BusAssignmentPage;
-<<<<<<< HEAD
-
-=======
->>>>>>> main

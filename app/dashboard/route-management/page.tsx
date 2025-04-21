@@ -12,8 +12,4 @@ const RouteManagementPage: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
 export default RouteManagementPage;
-=======
-export default RouteManagementPage;
->>>>>>> main

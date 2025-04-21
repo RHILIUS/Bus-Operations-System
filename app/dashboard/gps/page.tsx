@@ -12,8 +12,4 @@ const GPSPage: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
 export default GPSPage;
-=======
-export default GPSPage;
->>>>>>> main
