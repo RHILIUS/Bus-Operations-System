@@ -36,7 +36,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
       {/*  Search Bar */}
       <header className='mb-4'>  
-        <SearchBar placeholder='Search Bus' 
+        <SearchBar placeholder='Search Driver' 
           value={searchTerm}
           onChange = {(e) => {
             const text = e.target.value;

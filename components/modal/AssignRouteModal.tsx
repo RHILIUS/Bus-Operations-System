@@ -6,29 +6,53 @@ import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
 
 
-const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
+const AssignRouteModal = ({ onClose }: { onClose: () => void }) => {
 
   // Sample data
-  const conductors = [  
-    { name: 'John Mark Garces', job: 'Conductor', contactNo: '09123456789' ,address: '#1 JP Rizal St. Bagong Silang Caloocan City', image: null},
-    { name: 'Rhian Jolius Baldomar', job: 'Conductor', contactNo: '09987654321' ,address: '#1 JP Rizal St. Bagong Silangan Quezon City', image: null},
-    { name: 'Yuan Exequiel Evangelista', job: 'Conductor', contactNo: '09786389221' ,address: '#1 JP Rizal St. Holy Spirit Quezon City', image: null},
-    { name: 'Richard Jason Aquino', job: 'Conductor', contactNo: '09786565432' ,address: '#1 Don Fabian St. Commonwealth Quezon City', image: null},
+  const routes = [  
+    { routeID: 1 , routeName: 'Sapang Palay - PITX', isActive: true, startPoint: 'Sapang Palay', endPoint: 'PITX', roundTrip: true,  noOfBus: 5 , image: null},
+    { routeID: 2 ,routeName: 'Sapang Palay - Divisoria',isActive: true, startPoint: 'Sapang Palay', endPoint: 'Divisoria', roundTrip: false, noOfBus: 12, image: null},
+    { routeID: 3 ,routeName: 'Fairview - Litex', isActive: true, startPoint: 'Fairview, Quezon City', endPoint: 'Litex Commonwealth', roundTrip: true, noOfBus: 20, image: null},
 
+
+   
+  
   ];
 
-  const [filteredConductors, setFilteredConductors] = useState(conductors);
+  
+  const [filteredRoutes, setFilteredRoutes] = useState(routes); // use state for filter function
   const [searchTerm, setSearchTerm] = useState(''); // use state for search function
-
 
   const dropdownItems = [
     {
       name: 'Alphabetical',
       action: () => {
-        const sorted = [...filteredConductors].sort((a, b) => a.name.localeCompare(b.name));
-        setFilteredConductors(sorted);
+        const sorted = [...filteredRoutes].sort((a, b) => a.routeName.localeCompare(b.routeName));
+        setFilteredRoutes(sorted);
       },
     },
+
+    {
+      name: 'Round Trip Only',
+      action: () => {
+        const filtered = routes.filter(route => route.roundTrip === true);
+        setFilteredRoutes(filtered);
+      },
+    },
+    {
+      name: 'One-Way Only',
+      action: () => {
+        const filtered = routes.filter(route => route.roundTrip === false);
+        setFilteredRoutes(filtered);
+      },
+    },
+    {
+      name: 'Show All',
+      action: () => {
+        setFilteredRoutes(routes);
+      },
+    }
+   
   ];
   
   return (
@@ -36,30 +60,27 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
     <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
       {/*  Search Bar */}
       <header className='mb-4'>  
-        <SearchBar placeholder='Search Conductor'
+        <SearchBar 
+          placeholder='Search Route' 
           value={searchTerm}
-          onChange = {(e) => {
+          onChange={(e) => {
             const text = e.target.value;
             setSearchTerm(text);
-
-            // Filter buses
-            const filtered = conductors.filter((conductor) =>
-              conductor.name.toLowerCase().includes(text.toLowerCase()) ||
-              conductor.job.toLowerCase().includes(text.toLowerCase()) ||
-              conductor.contactNo.toLowerCase().includes(text.toLowerCase()) ||
-              conductor.address.toLowerCase().includes(text.toLowerCase())
-            );
-            setFilteredConductors(filtered);
-
-            
-          }}
         
+            // Filter buses
+            const filtered = routes.filter((route) =>
+              route.routeName.toLowerCase().includes(text.toLowerCase()) ||
+              route.startPoint.toLowerCase().includes(text.toLowerCase()) ||
+              route.endPoint.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredRoutes(filtered);
+          }}
         ></SearchBar>
       </header>
 
       {/* Title and Filter section */}
       <nav className='px-3 flex justify-between items-center mb-2'>
-        <div className='font-medium text-lg'>Available Conductors</div>
+        <div className='font-medium text-lg'>Routes</div>
         {/* Filter */}
         <div className='flex items-center'>
           <div className='font-medium mr-3'>Filter</div>
@@ -69,7 +90,7 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
 
       {/* Bus List Section */}
       <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-        {filteredConductors.map((conductor, index) => (
+        {filteredRoutes.map((route, index) => (
           // Each Bus
           <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
             {/* Bus Info */}
@@ -77,7 +98,7 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
               {/* Bus Icon */}
               <div className="bg-gray-200 rounded-2xl h-20 w-20 flex items-center relative overflow-hidden">
                 <Image
-                  src={conductor.image || '/assets/images/bus-fallback.png'}
+                  src={route.image || '/assets/images/bus-fallback.png'}
                   alt="Bus"
                   className="object-cover"
                   fill
@@ -86,11 +107,11 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
               {/* Bus Details */}
               <div>
                 <div className="flex gap-2 items-center">
-                  <div>{conductor.name}</div>
-                  <div className="text-sm text-gray-400">{conductor.job}</div>
+                  <div>{route.routeName}</div>
+                  <div className="text-sm text-gray-400">{route.roundTrip? 'Round Trip': 'One-way Trip'}</div>
                 </div>
-                <div className="text-sm text-gray-400">{conductor.contactNo}</div>
-                <div className="text-sm text-gray-400">{`${conductor.address}`}</div>
+                <div className="text-sm text-gray-400">{`${route.noOfBus} buses`}</div>
+                <div className="text-sm text-gray-400">{route.isActive? 'Active': 'Inactive'}</div>
               </div>
             </div>
 
@@ -113,4 +134,4 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-export default AssignConductorModal;
+export default AssignRouteModal;
