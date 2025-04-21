@@ -12,8 +12,4 @@ const QuotaAssignmentPage: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
 export default QuotaAssignmentPage;
-=======
-export default QuotaAssignmentPage;
->>>>>>> main
