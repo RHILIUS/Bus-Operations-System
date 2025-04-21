@@ -40,8 +40,8 @@ body {
   background-color: #f0f0f0;
   overflow-y: auto;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; */
+  /* align-items: center; */
 }
 
 /* Sidebar */
