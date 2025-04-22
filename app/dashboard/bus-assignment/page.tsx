@@ -64,6 +64,9 @@ const BusAssignmentPage: React.FC = () => {
       <div className="center-box">
         <div className={styles.container}>
 
+          {/* Title */}
+          <h2 className={styles.assignmentTitle}>CREATE ASSIGNMENT</h2>
+
           {/* Assignment Boxes */}
           <div className={styles.topPart}>
             {/* Bus Box */}
@@ -76,9 +79,7 @@ const BusAssignmentPage: React.FC = () => {
                 <button className={styles.saveButton} onClick={() => setShowAssignBusModal(true)}>
                   + Assign Bus
                 </button>
-                <input type="text" placeholder="Bus Number" />
-                <input type="text" placeholder="Route" />
-                <input type="text" placeholder="Status" />
+                <input type="text" placeholder="Bus ID" />
               </div>
             </div>
 
@@ -93,8 +94,6 @@ const BusAssignmentPage: React.FC = () => {
                   + Assign Driver
                 </button>
                 <input type="text" placeholder="Name" />
-                <input type="text" placeholder="Status" />
-                <input type="text" placeholder="Contact Number" />
               </div>
             </div>
 
@@ -109,26 +108,61 @@ const BusAssignmentPage: React.FC = () => {
                   + Assign Conductor
                 </button>
                 <input type="text" placeholder="Name" />
-                <input type="text" placeholder="Status" />
-                <input type="text" placeholder="Contact Number" />
               </div>
             </div>
           </div>
 
-          {/* Add and Clear Buttons */}
-          <div className={styles.buttonRow}>
-            <button className={styles.clearButton} onClick={handleClear}>CLEAR</button>
-            <button className={styles.addButton} onClick={handleAdd}>ADD</button> {/* Separate style */}
-          </div>
+            {/* Bottom Row: Route + Quota + Buttons */}
+            <div className={styles.bottomRow}>
+              {/* Route Box */}
+              <div className={styles.topItem}>
+                <div className={styles.assignmentBox}>
+                  <div className={styles.tab}>
+                    <img src="/assets/images/assignedroute.png" alt="Route Icon" className={styles.tabIcon} />
+                    Route
+                  </div>
+                  <button className={styles.saveButton}>
+                    + Assign Route
+                  </button>
+                  <input type="text" placeholder="Route Name" />
+                </div>
+              </div>
+
+              {/* Quota Box */}
+              <div className={styles.topItem}>
+                <div className={styles.assignmentBox}>
+                  <div className={styles.tab}>
+                    <img src="/assets/images/philippine-peso.png" alt="Quota Icon" className={styles.tabIcon} />
+                    Quota
+                  </div>
+                  <select className={styles.selectInput}>
+                    <option value="">Select Quota Type</option>
+                    <option value="daily">Fixed</option>
+                    <option value="weekly">Percentage</option>
+                  </select>
+                  <input type="text" placeholder="Value" />
+                </div>
+              </div>
+
+              {/* Buttons */}
+              <div className={styles.buttonColumn}>
+                <button className={styles.clearButton}>Clear</button>
+                <button className={styles.addButton}>Add</button>
+              </div>
+            </div>
+
 
           {/* Table Part */}
           <div className={styles.dataTable}>
             <table className={styles.table}>
               <thead>
                 <tr className={styles.tableHeadRow}>
+                  <th>Assignment</th>
                   <th>Bus ID</th>
                   <th>Driver</th>
                   <th>Conductor</th>
+                  <th>Route</th>
+                  <th>Quota</th>
                   <th>Actions</th>
                 </tr>
               </thead>
