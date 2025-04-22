@@ -26,7 +26,7 @@ const AssignBusModal = ({
     {
       name: 'Alphabetical',
       action: () => {
-        const sorted = [...filteredBuses].sort((a, b) => a.bus_id.localeCompare(b.bus_id));
+        const sorted = [...filteredBuses].sort((a, b) => a.busId.localeCompare(b.busId));
         setFilteredBuses(sorted);
       },
     },
