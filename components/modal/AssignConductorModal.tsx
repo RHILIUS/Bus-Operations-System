@@ -27,14 +27,13 @@ const AssignConductorModal = ({
   const dropdownItems = [
     {
       name: 'Alphabetical',
-
       action: () => {
         const sorted = [...filteredConductors].sort((a, b) => a.name.localeCompare(b.name));
         setFilteredConductors(sorted);
       },
     },
   ];
-
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/20">
       <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-xl p-4 flex flex-col border border-gray-300">
