@@ -1,9 +1,19 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
+import { fetchConductors } from '../../lib/fetchConductors';
+
+interface Conductor {
+  conductor_id: string;
+  name: string;
+  job: string;
+  contactNo: string;
+  address: string;
+  image: string | null;
+}
 
 const AssignConductorModal = ({ 
   onClose,
@@ -14,12 +24,22 @@ const AssignConductorModal = ({
 }
   
 ) => {
-  const conductors = [
-    { name: 'John Mark Garces', job: 'Conductor', contactNo: '09123456789', address: '#1 JP Rizal St. Bagong Silang Caloocan City', image: null },
-    { name: 'Rhian Jolius Baldomar', job: 'Conductor', contactNo: '09987654321', address: '#1 JP Rizal St. Bagong Silangan Quezon City', image: null },
-    { name: 'Yuan Exequiel Evangelista', job: 'Conductor', contactNo: '09786389221', address: '#1 JP Rizal St. Holy Spirit Quezon City', image: null },
-    { name: 'Richard Jason Aquino', job: 'Conductor', contactNo: '09786565432', address: '#1 Don Fabian St. Commonwealth Quezon City', image: null },
-  ];
+
+  const [conductors, setConductors] = useState<Conductor[]>([]);
+
+  useEffect(() => {
+    const loadConductors = async () => {
+      try {
+        const data = await fetchConductors();
+        setConductors(data);
+        setFilteredConductors(data);
+      } catch (error) {
+        console.error('Error fetching conductors:', error);
+      }
+    };
+
+    loadConductors();
+  }, []);
 
   const [filteredConductors, setFilteredConductors] = useState(conductors);
   const [searchTerm, setSearchTerm] = useState('');
