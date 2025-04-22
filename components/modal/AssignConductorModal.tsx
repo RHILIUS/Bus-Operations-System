@@ -5,7 +5,15 @@ import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
 
-const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
+const AssignConductorModal = ({ 
+  onClose,
+  onAssign, 
+}: { 
+  onClose: () => void;
+  onAssign: (conductor: any) => void; 
+}
+  
+) => {
   const conductors = [
     { name: 'John Mark Garces', job: 'Conductor', contactNo: '09123456789', address: '#1 JP Rizal St. Bagong Silang Caloocan City', image: null },
     { name: 'Rhian Jolius Baldomar', job: 'Conductor', contactNo: '09987654321', address: '#1 JP Rizal St. Bagong Silangan Quezon City', image: null },
@@ -26,43 +34,6 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
     },
   ];
   
-  return (
-    // Modal
-    <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
-      {/*  Search Bar */}
-      <header className='mb-4'>  
-        <SearchBar placeholder='Search Conductor'
-          value={searchTerm}
-          onChange = {(e) => {
-            const text = e.target.value;
-            setSearchTerm(text);
-
-            // Filter buses
-            const filtered = conductors.filter((conductor) =>
-              conductor.name.toLowerCase().includes(text.toLowerCase()) ||
-              conductor.job.toLowerCase().includes(text.toLowerCase()) ||
-              conductor.contactNo.toLowerCase().includes(text.toLowerCase()) ||
-              conductor.address.toLowerCase().includes(text.toLowerCase())
-            );
-            setFilteredConductors(filtered);
-
-            
-          }}
-        
-        ></SearchBar>
-      </header>
-
-      {/* Title and Filter section */}
-      <nav className='px-3 flex justify-between items-center mb-2'>
-        <div className='font-medium text-lg'>Available Conductors</div>
-        {/* Filter */}
-        <div className='flex items-center'>
-          <div className='font-medium mr-3'>Filter</div>
-          <DropdownButton dropdownItems={dropdownItems}></DropdownButton>
-        </div>
-      </nav>
-
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/20">
       <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-xl p-4 flex flex-col border border-gray-300">
@@ -111,7 +82,7 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
                     fill
                   />
                 </div>
-                <div>
+                <div className='flex flex-col items-start'>
                   <div className="flex gap-2 items-center">
                     <div>{conductor.name}</div>
                     <div className="text-sm text-gray-400">{conductor.job}</div>
@@ -120,7 +91,8 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
                   <div className="text-sm text-gray-400">{conductor.address}</div>
                 </div>
               </div>
-              <Button text="Assign" />
+              <Button text="Assign" 
+              onClick={() => onAssign(conductor)}/>
             </article>
           ))}
         </section>

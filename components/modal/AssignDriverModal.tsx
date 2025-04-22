@@ -5,7 +5,15 @@ import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
 
-const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
+const AssignDriverModal = ({ 
+  onClose,
+  onAssign, 
+}: { 
+  onClose: () => void;
+  onAssign: (driver: any) => void; 
+}
+
+) => {
   // Sample data
   const drivers = [
     { name: 'John Mark Garces', job: 'Driver', contactNo: '09123456789', address: '#1 JP Rizal St. Bagong Silang Caloocan City', image: null },
@@ -27,18 +35,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
     },
   ];
 
-  return (
-    // Modal
-    <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
-      {/*  Search Bar */}
-      <header className='mb-4'>  
-        <SearchBar placeholder='Search Driver' 
-          value={searchTerm}
-          onChange = {(e) => {
-            const text = e.target.value;
-            setSearchTerm(text);
-
-
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/20">
       <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
@@ -89,7 +86,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
                   />
                 </div>
                 {/* Driver Details */}
-                <div>
+                <div className='flex flex-col items-start'>
                   <div className="flex gap-2 items-center">
                     <div>{driver.name}</div>
                     <div className="text-sm text-gray-400">{driver.job}</div>
@@ -102,6 +99,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
               {/* Assign Button */}
               <Button
                 text='Assign'
+                onClick = {() => onAssign(driver)}
               />
             </article>
           ))}
