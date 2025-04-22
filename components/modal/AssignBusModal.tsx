@@ -17,7 +17,6 @@ interface Bus {
 const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
 
   const [buses, setBuses] = useState<Bus[]>([]);
-  const [filteredBuses, setFilteredBuses] = useState<Bus[]>([]);
 
   useEffect(() => {
     const loadBuses = async () => {
@@ -41,7 +40,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
     {
       name: 'Alphabetical',
       action: () => {
-        const sorted = [...filteredBuses].sort((a, b) => a.busId.localeCompare(b.busId));
+        const sorted = [...filteredBuses].sort((a, b) => a.bus_id.localeCompare(b.bus_id));
         setFilteredBuses(sorted);
       },
     },
@@ -75,7 +74,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
         
             // Filter buses
             const filtered = buses.filter((bus) =>
-              bus.busId.toLowerCase().includes(text.toLowerCase()) ||
+              bus.bus_id.toLowerCase().includes(text.toLowerCase()) ||
               bus.route.toLowerCase().includes(text.toLowerCase()) ||
               bus.type.toLowerCase().includes(text.toLowerCase())
             );

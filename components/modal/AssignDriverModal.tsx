@@ -18,7 +18,6 @@ interface Driver {
 const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
 
   const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [filteredDrivers, setFilteredDrivers] = useState<Driver[]>([]);
 
   useEffect(() => {
     const loadDrivers = async () => {
@@ -67,12 +66,11 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
             const filtered = drivers.filter((driver) =>
               driver.name.toLowerCase().includes(text.toLowerCase()) ||
               driver.job.toLowerCase().includes(text.toLowerCase()) ||
-              driver.contactNo.toLowerCase().includes(text.toLowerCase()) ||
+              driver.contact_no.toLowerCase().includes(text.toLowerCase()) ||
               driver.address.toLowerCase().includes(text.toLowerCase())
             );
             setFilteredDrivers(filtered);
 
-            
           }}
         
         
@@ -111,7 +109,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
                   <div>{driver.name}</div>
                   <div className="text-sm text-gray-400">{driver.job}</div>
                 </div>
-                <div className="text-sm text-gray-400">{driver.contactNo}</div>
+                <div className="text-sm text-gray-400">{driver.contact_no}</div>
                 <div className="text-sm text-gray-400">{`${driver.address}`}</div>
               </div>
             </div>
