@@ -105,7 +105,7 @@ const AssignRouteModal = ({ onClose }: { onClose: () => void }) => {
                 />
               </div>
               {/* Bus Details */}
-              <div>
+              <div className='flex flex-col items-start'>
                 <div className="flex gap-2 items-center">
                   <div>{route.routeName}</div>
                   <div className="text-sm text-gray-400">{route.roundTrip? 'Round Trip': 'One-way Trip'}</div>

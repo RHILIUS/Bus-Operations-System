@@ -85,7 +85,7 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
                 />
               </div>
               {/* Bus Details */}
-              <div>
+              <div className='flex flex-col items-start'>
                 <div className="flex gap-2 items-center">
                   <div>{driver.name}</div>
                   <div className="text-sm text-gray-400">{driver.job}</div>

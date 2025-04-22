@@ -107,7 +107,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
                 />
               </div>
               {/* Bus Details */}
-              <div>
+              <div className='flex flex-col items-start'>
                 <div className="flex gap-2 items-center">
                   <div>{bus.busId}</div>
                   <div className="text-sm text-gray-400">{bus.route}</div>
@@ -120,6 +120,10 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
             {/* Assign Button */}
             <Button
               text='Assign'
+              onClick={()=>{
+                alert(`${bus.busId} is assigned`);
+                onClose();
+              }}
             ></Button>
                   
           </article>
