@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import AssignBusModal from '@/components/modal/AssignBusModal';
 import AssignDriverModal from '@/components/modal/AssignDriverModal';
 import AssignConductorModal from '@/components/modal/AssignConductorModal';
+import AssignRouteModal from '@/components/modal/AssignRouteModal';
 import Button from "@/components/ui/Button";
-import styles from './bus-assignment.module.css'; // Create a CSS module for styling
+import styles from './bus-assignment.module.css';
 
 interface RegularBusAssignment {
   RegularBusAssignmentID: string;
@@ -16,132 +17,176 @@ interface RegularBusAssignment {
   } | null;
 }
 
-
 const BusAssignmentPage: React.FC = () => {
-
   const [busAssignments, setAssignments] = useState<RegularBusAssignment[]>([]);
   const [showAssignBusModal, setShowAssignBusModal] = useState(false);
   const [showAssignDriverModal, setShowAssignDriverModal] = useState(false);
   const [showAssignConductorModal, setShowAssignConductorModal] = useState(false);
 
+  // current record
+  const [selectedBus, setSelectedBus] = useState(null);
+  const [selectedDriver, setSelectedDriver] = useState(null);
+  const [selectedConductor, setSelectedConductor] = useState(null);
+
+
   useEffect(() => {
-      const fetchAssignments = async () => {
-        try {
-          const response = await fetch('/api/bus-assignment');
-          if (!response.ok) {
-            throw new Error(`Failed to fetch assignments: ${response.statusText}`);
-          }
-          const data = await response.json();
-          console.log('Fetched assignments:', data); // Debugging
-          setAssignments(data);
-        } catch (error) {
-          console.error('Error fetching assignments:', error);
+    const fetchAssignments = async () => {
+      try {
+        const response = await fetch('/api/bus-assignment');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch assignments: ${response.statusText}`);
         }
-      };
-    
-      fetchAssignments();
-    }, []);
+        const data = await response.json();
+        console.log('Fetched assignments:', data);
+        setAssignments(data);
+      } catch (error) {
+        console.error('Error fetching assignments:', error);
+      }
+    };
+
+    fetchAssignments();
+  }, []);
+
+  const handleClear = () => {
+    // Clear logic for resetting form values or handling state
+    console.log('Clear button clicked');
+  };
+
+  const handleAdd = () => {
+    // Add logic for adding data to the table will be implemented later
+    console.log('Add button clicked');
+  };
 
   return (
+
+
     <div className="dashboard-content">
       <div className="center-box">
         <div className={styles.container}>
 
-          {/* Show Modal Button */}
-          {/* <Button text='Assign Bus' onClick={()=> setShowAssignBusModal(true)}   />
-          <Button bgColor='bg-red-500' text='Assign Driver' onClick={()=> setShowAssignDriverModal(true)} />
-          <Button bgColor='bg-yellow-500' text='Assign Conductor' onClick={()=> setShowAssignConductorModal(true)} /> */}
-
-
-          {/* Overlay and Modal */}
-
-          {/* Assign Bus */}
-          {/* {showAssignBusModal && (
-            <div className="fixed inset-0 flex justify-center items-center z-50 pointer-events-none">
-              <div className="absolute inset-0 bg-black opacity-40"></div>
-              <div className="relative pointer-events-auto">
-                <AssignBusModal onClose={() => setShowAssignBusModal(false)} />
+          {/* Assignment Boxes */}
+          <div className={styles.topPart}>
+            {/* Bus Box */}
+            <div className={styles.topItem}>
+              <div className={styles.assignmentBox}>
+                <div className={styles.tab}>
+                  <img src="/assets/images/assignedbus.png" alt="Bus Icon" className={styles.tabIcon} />
+                  Bus
+                </div>
+                <button className={styles.saveButton} onClick={() => setShowAssignBusModal(true)}>
+                  + Assign Bus
+                </button>
+                <input type="text" placeholder="Bus Number" />
+                <input type="text" placeholder="Route" />
+                <input type="text" placeholder="Status" />
               </div>
             </div>
-          )} */}
 
-          {/* Assign Driver */}
-          {/* {showAssignDriverModal && (
-            <div className="fixed inset-0 flex justify-center items-center z-50 pointer-events-none">
-              <div className="absolute inset-0 bg-black opacity-40"></div>
-              <div className="relative pointer-events-auto">
-                <AssignDriverModal onClose={() => setShowAssignDriverModal(false)} />
+            {/* Driver Box */}
+            <div className={styles.topItem}>
+              <div className={styles.assignmentBox}>
+                <div className={styles.tab}>
+                  <img src="/assets/images/bus-driver.png" alt="Driver Icon" className={styles.tabIcon} />
+                  Driver
+                </div>
+                <button className={styles.saveButton} onClick={() => setShowAssignDriverModal(true)}>
+                  + Assign Driver
+                </button>
+                <input type="text" placeholder="Name" />
+                <input type="text" placeholder="Status" />
+                <input type="text" placeholder="Contact Number" />
               </div>
             </div>
-          )} */}
 
-          {/* Assign Conductor */}
-          {/* {showAssignConductorModal && (
-            <div className="fixed inset-0 flex justify-center items-center z-50 pointer-events-none">
-              <div className="absolute inset-0 bg-black opacity-40"></div>
-              <div className="relative pointer-events-auto">
-                <AssignConductorModal onClose={() => setShowAssignConductorModal(false)} />
+            {/* Conductor Box */}
+            <div className={styles.topItem}>
+              <div className={styles.assignmentBox}>
+                <div className={styles.tab}>
+                  <img src="/assets/images/bus-conductor.png" alt="Conductor Icon" className={styles.tabIcon} />
+                  Conductor
+                </div>
+                <button className={styles.saveButton} onClick={() => setShowAssignConductorModal(true)}>
+                  + Assign Conductor
+                </button>
+                <input type="text" placeholder="Name" />
+                <input type="text" placeholder="Status" />
+                <input type="text" placeholder="Contact Number" />
               </div>
             </div>
-          )} */}
-
-          
-        
-        {/* Top Part */}
-        <div className={styles.topPart}>
-          {/* Bus */}
-          <div className={styles.topItem}>
-            <h3>Bus</h3>
-            {/* Add content here */}
           </div>
 
-          {/* Driver */}
-          <div className={styles.topItem}>
-            <h3>Driver</h3>
-            {/* Add content here */}
+          {/* Add and Clear Buttons */}
+          <div className={styles.buttonRow}>
+            <button className={styles.clearButton} onClick={handleClear}>CLEAR</button>
+            <button className={styles.addButton} onClick={handleAdd}>ADD</button> {/* Separate style */}
           </div>
 
-          {/* Conductor */}
-          <div className={styles.topItem}>
-            <h3>Conductor</h3>
-            {/* Add content here */}
-          </div>
-        </div>
-        
-        {/* Table Part */}
-        <div className={styles.dataTable}>
-          <table className={styles.table}>
-            <thead>
-              <tr className={styles.tableHeadRow}>
-                <th>Bus ID</th>
-                <th>Driver</th>
-                <th>Conductor</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {busAssignments.map((assignment) => (
-                <tr key={assignment.RegularBusAssignmentID} className={styles.tableRow}>
-                  <td>{assignment.BusAssignment?.BusID}</td>
-                  <td>{assignment.DriverID}</td>
-                  <td>{assignment.ConductorID}</td>
-                  <td className={styles.actions}>
-                    <button className={styles.editBtn}>
-                      <img src="/assets/images/edit.png" alt="Edit" />
-                    </button>
-                    <button className={styles.deleteBtn}>
-                      <img src="/assets/images/delete.png" alt="Delete" />
-                    </button>
-                  </td>
+          {/* Table Part */}
+          <div className={styles.dataTable}>
+            <table className={styles.table}>
+              <thead>
+                <tr className={styles.tableHeadRow}>
+                  <th>Bus ID</th>
+                  <th>Driver</th>
+                  <th>Conductor</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {busAssignments.map((assignment) => (
+                  <tr key={assignment.RegularBusAssignmentID} className={styles.tableRow}>
+                    <td>{assignment.BusAssignment?.BusID}</td>
+                    <td>{assignment.DriverID}</td>
+                    <td>{assignment.ConductorID}</td>
+                    <td className={styles.actions}>
+                      <button className={styles.editBtn}>
+                        <img src="/assets/images/edit.png" alt="Edit" />
+                      </button>
+                      <button className={styles.deleteBtn}>
+                        <img src="/assets/images/delete.png" alt="Delete" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
+          {/* Modals */}
+          {showAssignBusModal && (
+            <AssignBusModal 
+              onClose={() => setShowAssignBusModal(false) } 
+              onAssign={(bus) => {
+                alert(`Assigned Bus: ${bus.busId}`);
+                setSelectedBus(bus); // store or use it as needed
+                setShowAssignBusModal(false); // close modal
+              }}
+            />
+          )}
+          {showAssignDriverModal && (
+            <AssignDriverModal 
+              onClose={() => setShowAssignDriverModal(false)} 
+              onAssign={(driver) => {
+                alert(`Assigned Conductor: ${driver.name}`);
+                setSelectedDriver(driver); // store or use it as needed
+                setShowAssignDriverModal(false); // close modal
+              }}
+            />
+          )}
+          {showAssignConductorModal && (
+            <AssignConductorModal 
+              onClose={() => setShowAssignConductorModal(false)}
+              onAssign={(conductor) => {
+                alert(`Assigned Conductor: ${conductor.name}`);
+                setSelectedConductor(conductor); // store or use it as needed
+                setShowAssignConductorModal(false); // close modal
+              }} 
+            />
+          )}
+
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 
