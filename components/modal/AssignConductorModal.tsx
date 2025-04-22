@@ -25,6 +25,43 @@ const AssignConductorModal = ({ onClose }: { onClose: () => void }) => {
       },
     },
   ];
+  
+  return (
+    // Modal
+    <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
+      {/*  Search Bar */}
+      <header className='mb-4'>  
+        <SearchBar placeholder='Search Conductor'
+          value={searchTerm}
+          onChange = {(e) => {
+            const text = e.target.value;
+            setSearchTerm(text);
+
+            // Filter buses
+            const filtered = conductors.filter((conductor) =>
+              conductor.name.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.job.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.contactNo.toLowerCase().includes(text.toLowerCase()) ||
+              conductor.address.toLowerCase().includes(text.toLowerCase())
+            );
+            setFilteredConductors(filtered);
+
+            
+          }}
+        
+        ></SearchBar>
+      </header>
+
+      {/* Title and Filter section */}
+      <nav className='px-3 flex justify-between items-center mb-2'>
+        <div className='font-medium text-lg'>Available Conductors</div>
+        {/* Filter */}
+        <div className='flex items-center'>
+          <div className='font-medium mr-3'>Filter</div>
+          <DropdownButton dropdownItems={dropdownItems}></DropdownButton>
+        </div>
+      </nav>
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/20">

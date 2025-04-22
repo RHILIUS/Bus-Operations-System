@@ -28,6 +28,18 @@ const AssignDriverModal = ({ onClose }: { onClose: () => void }) => {
   ];
 
   return (
+    // Modal
+    <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
+      {/*  Search Bar */}
+      <header className='mb-4'>  
+        <SearchBar placeholder='Search Driver' 
+          value={searchTerm}
+          onChange = {(e) => {
+            const text = e.target.value;
+            setSearchTerm(text);
+
+
+  return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/20">
       <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
         {/*  Search Bar */}
