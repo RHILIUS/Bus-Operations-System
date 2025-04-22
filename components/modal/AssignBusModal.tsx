@@ -5,7 +5,13 @@ import Button from '@/components/ui/Button';
 import SearchBar from '@/components/ui/SearchBar';
 import DropdownButton from '../ui/DropdownButton';
 
-const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
+const AssignBusModal = ({ 
+  onClose,
+  onAssign, 
+}: { 
+  onClose: () => void;
+  onAssign: (bus: any) => void; 
+}) => {
   const buses = [
     { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null },
     { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null },
@@ -88,7 +94,7 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
                   />
                 </div>
                 {/* Bus Details */}
-                <div>
+                <div className='flex flex-col items-start'>
                   <div className="flex gap-2 items-center">
                     <div>{bus.busId}</div>
                     <div className="text-sm text-gray-400">{bus.route}</div>
@@ -98,7 +104,11 @@ const AssignBusModal = ({ onClose }: { onClose: () => void }) => {
                 </div>
               </div>
               {/* Assign Button */}
-              <Button text="Assign" />
+              <Button 
+                text="Assign"
+                onClick={() => onAssign(bus)}
+              />
+              
             </article>
           ))}
         </section>
