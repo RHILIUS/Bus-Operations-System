@@ -23,6 +23,12 @@ const BusAssignmentPage: React.FC = () => {
   const [showAssignDriverModal, setShowAssignDriverModal] = useState(false);
   const [showAssignConductorModal, setShowAssignConductorModal] = useState(false);
 
+  // current record
+  const [selectedBus, setSelectedBus] = useState(null);
+  const [selectedDriver, setSelectedDriver] = useState(null);
+  const [selectedConductor, setSelectedConductor] = useState(null);
+
+
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
@@ -52,6 +58,8 @@ const BusAssignmentPage: React.FC = () => {
   };
 
   return (
+
+
     <div className="dashboard-content">
       <div className="center-box">
         <div className={styles.container}>
@@ -146,13 +154,34 @@ const BusAssignmentPage: React.FC = () => {
 
           {/* Modals */}
           {showAssignBusModal && (
-            <AssignBusModal onClose={() => setShowAssignBusModal(false)} />
+            <AssignBusModal 
+              onClose={() => setShowAssignBusModal(false) } 
+              onAssign={(bus) => {
+                alert(`Assigned Bus: ${bus.busId}`);
+                setSelectedBus(bus); // store or use it as needed
+                setShowAssignBusModal(false); // close modal
+              }}
+            />
           )}
           {showAssignDriverModal && (
-            <AssignDriverModal onClose={() => setShowAssignDriverModal(false)} />
+            <AssignDriverModal 
+              onClose={() => setShowAssignDriverModal(false)} 
+              onAssign={(driver) => {
+                alert(`Assigned Conductor: ${driver.name}`);
+                setSelectedDriver(driver); // store or use it as needed
+                setShowAssignDriverModal(false); // close modal
+              }}
+            />
           )}
           {showAssignConductorModal && (
-            <AssignConductorModal onClose={() => setShowAssignConductorModal(false)} />
+            <AssignConductorModal 
+              onClose={() => setShowAssignConductorModal(false)}
+              onAssign={(conductor) => {
+                alert(`Assigned Conductor: ${conductor.name}`);
+                setSelectedConductor(conductor); // store or use it as needed
+                setShowAssignConductorModal(false); // close modal
+              }} 
+            />
           )}
 
         </div>
