@@ -3,6 +3,59 @@ import { generateFormattedID } from '../lib/idGenerator'
 
 const prisma = new PrismaClient();
 
+const stopData1 = [
+  { StopName: "Sapang Palay Terminal", Location: "14.8139,121.0452" },
+  { StopName: "San Jose City Hall", Location: "14.813,121.045" },
+  { StopName: "Muzon", Location: "14.8135,121.0455" },
+  { StopName: "Gaya-Gaya", Location: "14.8137,121.0457" },
+  { StopName: "Grotto", Location: "14.814,121.046" },
+  { StopName: "SM City San Jose del Monte", Location: "14.8142,121.0462" },
+  { StopName: "SM City Fairview", Location: "14.815,121.0465" },
+  { StopName: "Commonwealth Ave", Location: "14.6583,121.0733" },
+  { StopName: "Tandang Sora", Location: "14.6751,121.0591" },
+  { StopName: "Quezon City Hall", Location: "14.6505,121.0499" },
+  { StopName: "Welcome Rotonda", Location: "14.6171,121.0045" },
+  { StopName: "España Blvd / UST", Location: "14.6096,120.9919" },
+  { StopName: "Morayta", Location: "14.6077,120.9862" },
+  { StopName: "Quiapo Church", Location: "14.5995,120.9835" },
+  { StopName: "Carriedo", Location: "14.5998,120.9818" },
+  { StopName: "Recto Avenue", Location: "14.6003,120.9789" },
+  { StopName: "Tutuban Center", Location: "14.6061,120.9729" },
+  { StopName: "Divisoria", Location: "14.6011,120.9743" },
+];
+
+const stopData2 = [
+  { StopName: "Sapang Palay Terminal", Location: "14.8139,121.0452" },
+  { StopName: "San Jose City Hall", Location: "14.813,121.045" },
+  { StopName: "Muzon", Location: "14.8135,121.0455" },
+  { StopName: "Gaya-Gaya", Location: "14.8137,121.0457" },
+  { StopName: "Grotto", Location: "14.814,121.046" },
+  { StopName: "SM City San Jose del Monte", Location: "14.8142,121.0462" },
+  { StopName: "SM City Fairview", Location: "14.815,121.0465" },
+  { StopName: "Commonwealth/Regalado Avenue", Location: "14.8155,121.0467" },
+  { StopName: "Tandang Sora", Location: "14.816,121.047" },
+  { StopName: "Central Avenue", Location: "14.8165,121.0472" },
+  { StopName: "UP Ayala Techno Hub", Location: "14.817,121.0475" },
+  { StopName: "Philcoa", Location: "14.8175,121.0477" },
+  { StopName: "PCMC", Location: "14.818,121.048" },
+  { StopName: "Lung Center of the Philippines", Location: "14.8185,121.0482" },
+  { StopName: "Quezon City Hall Interchange", Location: "14.819,121.0485" },
+  { StopName: "EDSA-Quezon Avenue", Location: "14.8195,121.0487" },
+  { StopName: "Quezon-Timog Avenue", Location: "14.82,121.049" },
+  { StopName: "Fisher Mall/Pantranco", Location: "14.8205,121.0492" },
+  { StopName: "Fisher Mall", Location: "14.821,121.0495" },
+  { StopName: "Morayta", Location: "14.8215,121.0497" },
+  { StopName: "Quiapo", Location: "14.822,121.05" },
+  { StopName: "UN Avenue", Location: "14.8225,121.0502" },
+  { StopName: "Leveriza", Location: "14.823,121.0505" },
+  { StopName: "Gil Puyat/Harrison", Location: "14.8235,121.0507" },
+  { StopName: "Shell Residences", Location: "14.824,121.051" },
+  { StopName: "Mall of Asia", Location: "14.8245,121.0512" },
+  { StopName: "DFA", Location: "14.825,121.0515" },
+  { StopName: "Ayala Malls Manila Bay", Location: "14.8255,121.0517" },
+  { StopName: "PITX Arrivals/Transfers", Location: "14.826,121.052" },
+];
+
 async function seedQuotaPolicy() {
   const quotaPolicyData = [
     {
@@ -81,46 +134,20 @@ async function seedPercentage() {
 }
 
 async function seedStops() {
-  const stopData = [
-    { StopName: "Sapang Palay Terminal", Location: "14.8139,121.0452" },
-    { StopName: "San Jose City Hall", Location: "14.813,121.045" },
-    { StopName: "Muzon", Location: "14.8135,121.0455" },
-    { StopName: "Gaya-Gaya", Location: "14.8137,121.0457" },
-    { StopName: "Grotto", Location: "14.814,121.046" },
-    { StopName: "SM City San Jose del Monte", Location: "14.8142,121.0462" },
-    { StopName: "SM City Fairview", Location: "14.815,121.0465" },
-    { StopName: "Commonwealth/Regalado Avenue", Location: "14.8155,121.0467" },
-    { StopName: "Tandang Sora", Location: "14.816,121.047" },
-    { StopName: "Central Avenue", Location: "14.8165,121.0472" },
-    { StopName: "UP Ayala Techno Hub", Location: "14.817,121.0475" },
-    { StopName: "Philcoa", Location: "14.8175,121.0477" },
-    { StopName: "PCMC", Location: "14.818,121.048" },
-    { StopName: "Lung Center of the Philippines", Location: "14.8185,121.0482" },
-    { StopName: "Quezon City Hall Interchange", Location: "14.819,121.0485" },
-    { StopName: "EDSA-Quezon Avenue", Location: "14.8195,121.0487" },
-    { StopName: "Quezon-Timog Avenue", Location: "14.82,121.049" },
-    { StopName: "Fisher Mall/Pantranco", Location: "14.8205,121.0492" },
-    { StopName: "Fisher Mall", Location: "14.821,121.0495" },
-    { StopName: "Morayta", Location: "14.8215,121.0497" },
-    { StopName: "Quiapo", Location: "14.822,121.05" },
-    { StopName: "UN Avenue", Location: "14.8225,121.0502" },
-    { StopName: "Leveriza", Location: "14.823,121.0505" },
-    { StopName: "Gil Puyat/Harrison", Location: "14.8235,121.0507" },
-    { StopName: "Shell Residences", Location: "14.824,121.051" },
-    { StopName: "Mall of Asia", Location: "14.8245,121.0512" },
-    { StopName: "DFA (temporary)", Location: "14.825,121.0515" },
-    { StopName: "Ayala Malls Manila Bay (temporary)", Location: "14.8255,121.0517" },
-    { StopName: "PITX Arrivals/Transfers", Location: "14.826,121.052" },
-  ];
 
-  // Generate formatted IDs for each stop and seed data
-  for (let i = 0; i < stopData.length; i++) {
-    const stopID = await generateFormattedID('stop', 'StopID', 'STP')
+  
+  // Combine and remove duplicates by StopName (first occurrence kept)
+  const combinedUniqueStops = Array.from(
+    new Map([...stopData1, ...stopData2].map(stop => [stop.StopName, stop])).values()
+  );
+  
+  for (let stop of combinedUniqueStops) {
+    const stopID = await generateFormattedID('stop', 'StopID', 'STP');
     await prisma.stop.create({
       data: {
         StopID: stopID,
-        StopName: stopData[i].StopName,
-        Location: stopData[i].Location,
+        StopName: stop.StopName,
+        Location: stop.Location,
       }
     });
   }
@@ -129,39 +156,62 @@ async function seedStops() {
 }
 
 async function seedRoutes() {
-  // Fetch all stops sorted by StopID
-  const stops = await prisma.stop.findMany({
-    orderBy: {
-      StopID: 'asc',
-    },
-  });
+  // Fetch all stops
+  const stops = await prisma.stop.findMany();
 
-  if (stops.length < 2) {
-    throw new Error('Not enough stops to create routes.');
-  }
+  // Helper function to find stop by name
+  const getStopIDByName = (name: string) => {
+    const stop = stops.find(s => s.StopName.toLowerCase() === name.toLowerCase());
+    if (!stop) throw new Error(`Stop with name "${name}" not found.`);
+    return stop.StopID;
+  };
 
-  const startStopID = stops[0].StopID;
-  const endStopID = stops[stops.length - 1].StopID;
+  // Get StopIDs for specific locations
+  const sapangPalayID = getStopIDByName('Sapang Palay Terminal');
+  const pitxID = getStopIDByName('PITX Arrivals/Transfers');
+  const divisoriaID = getStopIDByName('Divisoria');
 
-  // Generate RouteID and create route: Sapang Palay to PITX
+  // Route: Sapang Palay to PITX
   const routeID1 = await generateFormattedID('route', 'RouteID', 'RT');
   await prisma.route.create({
     data: {
       RouteID: routeID1,
-      StartStopID: startStopID,
-      EndStopID: endStopID,
+      StartStopID: sapangPalayID,
+      EndStopID: pitxID,
       RouteName: 'Sapang Palay to PITX',
     },
   });
 
-  // Generate RouteID and create route: PITX to Sapang Palay
+  // Route: PITX to Sapang Palay
   const routeID2 = await generateFormattedID('route', 'RouteID', 'RT');
   await prisma.route.create({
     data: {
       RouteID: routeID2,
-      StartStopID: endStopID,
-      EndStopID: startStopID,
+      StartStopID: pitxID,
+      EndStopID: sapangPalayID,
       RouteName: 'PITX to Sapang Palay',
+    },
+  });
+
+  // Route: Sapang Palay to Divisoria
+  const routeID3 = await generateFormattedID('route', 'RouteID', 'RT');
+  await prisma.route.create({
+    data: {
+      RouteID: routeID3,
+      StartStopID: sapangPalayID,
+      EndStopID: divisoriaID,
+      RouteName: 'Sapang Palay to Divisoria',
+    },
+  });
+
+  // Route: Divisoria to Sapang Palay
+  const routeID4 = await generateFormattedID('route', 'RouteID', 'RT');
+  await prisma.route.create({
+    data: {
+      RouteID: routeID4,
+      StartStopID: divisoriaID,
+      EndStopID: sapangPalayID,
+      RouteName: 'Divisoria to Sapang Palay',
     },
   });
 
@@ -169,52 +219,49 @@ async function seedRoutes() {
 }
 
 async function seedRouteStops() {
-  // Fetch all routes and stops
   const routes = await prisma.route.findMany();
   const stops = await prisma.stop.findMany();
 
-  if (routes.length === 0 || stops.length === 0) {
-    throw new Error('No routes or stops found.');
+  if (routes.length < 4 || stops.length === 0) {
+    throw new Error('Insufficient routes or stops found.');
   }
 
-  // Get the stops for the Sapang Palay to PITX route in the correct order
-  const sapangPalayToPITXStops = stops.slice(0, stops.length); // Assuming stops are ordered correctly in the database
-
-  // Route 1: Sapang Palay to PITX (normal order)
-  const route1 = routes[0]; // Sapang Palay to PITX route
-  let stopOrder = 1;
-
-  // Seeding the RouteStops for the first route (Sapang Palay to PITX)
-  for (const stop of sapangPalayToPITXStops) {
-    const routeStopID = await generateFormattedID('routeStop', 'RouteStopID', 'RTS', 4);  // Generate the RouteStopID
-    await prisma.routeStop.create({
-      data: {
-        RouteStopID: routeStopID, // Generated RouteStopID
-        RouteID: route1.RouteID,  // Foreign key to the Route table
-        StopID: stop.StopID,      // Foreign key to the Stop table
-        StopOrder: stopOrder,     // Sequential order of stops
-      },
-    });
-    stopOrder++;
+  // Helper to map StopName to StopID
+  const stopMap = new Map();
+  for (const stop of stops) {
+    stopMap.set(stop.StopName, stop.StopID);
   }
 
-  // Route 2: PITX to Sapang Palay (reverse order)
-  const route2 = routes[1]; // PITX to Sapang Palay route (assuming it's the second route)
-  stopOrder = 1;
+  const routeStopDataSets = [
+    { routeIndex: 0, stopData: stopData1 }, // Sapang Palay to PITX
+    { routeIndex: 1, stopData: [...stopData1].reverse() }, // PITX to Sapang Palay
+    { routeIndex: 2, stopData: stopData2 }, // Sapang Palay to Divisoria
+    { routeIndex: 3, stopData: [...stopData2].reverse() }, // Divisoria to Sapang Palay
+  ];
 
-  // Seeding the RouteStops for the second route (PITX to Sapang Palay)
-  for (let i = sapangPalayToPITXStops.length - 1; i >= 0; i--) {
-    const stop = sapangPalayToPITXStops[i];
-    const routeStopID = await generateFormattedID('routeStop', 'RouteStopID', 'RTS', 4);  // Generate the RouteStopID
-    await prisma.routeStop.create({
-      data: {
-        RouteStopID: routeStopID,  // Generated RouteStopID
-        RouteID: route2.RouteID,   // Foreign key to the Route table
-        StopID: stop.StopID,       // Foreign key to the Stop table
-        StopOrder: stopOrder,      // Sequential order of stops (in reverse order)
-      },
-    });
-    stopOrder++;
+  for (const { routeIndex, stopData } of routeStopDataSets) {
+    const route = routes[routeIndex];
+    let stopOrder = 1;
+
+    for (const stopInfo of stopData) {
+      const stopID = stopMap.get(stopInfo.StopName);
+      if (!stopID) {
+        console.warn(`⚠️ Stop "${stopInfo.StopName}" not found in database. Skipping.`);
+        continue;
+      }
+
+      const routeStopID = await generateFormattedID('routeStop', 'RouteStopID', 'RTS', 4);
+      await prisma.routeStop.create({
+        data: {
+          RouteStopID: routeStopID,
+          RouteID: route.RouteID,
+          StopID: stopID,
+          StopOrder: stopOrder,
+        },
+      });
+
+      stopOrder++;
+    }
   }
 
   console.log('RouteStops seeded successfully');
@@ -229,6 +276,7 @@ async function seedBusAssignments() {
     data: {
       BusAssignmentID: busAssignmentID1,
       BusID: "BUS-0001",
+      RouteID: "RT-0001",
       AssignmentDate: new Date('2025-04-15'),
       Battery: true,
       Lights: true,
@@ -248,6 +296,7 @@ async function seedBusAssignments() {
     data: {
       BusAssignmentID: busAssignmentID2,
       BusID: "BUS-0002",
+      RouteID: "RT-0003",
       AssignmentDate: new Date('2025-04-16'),
       Battery: false,
       Lights: true,
@@ -306,44 +355,6 @@ async function seedRegularBusAssignments() {
   console.log('Regular bus assignments seeded');
 }
 
-async function seedBusRouteAssignments() {
-  // Fetch existing BusAssignments and Routes to use their IDs as foreign keys
-  const [busAssignments, routes] = await Promise.all([
-    prisma.busAssignment.findMany({
-      orderBy: { AssignmentDate: 'asc' },  // Ordering by AssignmentDate or another relevant field
-      take: 2,  // Assuming you need the first two BusAssignments
-    }),
-    prisma.route.findMany({
-      orderBy: { RouteID: 'asc' },  // Ordering by RouteID
-      take: 2,  // Assuming you need the first two Routes
-    }),
-  ]);
-
-  if (busAssignments.length < 2 || routes.length < 2) {
-    throw new Error('Not enough BusAssignments or Routes to create BusRouteAssignments.');
-  }
-
-  // Create the first BusRouteAssignment
-  await prisma.busRouteAssignment.create({
-    data: {
-      BusRouteAssignmentID: await generateFormattedID('busRouteAssignment', 'BusRouteAssignmentID', 'BRA', 4),  // Generate ID for first entry
-      BusAssignmentID: busAssignments[0].BusAssignmentID,  // Foreign key from BusAssignments
-      RouteID: routes[0].RouteID,  // Foreign key from Routes
-    },
-  });
-
-  // Create the second BusRouteAssignment
-  await prisma.busRouteAssignment.create({
-    data: {
-      BusRouteAssignmentID: await generateFormattedID('busRouteAssignment', 'BusRouteAssignmentID', 'BRA', 4),  // Generate ID for second entry
-      BusAssignmentID: busAssignments[1].BusAssignmentID,  // Foreign key from BusAssignments
-      RouteID: routes[1].RouteID,  // Foreign key from Routes
-    },
-  });
-
-  console.log('Bus route assignments seeded');
-}
-
 async function main() {
   await seedQuotaPolicy();
   await seedFixed();
@@ -353,7 +364,6 @@ async function main() {
   await seedRouteStops();
   await seedBusAssignments();
   await seedRegularBusAssignments();
-  await seedBusRouteAssignments();
 }
 
 main()
