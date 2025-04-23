@@ -57,12 +57,62 @@ const BusAssignmentPage: React.FC = () => {
 
   const handleClear = () => {
     // Clear logic for resetting form values or handling state
-    console.log('Clear button clicked');
+    setSelectedBus(null);
+    setSelectedDriver(null);
+    setSelectedConductor(null);
   };
 
-  const handleAdd = () => {
-    // Add logic for adding data to the table will be implemented later
-    console.log('Add button clicked');
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission behavior
+  
+    // Gather the data to send to the API
+    const data = {
+      RouteID: 'RT-0001', // Replace with the selected route ID
+      BusID: selectedBus?.busId || '', // Use the selected bus ID
+      AssignmentDate: new Date().toISOString(), // Use the current date or a selected date
+      Battery: true, // Replace with actual form values
+      Lights: true,
+      Oil: true,
+      Water: true,
+      Break: true,
+      Air: true,
+      Gas: true,
+      Engine: true,
+      TireCondition: true,
+      Self: true,
+      DriverID: selectedDriver?.driver_id || '',
+      ConductorID: selectedConductor?.conductor_id || '',
+      QuotaPolicyID: 'QTA-0001', // Replace with the actual QuotaPolicyID
+      Change: 0.0,
+      TripRevenue: 1000.0,
+    };
+    
+    console.log('Data to be sent to API:', data); // Debugging
+
+    try {
+      // Send a POST request to the API route
+      const response = await fetch('/api/bus-assignment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to create BusAssignment');
+      }
+  
+      const result = await response.json();
+      console.log('New BusAssignment created:', result);
+  
+      // Optionally, reset the form or update the UI
+      handleClear();
+      alert('BusAssignment created successfully!');
+    } catch (error) {
+      console.error('Error creating BusAssignment:', error);
+      alert('Failed to create BusAssignment');
+    }
   };
 
   return (
@@ -163,8 +213,8 @@ const BusAssignmentPage: React.FC = () => {
 
               {/* Buttons */}
               <div className={styles.buttonColumn}>
-                <button className={styles.clearButton}>Clear</button>
-                <button className={styles.addButton}>Add</button>
+                <button className={styles.clearButton} onClick={handleClear}>Clear</button>
+                <button type="submit" className={styles.addButton} onClick={handleAdd}>Add</button>
               </div>
             </div>
 
