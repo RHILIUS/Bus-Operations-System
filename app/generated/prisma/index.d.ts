@@ -53,11 +53,6 @@ export type BusAssignment = $Result.DefaultSelection<Prisma.$BusAssignmentPayloa
  * 
  */
 export type RegularBusAssignment = $Result.DefaultSelection<Prisma.$RegularBusAssignmentPayload>
-/**
- * Model BusRouteAssignment
- * 
- */
-export type BusRouteAssignment = $Result.DefaultSelection<Prisma.$BusRouteAssignmentPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -263,16 +258,6 @@ export class PrismaClient<
     * ```
     */
   get regularBusAssignment(): Prisma.RegularBusAssignmentDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.busRouteAssignment`: Exposes CRUD operations for the **BusRouteAssignment** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more BusRouteAssignments
-    * const busRouteAssignments = await prisma.busRouteAssignment.findMany()
-    * ```
-    */
-  get busRouteAssignment(): Prisma.BusRouteAssignmentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -720,8 +705,7 @@ export namespace Prisma {
     Route: 'Route',
     RouteStop: 'RouteStop',
     BusAssignment: 'BusAssignment',
-    RegularBusAssignment: 'RegularBusAssignment',
-    BusRouteAssignment: 'BusRouteAssignment'
+    RegularBusAssignment: 'RegularBusAssignment'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -740,7 +724,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "quota_Policy" | "fixed" | "percentage" | "stop" | "route" | "routeStop" | "busAssignment" | "regularBusAssignment" | "busRouteAssignment"
+      modelProps: "quota_Policy" | "fixed" | "percentage" | "stop" | "route" | "routeStop" | "busAssignment" | "regularBusAssignment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1336,80 +1320,6 @@ export namespace Prisma {
           }
         }
       }
-      BusRouteAssignment: {
-        payload: Prisma.$BusRouteAssignmentPayload<ExtArgs>
-        fields: Prisma.BusRouteAssignmentFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.BusRouteAssignmentFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.BusRouteAssignmentFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>
-          }
-          findFirst: {
-            args: Prisma.BusRouteAssignmentFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.BusRouteAssignmentFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>
-          }
-          findMany: {
-            args: Prisma.BusRouteAssignmentFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>[]
-          }
-          create: {
-            args: Prisma.BusRouteAssignmentCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>
-          }
-          createMany: {
-            args: Prisma.BusRouteAssignmentCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.BusRouteAssignmentCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>[]
-          }
-          delete: {
-            args: Prisma.BusRouteAssignmentDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>
-          }
-          update: {
-            args: Prisma.BusRouteAssignmentUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>
-          }
-          deleteMany: {
-            args: Prisma.BusRouteAssignmentDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.BusRouteAssignmentUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.BusRouteAssignmentUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>[]
-          }
-          upsert: {
-            args: Prisma.BusRouteAssignmentUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BusRouteAssignmentPayload>
-          }
-          aggregate: {
-            args: Prisma.BusRouteAssignmentAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateBusRouteAssignment>
-          }
-          groupBy: {
-            args: Prisma.BusRouteAssignmentGroupByArgs<ExtArgs>
-            result: $Utils.Optional<BusRouteAssignmentGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.BusRouteAssignmentCountArgs<ExtArgs>
-            result: $Utils.Optional<BusRouteAssignmentCountAggregateOutputType> | number
-          }
-        }
-      }
     }
   } & {
     other: {
@@ -1502,7 +1412,6 @@ export namespace Prisma {
     routeStop?: RouteStopOmit
     busAssignment?: BusAssignmentOmit
     regularBusAssignment?: RegularBusAssignmentOmit
-    busRouteAssignment?: BusRouteAssignmentOmit
   }
 
   /* Types for Logging */
@@ -1708,38 +1617,7 @@ export namespace Prisma {
    * RouteCountOutputType without action
    */
   export type RouteCountOutputTypeCountBusAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BusRouteAssignmentWhereInput
-  }
-
-
-  /**
-   * Count Type RegularBusAssignmentCountOutputType
-   */
-
-  export type RegularBusAssignmentCountOutputType = {
-    BusRouteAssignments: number
-  }
-
-  export type RegularBusAssignmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    BusRouteAssignments?: boolean | RegularBusAssignmentCountOutputTypeCountBusRouteAssignmentsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * RegularBusAssignmentCountOutputType without action
-   */
-  export type RegularBusAssignmentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RegularBusAssignmentCountOutputType
-     */
-    select?: RegularBusAssignmentCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * RegularBusAssignmentCountOutputType without action
-   */
-  export type RegularBusAssignmentCountOutputTypeCountBusRouteAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BusRouteAssignmentWhereInput
+    where?: BusAssignmentWhereInput
   }
 
 
@@ -6254,7 +6132,7 @@ export namespace Prisma {
       StartStop: Prisma.$StopPayload<ExtArgs>
       EndStop: Prisma.$StopPayload<ExtArgs>
       RouteStops: Prisma.$RouteStopPayload<ExtArgs>[]
-      BusAssignments: Prisma.$BusRouteAssignmentPayload<ExtArgs>[]
+      BusAssignments: Prisma.$BusAssignmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       RouteID: string
@@ -6658,7 +6536,7 @@ export namespace Prisma {
     StartStop<T extends StopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StopDefaultArgs<ExtArgs>>): Prisma__StopClient<$Result.GetResult<Prisma.$StopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     EndStop<T extends StopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StopDefaultArgs<ExtArgs>>): Prisma__StopClient<$Result.GetResult<Prisma.$StopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     RouteStops<T extends Route$RouteStopsArgs<ExtArgs> = {}>(args?: Subset<T, Route$RouteStopsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RouteStopPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    BusAssignments<T extends Route$BusAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Route$BusAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    BusAssignments<T extends Route$BusAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Route$BusAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BusAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7116,23 +6994,23 @@ export namespace Prisma {
    */
   export type Route$BusAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the BusRouteAssignment
+     * Select specific fields to fetch from the BusAssignment
      */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
+    select?: BusAssignmentSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the BusRouteAssignment
+     * Omit specific fields from the BusAssignment
      */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
+    omit?: BusAssignmentOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    where?: BusRouteAssignmentWhereInput
-    orderBy?: BusRouteAssignmentOrderByWithRelationInput | BusRouteAssignmentOrderByWithRelationInput[]
-    cursor?: BusRouteAssignmentWhereUniqueInput
+    include?: BusAssignmentInclude<ExtArgs> | null
+    where?: BusAssignmentWhereInput
+    orderBy?: BusAssignmentOrderByWithRelationInput | BusAssignmentOrderByWithRelationInput[]
+    cursor?: BusAssignmentWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: BusRouteAssignmentScalarFieldEnum | BusRouteAssignmentScalarFieldEnum[]
+    distinct?: BusAssignmentScalarFieldEnum | BusAssignmentScalarFieldEnum[]
   }
 
   /**
@@ -8254,6 +8132,7 @@ export namespace Prisma {
   export type BusAssignmentMinAggregateOutputType = {
     BusAssignmentID: string | null
     BusID: string | null
+    RouteID: string | null
     AssignmentDate: Date | null
     Battery: boolean | null
     Lights: boolean | null
@@ -8270,6 +8149,7 @@ export namespace Prisma {
   export type BusAssignmentMaxAggregateOutputType = {
     BusAssignmentID: string | null
     BusID: string | null
+    RouteID: string | null
     AssignmentDate: Date | null
     Battery: boolean | null
     Lights: boolean | null
@@ -8286,6 +8166,7 @@ export namespace Prisma {
   export type BusAssignmentCountAggregateOutputType = {
     BusAssignmentID: number
     BusID: number
+    RouteID: number
     AssignmentDate: number
     Battery: number
     Lights: number
@@ -8304,6 +8185,7 @@ export namespace Prisma {
   export type BusAssignmentMinAggregateInputType = {
     BusAssignmentID?: true
     BusID?: true
+    RouteID?: true
     AssignmentDate?: true
     Battery?: true
     Lights?: true
@@ -8320,6 +8202,7 @@ export namespace Prisma {
   export type BusAssignmentMaxAggregateInputType = {
     BusAssignmentID?: true
     BusID?: true
+    RouteID?: true
     AssignmentDate?: true
     Battery?: true
     Lights?: true
@@ -8336,6 +8219,7 @@ export namespace Prisma {
   export type BusAssignmentCountAggregateInputType = {
     BusAssignmentID?: true
     BusID?: true
+    RouteID?: true
     AssignmentDate?: true
     Battery?: true
     Lights?: true
@@ -8425,6 +8309,7 @@ export namespace Prisma {
   export type BusAssignmentGroupByOutputType = {
     BusAssignmentID: string
     BusID: string
+    RouteID: string
     AssignmentDate: Date
     Battery: boolean
     Lights: boolean
@@ -8458,6 +8343,7 @@ export namespace Prisma {
   export type BusAssignmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     BusAssignmentID?: boolean
     BusID?: boolean
+    RouteID?: boolean
     AssignmentDate?: boolean
     Battery?: boolean
     Lights?: boolean
@@ -8469,12 +8355,14 @@ export namespace Prisma {
     Engine?: boolean
     TireCondition?: boolean
     Self?: boolean
+    Route?: boolean | RouteDefaultArgs<ExtArgs>
     RegularBusAssignment?: boolean | BusAssignment$RegularBusAssignmentArgs<ExtArgs>
   }, ExtArgs["result"]["busAssignment"]>
 
   export type BusAssignmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     BusAssignmentID?: boolean
     BusID?: boolean
+    RouteID?: boolean
     AssignmentDate?: boolean
     Battery?: boolean
     Lights?: boolean
@@ -8486,11 +8374,13 @@ export namespace Prisma {
     Engine?: boolean
     TireCondition?: boolean
     Self?: boolean
+    Route?: boolean | RouteDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["busAssignment"]>
 
   export type BusAssignmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     BusAssignmentID?: boolean
     BusID?: boolean
+    RouteID?: boolean
     AssignmentDate?: boolean
     Battery?: boolean
     Lights?: boolean
@@ -8502,11 +8392,13 @@ export namespace Prisma {
     Engine?: boolean
     TireCondition?: boolean
     Self?: boolean
+    Route?: boolean | RouteDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["busAssignment"]>
 
   export type BusAssignmentSelectScalar = {
     BusAssignmentID?: boolean
     BusID?: boolean
+    RouteID?: boolean
     AssignmentDate?: boolean
     Battery?: boolean
     Lights?: boolean
@@ -8520,21 +8412,28 @@ export namespace Prisma {
     Self?: boolean
   }
 
-  export type BusAssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"BusAssignmentID" | "BusID" | "AssignmentDate" | "Battery" | "Lights" | "Oil" | "Water" | "Break" | "Air" | "Gas" | "Engine" | "TireCondition" | "Self", ExtArgs["result"]["busAssignment"]>
+  export type BusAssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"BusAssignmentID" | "BusID" | "RouteID" | "AssignmentDate" | "Battery" | "Lights" | "Oil" | "Water" | "Break" | "Air" | "Gas" | "Engine" | "TireCondition" | "Self", ExtArgs["result"]["busAssignment"]>
   export type BusAssignmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Route?: boolean | RouteDefaultArgs<ExtArgs>
     RegularBusAssignment?: boolean | BusAssignment$RegularBusAssignmentArgs<ExtArgs>
   }
-  export type BusAssignmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type BusAssignmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type BusAssignmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Route?: boolean | RouteDefaultArgs<ExtArgs>
+  }
+  export type BusAssignmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Route?: boolean | RouteDefaultArgs<ExtArgs>
+  }
 
   export type $BusAssignmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "BusAssignment"
     objects: {
+      Route: Prisma.$RoutePayload<ExtArgs>
       RegularBusAssignment: Prisma.$RegularBusAssignmentPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       BusAssignmentID: string
       BusID: string
+      RouteID: string
       AssignmentDate: Date
       Battery: boolean
       Lights: boolean
@@ -8940,6 +8839,7 @@ export namespace Prisma {
    */
   export interface Prisma__BusAssignmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    Route<T extends RouteDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RouteDefaultArgs<ExtArgs>>): Prisma__RouteClient<$Result.GetResult<Prisma.$RoutePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     RegularBusAssignment<T extends BusAssignment$RegularBusAssignmentArgs<ExtArgs> = {}>(args?: Subset<T, BusAssignment$RegularBusAssignmentArgs<ExtArgs>>): Prisma__RegularBusAssignmentClient<$Result.GetResult<Prisma.$RegularBusAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8972,6 +8872,7 @@ export namespace Prisma {
   interface BusAssignmentFieldRefs {
     readonly BusAssignmentID: FieldRef<"BusAssignment", 'String'>
     readonly BusID: FieldRef<"BusAssignment", 'String'>
+    readonly RouteID: FieldRef<"BusAssignment", 'String'>
     readonly AssignmentDate: FieldRef<"BusAssignment", 'DateTime'>
     readonly Battery: FieldRef<"BusAssignment", 'Boolean'>
     readonly Lights: FieldRef<"BusAssignment", 'Boolean'>
@@ -9232,6 +9133,10 @@ export namespace Prisma {
      */
     data: BusAssignmentCreateManyInput | BusAssignmentCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BusAssignmentIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9302,6 +9207,10 @@ export namespace Prisma {
      * Limit how many BusAssignments to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BusAssignmentIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9618,10 +9527,8 @@ export namespace Prisma {
     QuotaPolicyID?: boolean
     Change?: boolean
     TripRevenue?: boolean
-    BusRouteAssignments?: boolean | RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs>
     quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
     BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
-    _count?: boolean | RegularBusAssignmentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["regularBusAssignment"]>
 
   export type RegularBusAssignmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9657,10 +9564,8 @@ export namespace Prisma {
 
   export type RegularBusAssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"RegularBusAssignmentID" | "DriverID" | "ConductorID" | "QuotaPolicyID" | "Change" | "TripRevenue", ExtArgs["result"]["regularBusAssignment"]>
   export type RegularBusAssignmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    BusRouteAssignments?: boolean | RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs>
     quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
     BusAssignment?: boolean | BusAssignmentDefaultArgs<ExtArgs>
-    _count?: boolean | RegularBusAssignmentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RegularBusAssignmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     quotaPolicy?: boolean | Quota_PolicyDefaultArgs<ExtArgs>
@@ -9674,7 +9579,6 @@ export namespace Prisma {
   export type $RegularBusAssignmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "RegularBusAssignment"
     objects: {
-      BusRouteAssignments: Prisma.$BusRouteAssignmentPayload<ExtArgs>[]
       quotaPolicy: Prisma.$Quota_PolicyPayload<ExtArgs>
       BusAssignment: Prisma.$BusAssignmentPayload<ExtArgs>
     }
@@ -10079,7 +9983,6 @@ export namespace Prisma {
    */
   export interface Prisma__RegularBusAssignmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    BusRouteAssignments<T extends RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     quotaPolicy<T extends Quota_PolicyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, Quota_PolicyDefaultArgs<ExtArgs>>): Prisma__Quota_PolicyClient<$Result.GetResult<Prisma.$Quota_PolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     BusAssignment<T extends BusAssignmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BusAssignmentDefaultArgs<ExtArgs>>): Prisma__BusAssignmentClient<$Result.GetResult<Prisma.$BusAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
@@ -10513,30 +10416,6 @@ export namespace Prisma {
   }
 
   /**
-   * RegularBusAssignment.BusRouteAssignments
-   */
-  export type RegularBusAssignment$BusRouteAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    where?: BusRouteAssignmentWhereInput
-    orderBy?: BusRouteAssignmentOrderByWithRelationInput | BusRouteAssignmentOrderByWithRelationInput[]
-    cursor?: BusRouteAssignmentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: BusRouteAssignmentScalarFieldEnum | BusRouteAssignmentScalarFieldEnum[]
-  }
-
-  /**
    * RegularBusAssignment without action
    */
   export type RegularBusAssignmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10552,1046 +10431,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: RegularBusAssignmentInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model BusRouteAssignment
-   */
-
-  export type AggregateBusRouteAssignment = {
-    _count: BusRouteAssignmentCountAggregateOutputType | null
-    _min: BusRouteAssignmentMinAggregateOutputType | null
-    _max: BusRouteAssignmentMaxAggregateOutputType | null
-  }
-
-  export type BusRouteAssignmentMinAggregateOutputType = {
-    BusRouteAssignmentID: string | null
-    BusAssignmentID: string | null
-    RouteID: string | null
-  }
-
-  export type BusRouteAssignmentMaxAggregateOutputType = {
-    BusRouteAssignmentID: string | null
-    BusAssignmentID: string | null
-    RouteID: string | null
-  }
-
-  export type BusRouteAssignmentCountAggregateOutputType = {
-    BusRouteAssignmentID: number
-    BusAssignmentID: number
-    RouteID: number
-    _all: number
-  }
-
-
-  export type BusRouteAssignmentMinAggregateInputType = {
-    BusRouteAssignmentID?: true
-    BusAssignmentID?: true
-    RouteID?: true
-  }
-
-  export type BusRouteAssignmentMaxAggregateInputType = {
-    BusRouteAssignmentID?: true
-    BusAssignmentID?: true
-    RouteID?: true
-  }
-
-  export type BusRouteAssignmentCountAggregateInputType = {
-    BusRouteAssignmentID?: true
-    BusAssignmentID?: true
-    RouteID?: true
-    _all?: true
-  }
-
-  export type BusRouteAssignmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which BusRouteAssignment to aggregate.
-     */
-    where?: BusRouteAssignmentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BusRouteAssignments to fetch.
-     */
-    orderBy?: BusRouteAssignmentOrderByWithRelationInput | BusRouteAssignmentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: BusRouteAssignmentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BusRouteAssignments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BusRouteAssignments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned BusRouteAssignments
-    **/
-    _count?: true | BusRouteAssignmentCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: BusRouteAssignmentMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: BusRouteAssignmentMaxAggregateInputType
-  }
-
-  export type GetBusRouteAssignmentAggregateType<T extends BusRouteAssignmentAggregateArgs> = {
-        [P in keyof T & keyof AggregateBusRouteAssignment]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateBusRouteAssignment[P]>
-      : GetScalarType<T[P], AggregateBusRouteAssignment[P]>
-  }
-
-
-
-
-  export type BusRouteAssignmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BusRouteAssignmentWhereInput
-    orderBy?: BusRouteAssignmentOrderByWithAggregationInput | BusRouteAssignmentOrderByWithAggregationInput[]
-    by: BusRouteAssignmentScalarFieldEnum[] | BusRouteAssignmentScalarFieldEnum
-    having?: BusRouteAssignmentScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: BusRouteAssignmentCountAggregateInputType | true
-    _min?: BusRouteAssignmentMinAggregateInputType
-    _max?: BusRouteAssignmentMaxAggregateInputType
-  }
-
-  export type BusRouteAssignmentGroupByOutputType = {
-    BusRouteAssignmentID: string
-    BusAssignmentID: string
-    RouteID: string
-    _count: BusRouteAssignmentCountAggregateOutputType | null
-    _min: BusRouteAssignmentMinAggregateOutputType | null
-    _max: BusRouteAssignmentMaxAggregateOutputType | null
-  }
-
-  type GetBusRouteAssignmentGroupByPayload<T extends BusRouteAssignmentGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<BusRouteAssignmentGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof BusRouteAssignmentGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], BusRouteAssignmentGroupByOutputType[P]>
-            : GetScalarType<T[P], BusRouteAssignmentGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type BusRouteAssignmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    BusRouteAssignmentID?: boolean
-    BusAssignmentID?: boolean
-    RouteID?: boolean
-    Route?: boolean | RouteDefaultArgs<ExtArgs>
-    RegularBusAssignment?: boolean | RegularBusAssignmentDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["busRouteAssignment"]>
-
-  export type BusRouteAssignmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    BusRouteAssignmentID?: boolean
-    BusAssignmentID?: boolean
-    RouteID?: boolean
-    Route?: boolean | RouteDefaultArgs<ExtArgs>
-    RegularBusAssignment?: boolean | RegularBusAssignmentDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["busRouteAssignment"]>
-
-  export type BusRouteAssignmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    BusRouteAssignmentID?: boolean
-    BusAssignmentID?: boolean
-    RouteID?: boolean
-    Route?: boolean | RouteDefaultArgs<ExtArgs>
-    RegularBusAssignment?: boolean | RegularBusAssignmentDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["busRouteAssignment"]>
-
-  export type BusRouteAssignmentSelectScalar = {
-    BusRouteAssignmentID?: boolean
-    BusAssignmentID?: boolean
-    RouteID?: boolean
-  }
-
-  export type BusRouteAssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"BusRouteAssignmentID" | "BusAssignmentID" | "RouteID", ExtArgs["result"]["busRouteAssignment"]>
-  export type BusRouteAssignmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    Route?: boolean | RouteDefaultArgs<ExtArgs>
-    RegularBusAssignment?: boolean | RegularBusAssignmentDefaultArgs<ExtArgs>
-  }
-  export type BusRouteAssignmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    Route?: boolean | RouteDefaultArgs<ExtArgs>
-    RegularBusAssignment?: boolean | RegularBusAssignmentDefaultArgs<ExtArgs>
-  }
-  export type BusRouteAssignmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    Route?: boolean | RouteDefaultArgs<ExtArgs>
-    RegularBusAssignment?: boolean | RegularBusAssignmentDefaultArgs<ExtArgs>
-  }
-
-  export type $BusRouteAssignmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "BusRouteAssignment"
-    objects: {
-      Route: Prisma.$RoutePayload<ExtArgs>
-      RegularBusAssignment: Prisma.$RegularBusAssignmentPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      BusRouteAssignmentID: string
-      BusAssignmentID: string
-      RouteID: string
-    }, ExtArgs["result"]["busRouteAssignment"]>
-    composites: {}
-  }
-
-  type BusRouteAssignmentGetPayload<S extends boolean | null | undefined | BusRouteAssignmentDefaultArgs> = $Result.GetResult<Prisma.$BusRouteAssignmentPayload, S>
-
-  type BusRouteAssignmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<BusRouteAssignmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: BusRouteAssignmentCountAggregateInputType | true
-    }
-
-  export interface BusRouteAssignmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BusRouteAssignment'], meta: { name: 'BusRouteAssignment' } }
-    /**
-     * Find zero or one BusRouteAssignment that matches the filter.
-     * @param {BusRouteAssignmentFindUniqueArgs} args - Arguments to find a BusRouteAssignment
-     * @example
-     * // Get one BusRouteAssignment
-     * const busRouteAssignment = await prisma.busRouteAssignment.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends BusRouteAssignmentFindUniqueArgs>(args: SelectSubset<T, BusRouteAssignmentFindUniqueArgs<ExtArgs>>): Prisma__BusRouteAssignmentClient<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one BusRouteAssignment that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {BusRouteAssignmentFindUniqueOrThrowArgs} args - Arguments to find a BusRouteAssignment
-     * @example
-     * // Get one BusRouteAssignment
-     * const busRouteAssignment = await prisma.busRouteAssignment.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends BusRouteAssignmentFindUniqueOrThrowArgs>(args: SelectSubset<T, BusRouteAssignmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BusRouteAssignmentClient<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first BusRouteAssignment that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BusRouteAssignmentFindFirstArgs} args - Arguments to find a BusRouteAssignment
-     * @example
-     * // Get one BusRouteAssignment
-     * const busRouteAssignment = await prisma.busRouteAssignment.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends BusRouteAssignmentFindFirstArgs>(args?: SelectSubset<T, BusRouteAssignmentFindFirstArgs<ExtArgs>>): Prisma__BusRouteAssignmentClient<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first BusRouteAssignment that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BusRouteAssignmentFindFirstOrThrowArgs} args - Arguments to find a BusRouteAssignment
-     * @example
-     * // Get one BusRouteAssignment
-     * const busRouteAssignment = await prisma.busRouteAssignment.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends BusRouteAssignmentFindFirstOrThrowArgs>(args?: SelectSubset<T, BusRouteAssignmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__BusRouteAssignmentClient<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more BusRouteAssignments that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BusRouteAssignmentFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all BusRouteAssignments
-     * const busRouteAssignments = await prisma.busRouteAssignment.findMany()
-     * 
-     * // Get first 10 BusRouteAssignments
-     * const busRouteAssignments = await prisma.busRouteAssignment.findMany({ take: 10 })
-     * 
-     * // Only select the `BusRouteAssignmentID`
-     * const busRouteAssignmentWithBusRouteAssignmentIDOnly = await prisma.busRouteAssignment.findMany({ select: { BusRouteAssignmentID: true } })
-     * 
-     */
-    findMany<T extends BusRouteAssignmentFindManyArgs>(args?: SelectSubset<T, BusRouteAssignmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a BusRouteAssignment.
-     * @param {BusRouteAssignmentCreateArgs} args - Arguments to create a BusRouteAssignment.
-     * @example
-     * // Create one BusRouteAssignment
-     * const BusRouteAssignment = await prisma.busRouteAssignment.create({
-     *   data: {
-     *     // ... data to create a BusRouteAssignment
-     *   }
-     * })
-     * 
-     */
-    create<T extends BusRouteAssignmentCreateArgs>(args: SelectSubset<T, BusRouteAssignmentCreateArgs<ExtArgs>>): Prisma__BusRouteAssignmentClient<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many BusRouteAssignments.
-     * @param {BusRouteAssignmentCreateManyArgs} args - Arguments to create many BusRouteAssignments.
-     * @example
-     * // Create many BusRouteAssignments
-     * const busRouteAssignment = await prisma.busRouteAssignment.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends BusRouteAssignmentCreateManyArgs>(args?: SelectSubset<T, BusRouteAssignmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many BusRouteAssignments and returns the data saved in the database.
-     * @param {BusRouteAssignmentCreateManyAndReturnArgs} args - Arguments to create many BusRouteAssignments.
-     * @example
-     * // Create many BusRouteAssignments
-     * const busRouteAssignment = await prisma.busRouteAssignment.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many BusRouteAssignments and only return the `BusRouteAssignmentID`
-     * const busRouteAssignmentWithBusRouteAssignmentIDOnly = await prisma.busRouteAssignment.createManyAndReturn({
-     *   select: { BusRouteAssignmentID: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends BusRouteAssignmentCreateManyAndReturnArgs>(args?: SelectSubset<T, BusRouteAssignmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a BusRouteAssignment.
-     * @param {BusRouteAssignmentDeleteArgs} args - Arguments to delete one BusRouteAssignment.
-     * @example
-     * // Delete one BusRouteAssignment
-     * const BusRouteAssignment = await prisma.busRouteAssignment.delete({
-     *   where: {
-     *     // ... filter to delete one BusRouteAssignment
-     *   }
-     * })
-     * 
-     */
-    delete<T extends BusRouteAssignmentDeleteArgs>(args: SelectSubset<T, BusRouteAssignmentDeleteArgs<ExtArgs>>): Prisma__BusRouteAssignmentClient<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one BusRouteAssignment.
-     * @param {BusRouteAssignmentUpdateArgs} args - Arguments to update one BusRouteAssignment.
-     * @example
-     * // Update one BusRouteAssignment
-     * const busRouteAssignment = await prisma.busRouteAssignment.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends BusRouteAssignmentUpdateArgs>(args: SelectSubset<T, BusRouteAssignmentUpdateArgs<ExtArgs>>): Prisma__BusRouteAssignmentClient<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more BusRouteAssignments.
-     * @param {BusRouteAssignmentDeleteManyArgs} args - Arguments to filter BusRouteAssignments to delete.
-     * @example
-     * // Delete a few BusRouteAssignments
-     * const { count } = await prisma.busRouteAssignment.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends BusRouteAssignmentDeleteManyArgs>(args?: SelectSubset<T, BusRouteAssignmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more BusRouteAssignments.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BusRouteAssignmentUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many BusRouteAssignments
-     * const busRouteAssignment = await prisma.busRouteAssignment.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends BusRouteAssignmentUpdateManyArgs>(args: SelectSubset<T, BusRouteAssignmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more BusRouteAssignments and returns the data updated in the database.
-     * @param {BusRouteAssignmentUpdateManyAndReturnArgs} args - Arguments to update many BusRouteAssignments.
-     * @example
-     * // Update many BusRouteAssignments
-     * const busRouteAssignment = await prisma.busRouteAssignment.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more BusRouteAssignments and only return the `BusRouteAssignmentID`
-     * const busRouteAssignmentWithBusRouteAssignmentIDOnly = await prisma.busRouteAssignment.updateManyAndReturn({
-     *   select: { BusRouteAssignmentID: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends BusRouteAssignmentUpdateManyAndReturnArgs>(args: SelectSubset<T, BusRouteAssignmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one BusRouteAssignment.
-     * @param {BusRouteAssignmentUpsertArgs} args - Arguments to update or create a BusRouteAssignment.
-     * @example
-     * // Update or create a BusRouteAssignment
-     * const busRouteAssignment = await prisma.busRouteAssignment.upsert({
-     *   create: {
-     *     // ... data to create a BusRouteAssignment
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the BusRouteAssignment we want to update
-     *   }
-     * })
-     */
-    upsert<T extends BusRouteAssignmentUpsertArgs>(args: SelectSubset<T, BusRouteAssignmentUpsertArgs<ExtArgs>>): Prisma__BusRouteAssignmentClient<$Result.GetResult<Prisma.$BusRouteAssignmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of BusRouteAssignments.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BusRouteAssignmentCountArgs} args - Arguments to filter BusRouteAssignments to count.
-     * @example
-     * // Count the number of BusRouteAssignments
-     * const count = await prisma.busRouteAssignment.count({
-     *   where: {
-     *     // ... the filter for the BusRouteAssignments we want to count
-     *   }
-     * })
-    **/
-    count<T extends BusRouteAssignmentCountArgs>(
-      args?: Subset<T, BusRouteAssignmentCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], BusRouteAssignmentCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a BusRouteAssignment.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BusRouteAssignmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends BusRouteAssignmentAggregateArgs>(args: Subset<T, BusRouteAssignmentAggregateArgs>): Prisma.PrismaPromise<GetBusRouteAssignmentAggregateType<T>>
-
-    /**
-     * Group by BusRouteAssignment.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BusRouteAssignmentGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends BusRouteAssignmentGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: BusRouteAssignmentGroupByArgs['orderBy'] }
-        : { orderBy?: BusRouteAssignmentGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, BusRouteAssignmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBusRouteAssignmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the BusRouteAssignment model
-   */
-  readonly fields: BusRouteAssignmentFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for BusRouteAssignment.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__BusRouteAssignmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    Route<T extends RouteDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RouteDefaultArgs<ExtArgs>>): Prisma__RouteClient<$Result.GetResult<Prisma.$RoutePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    RegularBusAssignment<T extends RegularBusAssignmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RegularBusAssignmentDefaultArgs<ExtArgs>>): Prisma__RegularBusAssignmentClient<$Result.GetResult<Prisma.$RegularBusAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the BusRouteAssignment model
-   */
-  interface BusRouteAssignmentFieldRefs {
-    readonly BusRouteAssignmentID: FieldRef<"BusRouteAssignment", 'String'>
-    readonly BusAssignmentID: FieldRef<"BusRouteAssignment", 'String'>
-    readonly RouteID: FieldRef<"BusRouteAssignment", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * BusRouteAssignment findUnique
-   */
-  export type BusRouteAssignmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * Filter, which BusRouteAssignment to fetch.
-     */
-    where: BusRouteAssignmentWhereUniqueInput
-  }
-
-  /**
-   * BusRouteAssignment findUniqueOrThrow
-   */
-  export type BusRouteAssignmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * Filter, which BusRouteAssignment to fetch.
-     */
-    where: BusRouteAssignmentWhereUniqueInput
-  }
-
-  /**
-   * BusRouteAssignment findFirst
-   */
-  export type BusRouteAssignmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * Filter, which BusRouteAssignment to fetch.
-     */
-    where?: BusRouteAssignmentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BusRouteAssignments to fetch.
-     */
-    orderBy?: BusRouteAssignmentOrderByWithRelationInput | BusRouteAssignmentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for BusRouteAssignments.
-     */
-    cursor?: BusRouteAssignmentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BusRouteAssignments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BusRouteAssignments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of BusRouteAssignments.
-     */
-    distinct?: BusRouteAssignmentScalarFieldEnum | BusRouteAssignmentScalarFieldEnum[]
-  }
-
-  /**
-   * BusRouteAssignment findFirstOrThrow
-   */
-  export type BusRouteAssignmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * Filter, which BusRouteAssignment to fetch.
-     */
-    where?: BusRouteAssignmentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BusRouteAssignments to fetch.
-     */
-    orderBy?: BusRouteAssignmentOrderByWithRelationInput | BusRouteAssignmentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for BusRouteAssignments.
-     */
-    cursor?: BusRouteAssignmentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BusRouteAssignments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BusRouteAssignments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of BusRouteAssignments.
-     */
-    distinct?: BusRouteAssignmentScalarFieldEnum | BusRouteAssignmentScalarFieldEnum[]
-  }
-
-  /**
-   * BusRouteAssignment findMany
-   */
-  export type BusRouteAssignmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * Filter, which BusRouteAssignments to fetch.
-     */
-    where?: BusRouteAssignmentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BusRouteAssignments to fetch.
-     */
-    orderBy?: BusRouteAssignmentOrderByWithRelationInput | BusRouteAssignmentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing BusRouteAssignments.
-     */
-    cursor?: BusRouteAssignmentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BusRouteAssignments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BusRouteAssignments.
-     */
-    skip?: number
-    distinct?: BusRouteAssignmentScalarFieldEnum | BusRouteAssignmentScalarFieldEnum[]
-  }
-
-  /**
-   * BusRouteAssignment create
-   */
-  export type BusRouteAssignmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * The data needed to create a BusRouteAssignment.
-     */
-    data: XOR<BusRouteAssignmentCreateInput, BusRouteAssignmentUncheckedCreateInput>
-  }
-
-  /**
-   * BusRouteAssignment createMany
-   */
-  export type BusRouteAssignmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many BusRouteAssignments.
-     */
-    data: BusRouteAssignmentCreateManyInput | BusRouteAssignmentCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * BusRouteAssignment createManyAndReturn
-   */
-  export type BusRouteAssignmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * The data used to create many BusRouteAssignments.
-     */
-    data: BusRouteAssignmentCreateManyInput | BusRouteAssignmentCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * BusRouteAssignment update
-   */
-  export type BusRouteAssignmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * The data needed to update a BusRouteAssignment.
-     */
-    data: XOR<BusRouteAssignmentUpdateInput, BusRouteAssignmentUncheckedUpdateInput>
-    /**
-     * Choose, which BusRouteAssignment to update.
-     */
-    where: BusRouteAssignmentWhereUniqueInput
-  }
-
-  /**
-   * BusRouteAssignment updateMany
-   */
-  export type BusRouteAssignmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update BusRouteAssignments.
-     */
-    data: XOR<BusRouteAssignmentUpdateManyMutationInput, BusRouteAssignmentUncheckedUpdateManyInput>
-    /**
-     * Filter which BusRouteAssignments to update
-     */
-    where?: BusRouteAssignmentWhereInput
-    /**
-     * Limit how many BusRouteAssignments to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * BusRouteAssignment updateManyAndReturn
-   */
-  export type BusRouteAssignmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * The data used to update BusRouteAssignments.
-     */
-    data: XOR<BusRouteAssignmentUpdateManyMutationInput, BusRouteAssignmentUncheckedUpdateManyInput>
-    /**
-     * Filter which BusRouteAssignments to update
-     */
-    where?: BusRouteAssignmentWhereInput
-    /**
-     * Limit how many BusRouteAssignments to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * BusRouteAssignment upsert
-   */
-  export type BusRouteAssignmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * The filter to search for the BusRouteAssignment to update in case it exists.
-     */
-    where: BusRouteAssignmentWhereUniqueInput
-    /**
-     * In case the BusRouteAssignment found by the `where` argument doesn't exist, create a new BusRouteAssignment with this data.
-     */
-    create: XOR<BusRouteAssignmentCreateInput, BusRouteAssignmentUncheckedCreateInput>
-    /**
-     * In case the BusRouteAssignment was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<BusRouteAssignmentUpdateInput, BusRouteAssignmentUncheckedUpdateInput>
-  }
-
-  /**
-   * BusRouteAssignment delete
-   */
-  export type BusRouteAssignmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
-    /**
-     * Filter which BusRouteAssignment to delete.
-     */
-    where: BusRouteAssignmentWhereUniqueInput
-  }
-
-  /**
-   * BusRouteAssignment deleteMany
-   */
-  export type BusRouteAssignmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which BusRouteAssignments to delete
-     */
-    where?: BusRouteAssignmentWhereInput
-    /**
-     * Limit how many BusRouteAssignments to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * BusRouteAssignment without action
-   */
-  export type BusRouteAssignmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BusRouteAssignment
-     */
-    select?: BusRouteAssignmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BusRouteAssignment
-     */
-    omit?: BusRouteAssignmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BusRouteAssignmentInclude<ExtArgs> | null
   }
 
 
@@ -11666,6 +10505,7 @@ export namespace Prisma {
   export const BusAssignmentScalarFieldEnum: {
     BusAssignmentID: 'BusAssignmentID',
     BusID: 'BusID',
+    RouteID: 'RouteID',
     AssignmentDate: 'AssignmentDate',
     Battery: 'Battery',
     Lights: 'Lights',
@@ -11692,15 +10532,6 @@ export namespace Prisma {
   };
 
   export type RegularBusAssignmentScalarFieldEnum = (typeof RegularBusAssignmentScalarFieldEnum)[keyof typeof RegularBusAssignmentScalarFieldEnum]
-
-
-  export const BusRouteAssignmentScalarFieldEnum: {
-    BusRouteAssignmentID: 'BusRouteAssignmentID',
-    BusAssignmentID: 'BusAssignmentID',
-    RouteID: 'RouteID'
-  };
-
-  export type BusRouteAssignmentScalarFieldEnum = (typeof BusRouteAssignmentScalarFieldEnum)[keyof typeof BusRouteAssignmentScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11987,7 +10818,7 @@ export namespace Prisma {
     StartStop?: XOR<StopScalarRelationFilter, StopWhereInput>
     EndStop?: XOR<StopScalarRelationFilter, StopWhereInput>
     RouteStops?: RouteStopListRelationFilter
-    BusAssignments?: BusRouteAssignmentListRelationFilter
+    BusAssignments?: BusAssignmentListRelationFilter
   }
 
   export type RouteOrderByWithRelationInput = {
@@ -11998,7 +10829,7 @@ export namespace Prisma {
     StartStop?: StopOrderByWithRelationInput
     EndStop?: StopOrderByWithRelationInput
     RouteStops?: RouteStopOrderByRelationAggregateInput
-    BusAssignments?: BusRouteAssignmentOrderByRelationAggregateInput
+    BusAssignments?: BusAssignmentOrderByRelationAggregateInput
   }
 
   export type RouteWhereUniqueInput = Prisma.AtLeast<{
@@ -12012,7 +10843,7 @@ export namespace Prisma {
     StartStop?: XOR<StopScalarRelationFilter, StopWhereInput>
     EndStop?: XOR<StopScalarRelationFilter, StopWhereInput>
     RouteStops?: RouteStopListRelationFilter
-    BusAssignments?: BusRouteAssignmentListRelationFilter
+    BusAssignments?: BusAssignmentListRelationFilter
   }, "RouteID">
 
   export type RouteOrderByWithAggregationInput = {
@@ -12097,6 +10928,7 @@ export namespace Prisma {
     NOT?: BusAssignmentWhereInput | BusAssignmentWhereInput[]
     BusAssignmentID?: StringFilter<"BusAssignment"> | string
     BusID?: StringFilter<"BusAssignment"> | string
+    RouteID?: StringFilter<"BusAssignment"> | string
     AssignmentDate?: DateTimeFilter<"BusAssignment"> | Date | string
     Battery?: BoolFilter<"BusAssignment"> | boolean
     Lights?: BoolFilter<"BusAssignment"> | boolean
@@ -12108,12 +10940,14 @@ export namespace Prisma {
     Engine?: BoolFilter<"BusAssignment"> | boolean
     TireCondition?: BoolFilter<"BusAssignment"> | boolean
     Self?: BoolFilter<"BusAssignment"> | boolean
+    Route?: XOR<RouteScalarRelationFilter, RouteWhereInput>
     RegularBusAssignment?: XOR<RegularBusAssignmentNullableScalarRelationFilter, RegularBusAssignmentWhereInput> | null
   }
 
   export type BusAssignmentOrderByWithRelationInput = {
     BusAssignmentID?: SortOrder
     BusID?: SortOrder
+    RouteID?: SortOrder
     AssignmentDate?: SortOrder
     Battery?: SortOrder
     Lights?: SortOrder
@@ -12125,6 +10959,7 @@ export namespace Prisma {
     Engine?: SortOrder
     TireCondition?: SortOrder
     Self?: SortOrder
+    Route?: RouteOrderByWithRelationInput
     RegularBusAssignment?: RegularBusAssignmentOrderByWithRelationInput
   }
 
@@ -12134,6 +10969,7 @@ export namespace Prisma {
     OR?: BusAssignmentWhereInput[]
     NOT?: BusAssignmentWhereInput | BusAssignmentWhereInput[]
     BusID?: StringFilter<"BusAssignment"> | string
+    RouteID?: StringFilter<"BusAssignment"> | string
     AssignmentDate?: DateTimeFilter<"BusAssignment"> | Date | string
     Battery?: BoolFilter<"BusAssignment"> | boolean
     Lights?: BoolFilter<"BusAssignment"> | boolean
@@ -12145,12 +10981,14 @@ export namespace Prisma {
     Engine?: BoolFilter<"BusAssignment"> | boolean
     TireCondition?: BoolFilter<"BusAssignment"> | boolean
     Self?: BoolFilter<"BusAssignment"> | boolean
+    Route?: XOR<RouteScalarRelationFilter, RouteWhereInput>
     RegularBusAssignment?: XOR<RegularBusAssignmentNullableScalarRelationFilter, RegularBusAssignmentWhereInput> | null
   }, "BusAssignmentID">
 
   export type BusAssignmentOrderByWithAggregationInput = {
     BusAssignmentID?: SortOrder
     BusID?: SortOrder
+    RouteID?: SortOrder
     AssignmentDate?: SortOrder
     Battery?: SortOrder
     Lights?: SortOrder
@@ -12173,6 +11011,7 @@ export namespace Prisma {
     NOT?: BusAssignmentScalarWhereWithAggregatesInput | BusAssignmentScalarWhereWithAggregatesInput[]
     BusAssignmentID?: StringWithAggregatesFilter<"BusAssignment"> | string
     BusID?: StringWithAggregatesFilter<"BusAssignment"> | string
+    RouteID?: StringWithAggregatesFilter<"BusAssignment"> | string
     AssignmentDate?: DateTimeWithAggregatesFilter<"BusAssignment"> | Date | string
     Battery?: BoolWithAggregatesFilter<"BusAssignment"> | boolean
     Lights?: BoolWithAggregatesFilter<"BusAssignment"> | boolean
@@ -12196,7 +11035,6 @@ export namespace Prisma {
     QuotaPolicyID?: StringFilter<"RegularBusAssignment"> | string
     Change?: FloatFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatFilter<"RegularBusAssignment"> | number
-    BusRouteAssignments?: BusRouteAssignmentListRelationFilter
     quotaPolicy?: XOR<Quota_PolicyScalarRelationFilter, Quota_PolicyWhereInput>
     BusAssignment?: XOR<BusAssignmentScalarRelationFilter, BusAssignmentWhereInput>
   }
@@ -12208,7 +11046,6 @@ export namespace Prisma {
     QuotaPolicyID?: SortOrder
     Change?: SortOrder
     TripRevenue?: SortOrder
-    BusRouteAssignments?: BusRouteAssignmentOrderByRelationAggregateInput
     quotaPolicy?: Quota_PolicyOrderByWithRelationInput
     BusAssignment?: BusAssignmentOrderByWithRelationInput
   }
@@ -12223,7 +11060,6 @@ export namespace Prisma {
     QuotaPolicyID?: StringFilter<"RegularBusAssignment"> | string
     Change?: FloatFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatFilter<"RegularBusAssignment"> | number
-    BusRouteAssignments?: BusRouteAssignmentListRelationFilter
     quotaPolicy?: XOR<Quota_PolicyScalarRelationFilter, Quota_PolicyWhereInput>
     BusAssignment?: XOR<BusAssignmentScalarRelationFilter, BusAssignmentWhereInput>
   }, "RegularBusAssignmentID">
@@ -12252,54 +11088,6 @@ export namespace Prisma {
     QuotaPolicyID?: StringWithAggregatesFilter<"RegularBusAssignment"> | string
     Change?: FloatWithAggregatesFilter<"RegularBusAssignment"> | number
     TripRevenue?: FloatWithAggregatesFilter<"RegularBusAssignment"> | number
-  }
-
-  export type BusRouteAssignmentWhereInput = {
-    AND?: BusRouteAssignmentWhereInput | BusRouteAssignmentWhereInput[]
-    OR?: BusRouteAssignmentWhereInput[]
-    NOT?: BusRouteAssignmentWhereInput | BusRouteAssignmentWhereInput[]
-    BusRouteAssignmentID?: StringFilter<"BusRouteAssignment"> | string
-    BusAssignmentID?: StringFilter<"BusRouteAssignment"> | string
-    RouteID?: StringFilter<"BusRouteAssignment"> | string
-    Route?: XOR<RouteScalarRelationFilter, RouteWhereInput>
-    RegularBusAssignment?: XOR<RegularBusAssignmentScalarRelationFilter, RegularBusAssignmentWhereInput>
-  }
-
-  export type BusRouteAssignmentOrderByWithRelationInput = {
-    BusRouteAssignmentID?: SortOrder
-    BusAssignmentID?: SortOrder
-    RouteID?: SortOrder
-    Route?: RouteOrderByWithRelationInput
-    RegularBusAssignment?: RegularBusAssignmentOrderByWithRelationInput
-  }
-
-  export type BusRouteAssignmentWhereUniqueInput = Prisma.AtLeast<{
-    BusRouteAssignmentID?: string
-    AND?: BusRouteAssignmentWhereInput | BusRouteAssignmentWhereInput[]
-    OR?: BusRouteAssignmentWhereInput[]
-    NOT?: BusRouteAssignmentWhereInput | BusRouteAssignmentWhereInput[]
-    BusAssignmentID?: StringFilter<"BusRouteAssignment"> | string
-    RouteID?: StringFilter<"BusRouteAssignment"> | string
-    Route?: XOR<RouteScalarRelationFilter, RouteWhereInput>
-    RegularBusAssignment?: XOR<RegularBusAssignmentScalarRelationFilter, RegularBusAssignmentWhereInput>
-  }, "BusRouteAssignmentID">
-
-  export type BusRouteAssignmentOrderByWithAggregationInput = {
-    BusRouteAssignmentID?: SortOrder
-    BusAssignmentID?: SortOrder
-    RouteID?: SortOrder
-    _count?: BusRouteAssignmentCountOrderByAggregateInput
-    _max?: BusRouteAssignmentMaxOrderByAggregateInput
-    _min?: BusRouteAssignmentMinOrderByAggregateInput
-  }
-
-  export type BusRouteAssignmentScalarWhereWithAggregatesInput = {
-    AND?: BusRouteAssignmentScalarWhereWithAggregatesInput | BusRouteAssignmentScalarWhereWithAggregatesInput[]
-    OR?: BusRouteAssignmentScalarWhereWithAggregatesInput[]
-    NOT?: BusRouteAssignmentScalarWhereWithAggregatesInput | BusRouteAssignmentScalarWhereWithAggregatesInput[]
-    BusRouteAssignmentID?: StringWithAggregatesFilter<"BusRouteAssignment"> | string
-    BusAssignmentID?: StringWithAggregatesFilter<"BusRouteAssignment"> | string
-    RouteID?: StringWithAggregatesFilter<"BusRouteAssignment"> | string
   }
 
   export type Quota_PolicyCreateInput = {
@@ -12484,7 +11272,7 @@ export namespace Prisma {
     StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
     EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
     RouteStops?: RouteStopCreateNestedManyWithoutRouteInput
-    BusAssignments?: BusRouteAssignmentCreateNestedManyWithoutRouteInput
+    BusAssignments?: BusAssignmentCreateNestedManyWithoutRouteInput
   }
 
   export type RouteUncheckedCreateInput = {
@@ -12493,7 +11281,7 @@ export namespace Prisma {
     EndStopID: string
     RouteName: string
     RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
-    BusAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput
+    BusAssignments?: BusAssignmentUncheckedCreateNestedManyWithoutRouteInput
   }
 
   export type RouteUpdateInput = {
@@ -12502,7 +11290,7 @@ export namespace Prisma {
     StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
     EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
     RouteStops?: RouteStopUpdateManyWithoutRouteNestedInput
-    BusAssignments?: BusRouteAssignmentUpdateManyWithoutRouteNestedInput
+    BusAssignments?: BusAssignmentUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteUncheckedUpdateInput = {
@@ -12511,7 +11299,7 @@ export namespace Prisma {
     EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
-    BusAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput
+    BusAssignments?: BusAssignmentUncheckedUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteCreateManyInput = {
@@ -12594,12 +11382,14 @@ export namespace Prisma {
     Engine: boolean
     TireCondition: boolean
     Self: boolean
+    Route: RouteCreateNestedOneWithoutBusAssignmentsInput
     RegularBusAssignment?: RegularBusAssignmentCreateNestedOneWithoutBusAssignmentInput
   }
 
   export type BusAssignmentUncheckedCreateInput = {
     BusAssignmentID: string
     BusID: string
+    RouteID: string
     AssignmentDate: Date | string
     Battery: boolean
     Lights: boolean
@@ -12628,12 +11418,14 @@ export namespace Prisma {
     Engine?: BoolFieldUpdateOperationsInput | boolean
     TireCondition?: BoolFieldUpdateOperationsInput | boolean
     Self?: BoolFieldUpdateOperationsInput | boolean
+    Route?: RouteUpdateOneRequiredWithoutBusAssignmentsNestedInput
     RegularBusAssignment?: RegularBusAssignmentUpdateOneWithoutBusAssignmentNestedInput
   }
 
   export type BusAssignmentUncheckedUpdateInput = {
     BusAssignmentID?: StringFieldUpdateOperationsInput | string
     BusID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -12651,6 +11443,7 @@ export namespace Prisma {
   export type BusAssignmentCreateManyInput = {
     BusAssignmentID: string
     BusID: string
+    RouteID: string
     AssignmentDate: Date | string
     Battery: boolean
     Lights: boolean
@@ -12683,6 +11476,7 @@ export namespace Prisma {
   export type BusAssignmentUncheckedUpdateManyInput = {
     BusAssignmentID?: StringFieldUpdateOperationsInput | string
     BusID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -12701,7 +11495,6 @@ export namespace Prisma {
     ConductorID: string
     Change: number
     TripRevenue: number
-    BusRouteAssignments?: BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput
     quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
     BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
   }
@@ -12713,7 +11506,6 @@ export namespace Prisma {
     QuotaPolicyID: string
     Change: number
     TripRevenue: number
-    BusRouteAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRegularBusAssignmentInput
   }
 
   export type RegularBusAssignmentUpdateInput = {
@@ -12721,7 +11513,6 @@ export namespace Prisma {
     ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusRouteAssignments?: BusRouteAssignmentUpdateManyWithoutRegularBusAssignmentNestedInput
     quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
     BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
   }
@@ -12733,7 +11524,6 @@ export namespace Prisma {
     QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusRouteAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput
   }
 
   export type RegularBusAssignmentCreateManyInput = {
@@ -12759,46 +11549,6 @@ export namespace Prisma {
     QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-  }
-
-  export type BusRouteAssignmentCreateInput = {
-    BusRouteAssignmentID: string
-    Route: RouteCreateNestedOneWithoutBusAssignmentsInput
-    RegularBusAssignment: RegularBusAssignmentCreateNestedOneWithoutBusRouteAssignmentsInput
-  }
-
-  export type BusRouteAssignmentUncheckedCreateInput = {
-    BusRouteAssignmentID: string
-    BusAssignmentID: string
-    RouteID: string
-  }
-
-  export type BusRouteAssignmentUpdateInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
-    Route?: RouteUpdateOneRequiredWithoutBusAssignmentsNestedInput
-    RegularBusAssignment?: RegularBusAssignmentUpdateOneRequiredWithoutBusRouteAssignmentsNestedInput
-  }
-
-  export type BusRouteAssignmentUncheckedUpdateInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
-    BusAssignmentID?: StringFieldUpdateOperationsInput | string
-    RouteID?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type BusRouteAssignmentCreateManyInput = {
-    BusRouteAssignmentID: string
-    BusAssignmentID: string
-    RouteID: string
-  }
-
-  export type BusRouteAssignmentUpdateManyMutationInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type BusRouteAssignmentUncheckedUpdateManyInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
-    BusAssignmentID?: StringFieldUpdateOperationsInput | string
-    RouteID?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -13018,13 +11768,13 @@ export namespace Prisma {
     isNot?: StopWhereInput
   }
 
-  export type BusRouteAssignmentListRelationFilter = {
-    every?: BusRouteAssignmentWhereInput
-    some?: BusRouteAssignmentWhereInput
-    none?: BusRouteAssignmentWhereInput
+  export type BusAssignmentListRelationFilter = {
+    every?: BusAssignmentWhereInput
+    some?: BusAssignmentWhereInput
+    none?: BusAssignmentWhereInput
   }
 
-  export type BusRouteAssignmentOrderByRelationAggregateInput = {
+  export type BusAssignmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -13128,6 +11878,7 @@ export namespace Prisma {
   export type BusAssignmentCountOrderByAggregateInput = {
     BusAssignmentID?: SortOrder
     BusID?: SortOrder
+    RouteID?: SortOrder
     AssignmentDate?: SortOrder
     Battery?: SortOrder
     Lights?: SortOrder
@@ -13144,6 +11895,7 @@ export namespace Prisma {
   export type BusAssignmentMaxOrderByAggregateInput = {
     BusAssignmentID?: SortOrder
     BusID?: SortOrder
+    RouteID?: SortOrder
     AssignmentDate?: SortOrder
     Battery?: SortOrder
     Lights?: SortOrder
@@ -13160,6 +11912,7 @@ export namespace Prisma {
   export type BusAssignmentMinOrderByAggregateInput = {
     BusAssignmentID?: SortOrder
     BusID?: SortOrder
+    RouteID?: SortOrder
     AssignmentDate?: SortOrder
     Battery?: SortOrder
     Lights?: SortOrder
@@ -13221,29 +11974,6 @@ export namespace Prisma {
   export type RegularBusAssignmentSumOrderByAggregateInput = {
     Change?: SortOrder
     TripRevenue?: SortOrder
-  }
-
-  export type RegularBusAssignmentScalarRelationFilter = {
-    is?: RegularBusAssignmentWhereInput
-    isNot?: RegularBusAssignmentWhereInput
-  }
-
-  export type BusRouteAssignmentCountOrderByAggregateInput = {
-    BusRouteAssignmentID?: SortOrder
-    BusAssignmentID?: SortOrder
-    RouteID?: SortOrder
-  }
-
-  export type BusRouteAssignmentMaxOrderByAggregateInput = {
-    BusRouteAssignmentID?: SortOrder
-    BusAssignmentID?: SortOrder
-    RouteID?: SortOrder
-  }
-
-  export type BusRouteAssignmentMinOrderByAggregateInput = {
-    BusRouteAssignmentID?: SortOrder
-    BusAssignmentID?: SortOrder
-    RouteID?: SortOrder
   }
 
   export type FixedCreateNestedOneWithoutQuotaPolicyInput = {
@@ -13541,11 +12271,11 @@ export namespace Prisma {
     connect?: RouteStopWhereUniqueInput | RouteStopWhereUniqueInput[]
   }
 
-  export type BusRouteAssignmentCreateNestedManyWithoutRouteInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRouteInput, BusRouteAssignmentUncheckedCreateWithoutRouteInput> | BusRouteAssignmentCreateWithoutRouteInput[] | BusRouteAssignmentUncheckedCreateWithoutRouteInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRouteInput | BusRouteAssignmentCreateOrConnectWithoutRouteInput[]
-    createMany?: BusRouteAssignmentCreateManyRouteInputEnvelope
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
+  export type BusAssignmentCreateNestedManyWithoutRouteInput = {
+    create?: XOR<BusAssignmentCreateWithoutRouteInput, BusAssignmentUncheckedCreateWithoutRouteInput> | BusAssignmentCreateWithoutRouteInput[] | BusAssignmentUncheckedCreateWithoutRouteInput[]
+    connectOrCreate?: BusAssignmentCreateOrConnectWithoutRouteInput | BusAssignmentCreateOrConnectWithoutRouteInput[]
+    createMany?: BusAssignmentCreateManyRouteInputEnvelope
+    connect?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
   }
 
   export type RouteStopUncheckedCreateNestedManyWithoutRouteInput = {
@@ -13555,11 +12285,11 @@ export namespace Prisma {
     connect?: RouteStopWhereUniqueInput | RouteStopWhereUniqueInput[]
   }
 
-  export type BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRouteInput, BusRouteAssignmentUncheckedCreateWithoutRouteInput> | BusRouteAssignmentCreateWithoutRouteInput[] | BusRouteAssignmentUncheckedCreateWithoutRouteInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRouteInput | BusRouteAssignmentCreateOrConnectWithoutRouteInput[]
-    createMany?: BusRouteAssignmentCreateManyRouteInputEnvelope
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
+  export type BusAssignmentUncheckedCreateNestedManyWithoutRouteInput = {
+    create?: XOR<BusAssignmentCreateWithoutRouteInput, BusAssignmentUncheckedCreateWithoutRouteInput> | BusAssignmentCreateWithoutRouteInput[] | BusAssignmentUncheckedCreateWithoutRouteInput[]
+    connectOrCreate?: BusAssignmentCreateOrConnectWithoutRouteInput | BusAssignmentCreateOrConnectWithoutRouteInput[]
+    createMany?: BusAssignmentCreateManyRouteInputEnvelope
+    connect?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
   }
 
   export type StopUpdateOneRequiredWithoutRoutesAsStartNestedInput = {
@@ -13592,18 +12322,18 @@ export namespace Prisma {
     deleteMany?: RouteStopScalarWhereInput | RouteStopScalarWhereInput[]
   }
 
-  export type BusRouteAssignmentUpdateManyWithoutRouteNestedInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRouteInput, BusRouteAssignmentUncheckedCreateWithoutRouteInput> | BusRouteAssignmentCreateWithoutRouteInput[] | BusRouteAssignmentUncheckedCreateWithoutRouteInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRouteInput | BusRouteAssignmentCreateOrConnectWithoutRouteInput[]
-    upsert?: BusRouteAssignmentUpsertWithWhereUniqueWithoutRouteInput | BusRouteAssignmentUpsertWithWhereUniqueWithoutRouteInput[]
-    createMany?: BusRouteAssignmentCreateManyRouteInputEnvelope
-    set?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    disconnect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    delete?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    update?: BusRouteAssignmentUpdateWithWhereUniqueWithoutRouteInput | BusRouteAssignmentUpdateWithWhereUniqueWithoutRouteInput[]
-    updateMany?: BusRouteAssignmentUpdateManyWithWhereWithoutRouteInput | BusRouteAssignmentUpdateManyWithWhereWithoutRouteInput[]
-    deleteMany?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
+  export type BusAssignmentUpdateManyWithoutRouteNestedInput = {
+    create?: XOR<BusAssignmentCreateWithoutRouteInput, BusAssignmentUncheckedCreateWithoutRouteInput> | BusAssignmentCreateWithoutRouteInput[] | BusAssignmentUncheckedCreateWithoutRouteInput[]
+    connectOrCreate?: BusAssignmentCreateOrConnectWithoutRouteInput | BusAssignmentCreateOrConnectWithoutRouteInput[]
+    upsert?: BusAssignmentUpsertWithWhereUniqueWithoutRouteInput | BusAssignmentUpsertWithWhereUniqueWithoutRouteInput[]
+    createMany?: BusAssignmentCreateManyRouteInputEnvelope
+    set?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
+    disconnect?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
+    delete?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
+    connect?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
+    update?: BusAssignmentUpdateWithWhereUniqueWithoutRouteInput | BusAssignmentUpdateWithWhereUniqueWithoutRouteInput[]
+    updateMany?: BusAssignmentUpdateManyWithWhereWithoutRouteInput | BusAssignmentUpdateManyWithWhereWithoutRouteInput[]
+    deleteMany?: BusAssignmentScalarWhereInput | BusAssignmentScalarWhereInput[]
   }
 
   export type RouteStopUncheckedUpdateManyWithoutRouteNestedInput = {
@@ -13620,18 +12350,18 @@ export namespace Prisma {
     deleteMany?: RouteStopScalarWhereInput | RouteStopScalarWhereInput[]
   }
 
-  export type BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRouteInput, BusRouteAssignmentUncheckedCreateWithoutRouteInput> | BusRouteAssignmentCreateWithoutRouteInput[] | BusRouteAssignmentUncheckedCreateWithoutRouteInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRouteInput | BusRouteAssignmentCreateOrConnectWithoutRouteInput[]
-    upsert?: BusRouteAssignmentUpsertWithWhereUniqueWithoutRouteInput | BusRouteAssignmentUpsertWithWhereUniqueWithoutRouteInput[]
-    createMany?: BusRouteAssignmentCreateManyRouteInputEnvelope
-    set?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    disconnect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    delete?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    update?: BusRouteAssignmentUpdateWithWhereUniqueWithoutRouteInput | BusRouteAssignmentUpdateWithWhereUniqueWithoutRouteInput[]
-    updateMany?: BusRouteAssignmentUpdateManyWithWhereWithoutRouteInput | BusRouteAssignmentUpdateManyWithWhereWithoutRouteInput[]
-    deleteMany?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
+  export type BusAssignmentUncheckedUpdateManyWithoutRouteNestedInput = {
+    create?: XOR<BusAssignmentCreateWithoutRouteInput, BusAssignmentUncheckedCreateWithoutRouteInput> | BusAssignmentCreateWithoutRouteInput[] | BusAssignmentUncheckedCreateWithoutRouteInput[]
+    connectOrCreate?: BusAssignmentCreateOrConnectWithoutRouteInput | BusAssignmentCreateOrConnectWithoutRouteInput[]
+    upsert?: BusAssignmentUpsertWithWhereUniqueWithoutRouteInput | BusAssignmentUpsertWithWhereUniqueWithoutRouteInput[]
+    createMany?: BusAssignmentCreateManyRouteInputEnvelope
+    set?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
+    disconnect?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
+    delete?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
+    connect?: BusAssignmentWhereUniqueInput | BusAssignmentWhereUniqueInput[]
+    update?: BusAssignmentUpdateWithWhereUniqueWithoutRouteInput | BusAssignmentUpdateWithWhereUniqueWithoutRouteInput[]
+    updateMany?: BusAssignmentUpdateManyWithWhereWithoutRouteInput | BusAssignmentUpdateManyWithWhereWithoutRouteInput[]
+    deleteMany?: BusAssignmentScalarWhereInput | BusAssignmentScalarWhereInput[]
   }
 
   export type RouteCreateNestedOneWithoutRouteStopsInput = {
@@ -13670,6 +12400,12 @@ export namespace Prisma {
     update?: XOR<XOR<StopUpdateToOneWithWhereWithoutRouteStopsInput, StopUpdateWithoutRouteStopsInput>, StopUncheckedUpdateWithoutRouteStopsInput>
   }
 
+  export type RouteCreateNestedOneWithoutBusAssignmentsInput = {
+    create?: XOR<RouteCreateWithoutBusAssignmentsInput, RouteUncheckedCreateWithoutBusAssignmentsInput>
+    connectOrCreate?: RouteCreateOrConnectWithoutBusAssignmentsInput
+    connect?: RouteWhereUniqueInput
+  }
+
   export type RegularBusAssignmentCreateNestedOneWithoutBusAssignmentInput = {
     create?: XOR<RegularBusAssignmentCreateWithoutBusAssignmentInput, RegularBusAssignmentUncheckedCreateWithoutBusAssignmentInput>
     connectOrCreate?: RegularBusAssignmentCreateOrConnectWithoutBusAssignmentInput
@@ -13684,6 +12420,14 @@ export namespace Prisma {
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type RouteUpdateOneRequiredWithoutBusAssignmentsNestedInput = {
+    create?: XOR<RouteCreateWithoutBusAssignmentsInput, RouteUncheckedCreateWithoutBusAssignmentsInput>
+    connectOrCreate?: RouteCreateOrConnectWithoutBusAssignmentsInput
+    upsert?: RouteUpsertWithoutBusAssignmentsInput
+    connect?: RouteWhereUniqueInput
+    update?: XOR<XOR<RouteUpdateToOneWithWhereWithoutBusAssignmentsInput, RouteUpdateWithoutBusAssignmentsInput>, RouteUncheckedUpdateWithoutBusAssignmentsInput>
   }
 
   export type RegularBusAssignmentUpdateOneWithoutBusAssignmentNestedInput = {
@@ -13706,13 +12450,6 @@ export namespace Prisma {
     update?: XOR<XOR<RegularBusAssignmentUpdateToOneWithWhereWithoutBusAssignmentInput, RegularBusAssignmentUpdateWithoutBusAssignmentInput>, RegularBusAssignmentUncheckedUpdateWithoutBusAssignmentInput>
   }
 
-  export type BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput> | BusRouteAssignmentCreateWithoutRegularBusAssignmentInput[] | BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput | BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput[]
-    createMany?: BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-  }
-
   export type Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput = {
     create?: XOR<Quota_PolicyCreateWithoutRegularBusAssignmentsInput, Quota_PolicyUncheckedCreateWithoutRegularBusAssignmentsInput>
     connectOrCreate?: Quota_PolicyCreateOrConnectWithoutRegularBusAssignmentsInput
@@ -13723,27 +12460,6 @@ export namespace Prisma {
     create?: XOR<BusAssignmentCreateWithoutRegularBusAssignmentInput, BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
     connectOrCreate?: BusAssignmentCreateOrConnectWithoutRegularBusAssignmentInput
     connect?: BusAssignmentWhereUniqueInput
-  }
-
-  export type BusRouteAssignmentUncheckedCreateNestedManyWithoutRegularBusAssignmentInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput> | BusRouteAssignmentCreateWithoutRegularBusAssignmentInput[] | BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput | BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput[]
-    createMany?: BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-  }
-
-  export type BusRouteAssignmentUpdateManyWithoutRegularBusAssignmentNestedInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput> | BusRouteAssignmentCreateWithoutRegularBusAssignmentInput[] | BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput | BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput[]
-    upsert?: BusRouteAssignmentUpsertWithWhereUniqueWithoutRegularBusAssignmentInput | BusRouteAssignmentUpsertWithWhereUniqueWithoutRegularBusAssignmentInput[]
-    createMany?: BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope
-    set?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    disconnect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    delete?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    update?: BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput | BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput[]
-    updateMany?: BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput | BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput[]
-    deleteMany?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
   }
 
   export type Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput = {
@@ -13760,48 +12476,6 @@ export namespace Prisma {
     upsert?: BusAssignmentUpsertWithoutRegularBusAssignmentInput
     connect?: BusAssignmentWhereUniqueInput
     update?: XOR<XOR<BusAssignmentUpdateToOneWithWhereWithoutRegularBusAssignmentInput, BusAssignmentUpdateWithoutRegularBusAssignmentInput>, BusAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
-  }
-
-  export type BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput = {
-    create?: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput> | BusRouteAssignmentCreateWithoutRegularBusAssignmentInput[] | BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput[]
-    connectOrCreate?: BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput | BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput[]
-    upsert?: BusRouteAssignmentUpsertWithWhereUniqueWithoutRegularBusAssignmentInput | BusRouteAssignmentUpsertWithWhereUniqueWithoutRegularBusAssignmentInput[]
-    createMany?: BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope
-    set?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    disconnect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    delete?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    connect?: BusRouteAssignmentWhereUniqueInput | BusRouteAssignmentWhereUniqueInput[]
-    update?: BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput | BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput[]
-    updateMany?: BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput | BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput[]
-    deleteMany?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
-  }
-
-  export type RouteCreateNestedOneWithoutBusAssignmentsInput = {
-    create?: XOR<RouteCreateWithoutBusAssignmentsInput, RouteUncheckedCreateWithoutBusAssignmentsInput>
-    connectOrCreate?: RouteCreateOrConnectWithoutBusAssignmentsInput
-    connect?: RouteWhereUniqueInput
-  }
-
-  export type RegularBusAssignmentCreateNestedOneWithoutBusRouteAssignmentsInput = {
-    create?: XOR<RegularBusAssignmentCreateWithoutBusRouteAssignmentsInput, RegularBusAssignmentUncheckedCreateWithoutBusRouteAssignmentsInput>
-    connectOrCreate?: RegularBusAssignmentCreateOrConnectWithoutBusRouteAssignmentsInput
-    connect?: RegularBusAssignmentWhereUniqueInput
-  }
-
-  export type RouteUpdateOneRequiredWithoutBusAssignmentsNestedInput = {
-    create?: XOR<RouteCreateWithoutBusAssignmentsInput, RouteUncheckedCreateWithoutBusAssignmentsInput>
-    connectOrCreate?: RouteCreateOrConnectWithoutBusAssignmentsInput
-    upsert?: RouteUpsertWithoutBusAssignmentsInput
-    connect?: RouteWhereUniqueInput
-    update?: XOR<XOR<RouteUpdateToOneWithWhereWithoutBusAssignmentsInput, RouteUpdateWithoutBusAssignmentsInput>, RouteUncheckedUpdateWithoutBusAssignmentsInput>
-  }
-
-  export type RegularBusAssignmentUpdateOneRequiredWithoutBusRouteAssignmentsNestedInput = {
-    create?: XOR<RegularBusAssignmentCreateWithoutBusRouteAssignmentsInput, RegularBusAssignmentUncheckedCreateWithoutBusRouteAssignmentsInput>
-    connectOrCreate?: RegularBusAssignmentCreateOrConnectWithoutBusRouteAssignmentsInput
-    upsert?: RegularBusAssignmentUpsertWithoutBusRouteAssignmentsInput
-    connect?: RegularBusAssignmentWhereUniqueInput
-    update?: XOR<XOR<RegularBusAssignmentUpdateToOneWithWhereWithoutBusRouteAssignmentsInput, RegularBusAssignmentUpdateWithoutBusRouteAssignmentsInput>, RegularBusAssignmentUncheckedUpdateWithoutBusRouteAssignmentsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -13958,7 +12632,6 @@ export namespace Prisma {
     ConductorID: string
     Change: number
     TripRevenue: number
-    BusRouteAssignments?: BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput
     BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
   }
 
@@ -13968,7 +12641,6 @@ export namespace Prisma {
     ConductorID: string
     Change: number
     TripRevenue: number
-    BusRouteAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRegularBusAssignmentInput
   }
 
   export type RegularBusAssignmentCreateOrConnectWithoutQuotaPolicyInput = {
@@ -14148,7 +12820,7 @@ export namespace Prisma {
     RouteName: string
     EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
     RouteStops?: RouteStopCreateNestedManyWithoutRouteInput
-    BusAssignments?: BusRouteAssignmentCreateNestedManyWithoutRouteInput
+    BusAssignments?: BusAssignmentCreateNestedManyWithoutRouteInput
   }
 
   export type RouteUncheckedCreateWithoutStartStopInput = {
@@ -14156,7 +12828,7 @@ export namespace Prisma {
     EndStopID: string
     RouteName: string
     RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
-    BusAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput
+    BusAssignments?: BusAssignmentUncheckedCreateNestedManyWithoutRouteInput
   }
 
   export type RouteCreateOrConnectWithoutStartStopInput = {
@@ -14174,7 +12846,7 @@ export namespace Prisma {
     RouteName: string
     StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
     RouteStops?: RouteStopCreateNestedManyWithoutRouteInput
-    BusAssignments?: BusRouteAssignmentCreateNestedManyWithoutRouteInput
+    BusAssignments?: BusAssignmentCreateNestedManyWithoutRouteInput
   }
 
   export type RouteUncheckedCreateWithoutEndStopInput = {
@@ -14182,7 +12854,7 @@ export namespace Prisma {
     StartStopID: string
     RouteName: string
     RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
-    BusAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput
+    BusAssignments?: BusAssignmentUncheckedCreateNestedManyWithoutRouteInput
   }
 
   export type RouteCreateOrConnectWithoutEndStopInput = {
@@ -14349,23 +13021,47 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type BusRouteAssignmentCreateWithoutRouteInput = {
-    BusRouteAssignmentID: string
-    RegularBusAssignment: RegularBusAssignmentCreateNestedOneWithoutBusRouteAssignmentsInput
-  }
-
-  export type BusRouteAssignmentUncheckedCreateWithoutRouteInput = {
-    BusRouteAssignmentID: string
+  export type BusAssignmentCreateWithoutRouteInput = {
     BusAssignmentID: string
+    BusID: string
+    AssignmentDate: Date | string
+    Battery: boolean
+    Lights: boolean
+    Oil: boolean
+    Water: boolean
+    Break: boolean
+    Air: boolean
+    Gas: boolean
+    Engine: boolean
+    TireCondition: boolean
+    Self: boolean
+    RegularBusAssignment?: RegularBusAssignmentCreateNestedOneWithoutBusAssignmentInput
   }
 
-  export type BusRouteAssignmentCreateOrConnectWithoutRouteInput = {
-    where: BusRouteAssignmentWhereUniqueInput
-    create: XOR<BusRouteAssignmentCreateWithoutRouteInput, BusRouteAssignmentUncheckedCreateWithoutRouteInput>
+  export type BusAssignmentUncheckedCreateWithoutRouteInput = {
+    BusAssignmentID: string
+    BusID: string
+    AssignmentDate: Date | string
+    Battery: boolean
+    Lights: boolean
+    Oil: boolean
+    Water: boolean
+    Break: boolean
+    Air: boolean
+    Gas: boolean
+    Engine: boolean
+    TireCondition: boolean
+    Self: boolean
+    RegularBusAssignment?: RegularBusAssignmentUncheckedCreateNestedOneWithoutBusAssignmentInput
   }
 
-  export type BusRouteAssignmentCreateManyRouteInputEnvelope = {
-    data: BusRouteAssignmentCreateManyRouteInput | BusRouteAssignmentCreateManyRouteInput[]
+  export type BusAssignmentCreateOrConnectWithoutRouteInput = {
+    where: BusAssignmentWhereUniqueInput
+    create: XOR<BusAssignmentCreateWithoutRouteInput, BusAssignmentUncheckedCreateWithoutRouteInput>
+  }
+
+  export type BusAssignmentCreateManyRouteInputEnvelope = {
+    data: BusAssignmentCreateManyRouteInput | BusAssignmentCreateManyRouteInput[]
     skipDuplicates?: boolean
   }
 
@@ -14439,29 +13135,40 @@ export namespace Prisma {
     data: XOR<RouteStopUpdateManyMutationInput, RouteStopUncheckedUpdateManyWithoutRouteInput>
   }
 
-  export type BusRouteAssignmentUpsertWithWhereUniqueWithoutRouteInput = {
-    where: BusRouteAssignmentWhereUniqueInput
-    update: XOR<BusRouteAssignmentUpdateWithoutRouteInput, BusRouteAssignmentUncheckedUpdateWithoutRouteInput>
-    create: XOR<BusRouteAssignmentCreateWithoutRouteInput, BusRouteAssignmentUncheckedCreateWithoutRouteInput>
+  export type BusAssignmentUpsertWithWhereUniqueWithoutRouteInput = {
+    where: BusAssignmentWhereUniqueInput
+    update: XOR<BusAssignmentUpdateWithoutRouteInput, BusAssignmentUncheckedUpdateWithoutRouteInput>
+    create: XOR<BusAssignmentCreateWithoutRouteInput, BusAssignmentUncheckedCreateWithoutRouteInput>
   }
 
-  export type BusRouteAssignmentUpdateWithWhereUniqueWithoutRouteInput = {
-    where: BusRouteAssignmentWhereUniqueInput
-    data: XOR<BusRouteAssignmentUpdateWithoutRouteInput, BusRouteAssignmentUncheckedUpdateWithoutRouteInput>
+  export type BusAssignmentUpdateWithWhereUniqueWithoutRouteInput = {
+    where: BusAssignmentWhereUniqueInput
+    data: XOR<BusAssignmentUpdateWithoutRouteInput, BusAssignmentUncheckedUpdateWithoutRouteInput>
   }
 
-  export type BusRouteAssignmentUpdateManyWithWhereWithoutRouteInput = {
-    where: BusRouteAssignmentScalarWhereInput
-    data: XOR<BusRouteAssignmentUpdateManyMutationInput, BusRouteAssignmentUncheckedUpdateManyWithoutRouteInput>
+  export type BusAssignmentUpdateManyWithWhereWithoutRouteInput = {
+    where: BusAssignmentScalarWhereInput
+    data: XOR<BusAssignmentUpdateManyMutationInput, BusAssignmentUncheckedUpdateManyWithoutRouteInput>
   }
 
-  export type BusRouteAssignmentScalarWhereInput = {
-    AND?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
-    OR?: BusRouteAssignmentScalarWhereInput[]
-    NOT?: BusRouteAssignmentScalarWhereInput | BusRouteAssignmentScalarWhereInput[]
-    BusRouteAssignmentID?: StringFilter<"BusRouteAssignment"> | string
-    BusAssignmentID?: StringFilter<"BusRouteAssignment"> | string
-    RouteID?: StringFilter<"BusRouteAssignment"> | string
+  export type BusAssignmentScalarWhereInput = {
+    AND?: BusAssignmentScalarWhereInput | BusAssignmentScalarWhereInput[]
+    OR?: BusAssignmentScalarWhereInput[]
+    NOT?: BusAssignmentScalarWhereInput | BusAssignmentScalarWhereInput[]
+    BusAssignmentID?: StringFilter<"BusAssignment"> | string
+    BusID?: StringFilter<"BusAssignment"> | string
+    RouteID?: StringFilter<"BusAssignment"> | string
+    AssignmentDate?: DateTimeFilter<"BusAssignment"> | Date | string
+    Battery?: BoolFilter<"BusAssignment"> | boolean
+    Lights?: BoolFilter<"BusAssignment"> | boolean
+    Oil?: BoolFilter<"BusAssignment"> | boolean
+    Water?: BoolFilter<"BusAssignment"> | boolean
+    Break?: BoolFilter<"BusAssignment"> | boolean
+    Air?: BoolFilter<"BusAssignment"> | boolean
+    Gas?: BoolFilter<"BusAssignment"> | boolean
+    Engine?: BoolFilter<"BusAssignment"> | boolean
+    TireCondition?: BoolFilter<"BusAssignment"> | boolean
+    Self?: BoolFilter<"BusAssignment"> | boolean
   }
 
   export type RouteCreateWithoutRouteStopsInput = {
@@ -14469,7 +13176,7 @@ export namespace Prisma {
     RouteName: string
     StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
     EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
-    BusAssignments?: BusRouteAssignmentCreateNestedManyWithoutRouteInput
+    BusAssignments?: BusAssignmentCreateNestedManyWithoutRouteInput
   }
 
   export type RouteUncheckedCreateWithoutRouteStopsInput = {
@@ -14477,7 +13184,7 @@ export namespace Prisma {
     StartStopID: string
     EndStopID: string
     RouteName: string
-    BusAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRouteInput
+    BusAssignments?: BusAssignmentUncheckedCreateNestedManyWithoutRouteInput
   }
 
   export type RouteCreateOrConnectWithoutRouteStopsInput = {
@@ -14522,7 +13229,7 @@ export namespace Prisma {
     RouteName?: StringFieldUpdateOperationsInput | string
     StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
     EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
-    BusAssignments?: BusRouteAssignmentUpdateManyWithoutRouteNestedInput
+    BusAssignments?: BusAssignmentUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteUncheckedUpdateWithoutRouteStopsInput = {
@@ -14530,7 +13237,7 @@ export namespace Prisma {
     StartStopID?: StringFieldUpdateOperationsInput | string
     EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
-    BusAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput
+    BusAssignments?: BusAssignmentUncheckedUpdateManyWithoutRouteNestedInput
   }
 
   export type StopUpsertWithoutRouteStopsInput = {
@@ -14560,12 +13267,32 @@ export namespace Prisma {
     routesAsEnd?: RouteUncheckedUpdateManyWithoutEndStopNestedInput
   }
 
+  export type RouteCreateWithoutBusAssignmentsInput = {
+    RouteID: string
+    RouteName: string
+    StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
+    EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
+    RouteStops?: RouteStopCreateNestedManyWithoutRouteInput
+  }
+
+  export type RouteUncheckedCreateWithoutBusAssignmentsInput = {
+    RouteID: string
+    StartStopID: string
+    EndStopID: string
+    RouteName: string
+    RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
+  }
+
+  export type RouteCreateOrConnectWithoutBusAssignmentsInput = {
+    where: RouteWhereUniqueInput
+    create: XOR<RouteCreateWithoutBusAssignmentsInput, RouteUncheckedCreateWithoutBusAssignmentsInput>
+  }
+
   export type RegularBusAssignmentCreateWithoutBusAssignmentInput = {
     DriverID: string
     ConductorID: string
     Change: number
     TripRevenue: number
-    BusRouteAssignments?: BusRouteAssignmentCreateNestedManyWithoutRegularBusAssignmentInput
     quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
   }
 
@@ -14575,12 +13302,38 @@ export namespace Prisma {
     QuotaPolicyID: string
     Change: number
     TripRevenue: number
-    BusRouteAssignments?: BusRouteAssignmentUncheckedCreateNestedManyWithoutRegularBusAssignmentInput
   }
 
   export type RegularBusAssignmentCreateOrConnectWithoutBusAssignmentInput = {
     where: RegularBusAssignmentWhereUniqueInput
     create: XOR<RegularBusAssignmentCreateWithoutBusAssignmentInput, RegularBusAssignmentUncheckedCreateWithoutBusAssignmentInput>
+  }
+
+  export type RouteUpsertWithoutBusAssignmentsInput = {
+    update: XOR<RouteUpdateWithoutBusAssignmentsInput, RouteUncheckedUpdateWithoutBusAssignmentsInput>
+    create: XOR<RouteCreateWithoutBusAssignmentsInput, RouteUncheckedCreateWithoutBusAssignmentsInput>
+    where?: RouteWhereInput
+  }
+
+  export type RouteUpdateToOneWithWhereWithoutBusAssignmentsInput = {
+    where?: RouteWhereInput
+    data: XOR<RouteUpdateWithoutBusAssignmentsInput, RouteUncheckedUpdateWithoutBusAssignmentsInput>
+  }
+
+  export type RouteUpdateWithoutBusAssignmentsInput = {
+    RouteID?: StringFieldUpdateOperationsInput | string
+    RouteName?: StringFieldUpdateOperationsInput | string
+    StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
+    EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
+    RouteStops?: RouteStopUpdateManyWithoutRouteNestedInput
+  }
+
+  export type RouteUncheckedUpdateWithoutBusAssignmentsInput = {
+    RouteID?: StringFieldUpdateOperationsInput | string
+    StartStopID?: StringFieldUpdateOperationsInput | string
+    EndStopID?: StringFieldUpdateOperationsInput | string
+    RouteName?: StringFieldUpdateOperationsInput | string
+    RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
   }
 
   export type RegularBusAssignmentUpsertWithoutBusAssignmentInput = {
@@ -14599,7 +13352,6 @@ export namespace Prisma {
     ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusRouteAssignments?: BusRouteAssignmentUpdateManyWithoutRegularBusAssignmentNestedInput
     quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
   }
 
@@ -14609,27 +13361,6 @@ export namespace Prisma {
     QuotaPolicyID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusRouteAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput
-  }
-
-  export type BusRouteAssignmentCreateWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID: string
-    Route: RouteCreateNestedOneWithoutBusAssignmentsInput
-  }
-
-  export type BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID: string
-    RouteID: string
-  }
-
-  export type BusRouteAssignmentCreateOrConnectWithoutRegularBusAssignmentInput = {
-    where: BusRouteAssignmentWhereUniqueInput
-    create: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
-  }
-
-  export type BusRouteAssignmentCreateManyRegularBusAssignmentInputEnvelope = {
-    data: BusRouteAssignmentCreateManyRegularBusAssignmentInput | BusRouteAssignmentCreateManyRegularBusAssignmentInput[]
-    skipDuplicates?: boolean
   }
 
   export type Quota_PolicyCreateWithoutRegularBusAssignmentsInput = {
@@ -14667,11 +13398,13 @@ export namespace Prisma {
     Engine: boolean
     TireCondition: boolean
     Self: boolean
+    Route: RouteCreateNestedOneWithoutBusAssignmentsInput
   }
 
   export type BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput = {
     BusAssignmentID: string
     BusID: string
+    RouteID: string
     AssignmentDate: Date | string
     Battery: boolean
     Lights: boolean
@@ -14688,22 +13421,6 @@ export namespace Prisma {
   export type BusAssignmentCreateOrConnectWithoutRegularBusAssignmentInput = {
     where: BusAssignmentWhereUniqueInput
     create: XOR<BusAssignmentCreateWithoutRegularBusAssignmentInput, BusAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
-  }
-
-  export type BusRouteAssignmentUpsertWithWhereUniqueWithoutRegularBusAssignmentInput = {
-    where: BusRouteAssignmentWhereUniqueInput
-    update: XOR<BusRouteAssignmentUpdateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
-    create: XOR<BusRouteAssignmentCreateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedCreateWithoutRegularBusAssignmentInput>
-  }
-
-  export type BusRouteAssignmentUpdateWithWhereUniqueWithoutRegularBusAssignmentInput = {
-    where: BusRouteAssignmentWhereUniqueInput
-    data: XOR<BusRouteAssignmentUpdateWithoutRegularBusAssignmentInput, BusRouteAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput>
-  }
-
-  export type BusRouteAssignmentUpdateManyWithWhereWithoutRegularBusAssignmentInput = {
-    where: BusRouteAssignmentScalarWhereInput
-    data: XOR<BusRouteAssignmentUpdateManyMutationInput, BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentInput>
   }
 
   export type Quota_PolicyUpsertWithoutRegularBusAssignmentsInput = {
@@ -14758,11 +13475,13 @@ export namespace Prisma {
     Engine?: BoolFieldUpdateOperationsInput | boolean
     TireCondition?: BoolFieldUpdateOperationsInput | boolean
     Self?: BoolFieldUpdateOperationsInput | boolean
+    Route?: RouteUpdateOneRequiredWithoutBusAssignmentsNestedInput
   }
 
   export type BusAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput = {
     BusAssignmentID?: StringFieldUpdateOperationsInput | string
     BusID?: StringFieldUpdateOperationsInput | string
+    RouteID?: StringFieldUpdateOperationsInput | string
     AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     Battery?: BoolFieldUpdateOperationsInput | boolean
     Lights?: BoolFieldUpdateOperationsInput | boolean
@@ -14774,106 +13493,6 @@ export namespace Prisma {
     Engine?: BoolFieldUpdateOperationsInput | boolean
     TireCondition?: BoolFieldUpdateOperationsInput | boolean
     Self?: BoolFieldUpdateOperationsInput | boolean
-  }
-
-  export type RouteCreateWithoutBusAssignmentsInput = {
-    RouteID: string
-    RouteName: string
-    StartStop: StopCreateNestedOneWithoutRoutesAsStartInput
-    EndStop: StopCreateNestedOneWithoutRoutesAsEndInput
-    RouteStops?: RouteStopCreateNestedManyWithoutRouteInput
-  }
-
-  export type RouteUncheckedCreateWithoutBusAssignmentsInput = {
-    RouteID: string
-    StartStopID: string
-    EndStopID: string
-    RouteName: string
-    RouteStops?: RouteStopUncheckedCreateNestedManyWithoutRouteInput
-  }
-
-  export type RouteCreateOrConnectWithoutBusAssignmentsInput = {
-    where: RouteWhereUniqueInput
-    create: XOR<RouteCreateWithoutBusAssignmentsInput, RouteUncheckedCreateWithoutBusAssignmentsInput>
-  }
-
-  export type RegularBusAssignmentCreateWithoutBusRouteAssignmentsInput = {
-    DriverID: string
-    ConductorID: string
-    Change: number
-    TripRevenue: number
-    quotaPolicy: Quota_PolicyCreateNestedOneWithoutRegularBusAssignmentsInput
-    BusAssignment: BusAssignmentCreateNestedOneWithoutRegularBusAssignmentInput
-  }
-
-  export type RegularBusAssignmentUncheckedCreateWithoutBusRouteAssignmentsInput = {
-    RegularBusAssignmentID: string
-    DriverID: string
-    ConductorID: string
-    QuotaPolicyID: string
-    Change: number
-    TripRevenue: number
-  }
-
-  export type RegularBusAssignmentCreateOrConnectWithoutBusRouteAssignmentsInput = {
-    where: RegularBusAssignmentWhereUniqueInput
-    create: XOR<RegularBusAssignmentCreateWithoutBusRouteAssignmentsInput, RegularBusAssignmentUncheckedCreateWithoutBusRouteAssignmentsInput>
-  }
-
-  export type RouteUpsertWithoutBusAssignmentsInput = {
-    update: XOR<RouteUpdateWithoutBusAssignmentsInput, RouteUncheckedUpdateWithoutBusAssignmentsInput>
-    create: XOR<RouteCreateWithoutBusAssignmentsInput, RouteUncheckedCreateWithoutBusAssignmentsInput>
-    where?: RouteWhereInput
-  }
-
-  export type RouteUpdateToOneWithWhereWithoutBusAssignmentsInput = {
-    where?: RouteWhereInput
-    data: XOR<RouteUpdateWithoutBusAssignmentsInput, RouteUncheckedUpdateWithoutBusAssignmentsInput>
-  }
-
-  export type RouteUpdateWithoutBusAssignmentsInput = {
-    RouteID?: StringFieldUpdateOperationsInput | string
-    RouteName?: StringFieldUpdateOperationsInput | string
-    StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
-    EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
-    RouteStops?: RouteStopUpdateManyWithoutRouteNestedInput
-  }
-
-  export type RouteUncheckedUpdateWithoutBusAssignmentsInput = {
-    RouteID?: StringFieldUpdateOperationsInput | string
-    StartStopID?: StringFieldUpdateOperationsInput | string
-    EndStopID?: StringFieldUpdateOperationsInput | string
-    RouteName?: StringFieldUpdateOperationsInput | string
-    RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
-  }
-
-  export type RegularBusAssignmentUpsertWithoutBusRouteAssignmentsInput = {
-    update: XOR<RegularBusAssignmentUpdateWithoutBusRouteAssignmentsInput, RegularBusAssignmentUncheckedUpdateWithoutBusRouteAssignmentsInput>
-    create: XOR<RegularBusAssignmentCreateWithoutBusRouteAssignmentsInput, RegularBusAssignmentUncheckedCreateWithoutBusRouteAssignmentsInput>
-    where?: RegularBusAssignmentWhereInput
-  }
-
-  export type RegularBusAssignmentUpdateToOneWithWhereWithoutBusRouteAssignmentsInput = {
-    where?: RegularBusAssignmentWhereInput
-    data: XOR<RegularBusAssignmentUpdateWithoutBusRouteAssignmentsInput, RegularBusAssignmentUncheckedUpdateWithoutBusRouteAssignmentsInput>
-  }
-
-  export type RegularBusAssignmentUpdateWithoutBusRouteAssignmentsInput = {
-    DriverID?: StringFieldUpdateOperationsInput | string
-    ConductorID?: StringFieldUpdateOperationsInput | string
-    Change?: FloatFieldUpdateOperationsInput | number
-    TripRevenue?: FloatFieldUpdateOperationsInput | number
-    quotaPolicy?: Quota_PolicyUpdateOneRequiredWithoutRegularBusAssignmentsNestedInput
-    BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
-  }
-
-  export type RegularBusAssignmentUncheckedUpdateWithoutBusRouteAssignmentsInput = {
-    RegularBusAssignmentID?: StringFieldUpdateOperationsInput | string
-    DriverID?: StringFieldUpdateOperationsInput | string
-    ConductorID?: StringFieldUpdateOperationsInput | string
-    QuotaPolicyID?: StringFieldUpdateOperationsInput | string
-    Change?: FloatFieldUpdateOperationsInput | number
-    TripRevenue?: FloatFieldUpdateOperationsInput | number
   }
 
   export type RegularBusAssignmentCreateManyQuotaPolicyInput = {
@@ -14889,7 +13508,6 @@ export namespace Prisma {
     ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusRouteAssignments?: BusRouteAssignmentUpdateManyWithoutRegularBusAssignmentNestedInput
     BusAssignment?: BusAssignmentUpdateOneRequiredWithoutRegularBusAssignmentNestedInput
   }
 
@@ -14899,7 +13517,6 @@ export namespace Prisma {
     ConductorID?: StringFieldUpdateOperationsInput | string
     Change?: FloatFieldUpdateOperationsInput | number
     TripRevenue?: FloatFieldUpdateOperationsInput | number
-    BusRouteAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentNestedInput
   }
 
   export type RegularBusAssignmentUncheckedUpdateManyWithoutQuotaPolicyInput = {
@@ -14933,7 +13550,7 @@ export namespace Prisma {
     RouteName?: StringFieldUpdateOperationsInput | string
     EndStop?: StopUpdateOneRequiredWithoutRoutesAsEndNestedInput
     RouteStops?: RouteStopUpdateManyWithoutRouteNestedInput
-    BusAssignments?: BusRouteAssignmentUpdateManyWithoutRouteNestedInput
+    BusAssignments?: BusAssignmentUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteUncheckedUpdateWithoutStartStopInput = {
@@ -14941,7 +13558,7 @@ export namespace Prisma {
     EndStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
-    BusAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput
+    BusAssignments?: BusAssignmentUncheckedUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteUncheckedUpdateManyWithoutStartStopInput = {
@@ -14955,7 +13572,7 @@ export namespace Prisma {
     RouteName?: StringFieldUpdateOperationsInput | string
     StartStop?: StopUpdateOneRequiredWithoutRoutesAsStartNestedInput
     RouteStops?: RouteStopUpdateManyWithoutRouteNestedInput
-    BusAssignments?: BusRouteAssignmentUpdateManyWithoutRouteNestedInput
+    BusAssignments?: BusAssignmentUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteUncheckedUpdateWithoutEndStopInput = {
@@ -14963,7 +13580,7 @@ export namespace Prisma {
     StartStopID?: StringFieldUpdateOperationsInput | string
     RouteName?: StringFieldUpdateOperationsInput | string
     RouteStops?: RouteStopUncheckedUpdateManyWithoutRouteNestedInput
-    BusAssignments?: BusRouteAssignmentUncheckedUpdateManyWithoutRouteNestedInput
+    BusAssignments?: BusAssignmentUncheckedUpdateManyWithoutRouteNestedInput
   }
 
   export type RouteUncheckedUpdateManyWithoutEndStopInput = {
@@ -14996,9 +13613,20 @@ export namespace Prisma {
     StopOrder: number
   }
 
-  export type BusRouteAssignmentCreateManyRouteInput = {
-    BusRouteAssignmentID: string
+  export type BusAssignmentCreateManyRouteInput = {
     BusAssignmentID: string
+    BusID: string
+    AssignmentDate: Date | string
+    Battery: boolean
+    Lights: boolean
+    Oil: boolean
+    Water: boolean
+    Break: boolean
+    Air: boolean
+    Gas: boolean
+    Engine: boolean
+    TireCondition: boolean
+    Self: boolean
   }
 
   export type RouteStopUpdateWithoutRouteInput = {
@@ -15019,39 +13647,54 @@ export namespace Prisma {
     StopOrder?: IntFieldUpdateOperationsInput | number
   }
 
-  export type BusRouteAssignmentUpdateWithoutRouteInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
-    RegularBusAssignment?: RegularBusAssignmentUpdateOneRequiredWithoutBusRouteAssignmentsNestedInput
-  }
-
-  export type BusRouteAssignmentUncheckedUpdateWithoutRouteInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
+  export type BusAssignmentUpdateWithoutRouteInput = {
     BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
+    AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    Battery?: BoolFieldUpdateOperationsInput | boolean
+    Lights?: BoolFieldUpdateOperationsInput | boolean
+    Oil?: BoolFieldUpdateOperationsInput | boolean
+    Water?: BoolFieldUpdateOperationsInput | boolean
+    Break?: BoolFieldUpdateOperationsInput | boolean
+    Air?: BoolFieldUpdateOperationsInput | boolean
+    Gas?: BoolFieldUpdateOperationsInput | boolean
+    Engine?: BoolFieldUpdateOperationsInput | boolean
+    TireCondition?: BoolFieldUpdateOperationsInput | boolean
+    Self?: BoolFieldUpdateOperationsInput | boolean
+    RegularBusAssignment?: RegularBusAssignmentUpdateOneWithoutBusAssignmentNestedInput
   }
 
-  export type BusRouteAssignmentUncheckedUpdateManyWithoutRouteInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
+  export type BusAssignmentUncheckedUpdateWithoutRouteInput = {
     BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
+    AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    Battery?: BoolFieldUpdateOperationsInput | boolean
+    Lights?: BoolFieldUpdateOperationsInput | boolean
+    Oil?: BoolFieldUpdateOperationsInput | boolean
+    Water?: BoolFieldUpdateOperationsInput | boolean
+    Break?: BoolFieldUpdateOperationsInput | boolean
+    Air?: BoolFieldUpdateOperationsInput | boolean
+    Gas?: BoolFieldUpdateOperationsInput | boolean
+    Engine?: BoolFieldUpdateOperationsInput | boolean
+    TireCondition?: BoolFieldUpdateOperationsInput | boolean
+    Self?: BoolFieldUpdateOperationsInput | boolean
+    RegularBusAssignment?: RegularBusAssignmentUncheckedUpdateOneWithoutBusAssignmentNestedInput
   }
 
-  export type BusRouteAssignmentCreateManyRegularBusAssignmentInput = {
-    BusRouteAssignmentID: string
-    RouteID: string
-  }
-
-  export type BusRouteAssignmentUpdateWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
-    Route?: RouteUpdateOneRequiredWithoutBusAssignmentsNestedInput
-  }
-
-  export type BusRouteAssignmentUncheckedUpdateWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
-    RouteID?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type BusRouteAssignmentUncheckedUpdateManyWithoutRegularBusAssignmentInput = {
-    BusRouteAssignmentID?: StringFieldUpdateOperationsInput | string
-    RouteID?: StringFieldUpdateOperationsInput | string
+  export type BusAssignmentUncheckedUpdateManyWithoutRouteInput = {
+    BusAssignmentID?: StringFieldUpdateOperationsInput | string
+    BusID?: StringFieldUpdateOperationsInput | string
+    AssignmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    Battery?: BoolFieldUpdateOperationsInput | boolean
+    Lights?: BoolFieldUpdateOperationsInput | boolean
+    Oil?: BoolFieldUpdateOperationsInput | boolean
+    Water?: BoolFieldUpdateOperationsInput | boolean
+    Break?: BoolFieldUpdateOperationsInput | boolean
+    Air?: BoolFieldUpdateOperationsInput | boolean
+    Gas?: BoolFieldUpdateOperationsInput | boolean
+    Engine?: BoolFieldUpdateOperationsInput | boolean
+    TireCondition?: BoolFieldUpdateOperationsInput | boolean
+    Self?: BoolFieldUpdateOperationsInput | boolean
   }
 
 

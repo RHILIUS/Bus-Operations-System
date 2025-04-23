@@ -156,6 +156,7 @@ exports.Prisma.RouteStopScalarFieldEnum = {
 exports.Prisma.BusAssignmentScalarFieldEnum = {
   BusAssignmentID: 'BusAssignmentID',
   BusID: 'BusID',
+  RouteID: 'RouteID',
   AssignmentDate: 'AssignmentDate',
   Battery: 'Battery',
   Lights: 'Lights',
@@ -178,12 +179,6 @@ exports.Prisma.RegularBusAssignmentScalarFieldEnum = {
   TripRevenue: 'TripRevenue'
 };
 
-exports.Prisma.BusRouteAssignmentScalarFieldEnum = {
-  BusRouteAssignmentID: 'BusRouteAssignmentID',
-  BusAssignmentID: 'BusAssignmentID',
-  RouteID: 'RouteID'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -203,8 +198,7 @@ exports.Prisma.ModelName = {
   Route: 'Route',
   RouteStop: 'RouteStop',
   BusAssignment: 'BusAssignment',
-  RegularBusAssignment: 'RegularBusAssignment',
-  BusRouteAssignment: 'BusRouteAssignment'
+  RegularBusAssignment: 'RegularBusAssignment'
 };
 
 /**
