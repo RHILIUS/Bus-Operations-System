@@ -15,6 +15,14 @@ interface RegularBusAssignment {
   BusAssignment?: {
     BusID: string;
   } | null;
+  quotaPolicy?: {
+    Fixed?: {
+      Quota: string;
+    } | null;
+    Percentage?: {
+      Quota: string;
+    } | null;
+  } | null;
 }
 
 const BusAssignmentPage: React.FC = () => {
@@ -79,7 +87,10 @@ const BusAssignmentPage: React.FC = () => {
                 <button className={styles.saveButton} onClick={() => setShowAssignBusModal(true)}>
                   + Assign Bus
                 </button>
-                <input type="text" placeholder="Bus ID" />
+                {/* <input type="text" value={selectedBus.busId} placeholder="Bus ID" /> */}
+                <div className={styles.outputField}>
+                  {selectedBus ? selectedBus.busId : 'None Selected'}
+                </div>
               </div>
             </div>
 
@@ -93,7 +104,10 @@ const BusAssignmentPage: React.FC = () => {
                 <button className={styles.saveButton} onClick={() => setShowAssignDriverModal(true)}>
                   + Assign Driver
                 </button>
-                <input type="text" placeholder="Name" />
+                {/* <input type="text" placeholder="Name" /> */}
+                <div className={styles.outputField}>
+                  {selectedDriver ? selectedDriver.name : 'None Selected'}
+                </div>
               </div>
             </div>
 
@@ -107,7 +121,10 @@ const BusAssignmentPage: React.FC = () => {
                 <button className={styles.saveButton} onClick={() => setShowAssignConductorModal(true)}>
                   + Assign Conductor
                 </button>
-                <input type="text" placeholder="Name" />
+                {/* <input type="text" placeholder="Name" /> */}
+                <div className={styles.outputField}>
+                  {selectedConductor ? selectedConductor.name : 'None Selected'}
+                </div>
               </div>
             </div>
           </div>
@@ -169,9 +186,18 @@ const BusAssignmentPage: React.FC = () => {
               <tbody>
                 {busAssignments.map((assignment) => (
                   <tr key={assignment.RegularBusAssignmentID} className={styles.tableRow}>
+                    <td>{assignment.RegularBusAssignmentID}</td>
                     <td>{assignment.BusAssignment?.BusID}</td>
                     <td>{assignment.DriverID}</td>
                     <td>{assignment.ConductorID}</td>
+                    <td>no route yet</td>
+                    <td>
+                      {assignment.quotaPolicy?.Fixed
+                        ? `Fixed: ${assignment.quotaPolicy.Fixed.Quota}`
+                        : assignment.quotaPolicy?.Percentage
+                        ? `Percentage: ${assignment.quotaPolicy.Percentage.Quota}`
+                        : 'No Quota'}
+                    </td>
                     <td className={styles.actions}>
                       <button className={styles.editBtn}>
                         <img src="/assets/images/edit.png" alt="Edit" />
