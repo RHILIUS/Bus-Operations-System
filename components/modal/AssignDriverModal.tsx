@@ -4,6 +4,17 @@ import Image from 'next/image';
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
+import { useEffect} from 'react';
+import { fetchDrivers } from '../../lib/fetchDrivers';
+
+interface Driver {
+  driver_id: string;
+  name: string;
+  job: string;
+  contactNo: string;
+  address: string;
+  image: string | null; 
+}
 
 const AssignDriverModal = ({ 
   onClose,
@@ -14,13 +25,21 @@ const AssignDriverModal = ({
 }
 
 ) => {
-  // Sample data
-  const drivers = [
-    { name: 'John Mark Garces', job: 'Driver', contactNo: '09123456789', address: '#1 JP Rizal St. Bagong Silang Caloocan City', image: null },
-    { name: 'Rhian Jolius Baldomar', job: 'Driver', contactNo: '09987654321', address: '#1 JP Rizal St. Bagong Silangan Quezon City', image: null },
-    { name: 'Yuan Exequiel Evangelista', job: 'Driver', contactNo: '09786389221', address: '#1 JP Rizal St. Holy Spirit Quezon City', image: null },
-    { name: 'Richard Jason Aquino', job: 'Driver', contactNo: '09786565432', address: '#1 Don Fabian St. Commonwealth Quezon City', image: null },
-  ];
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+
+  useEffect(() => {
+    const loadDrivers = async () => {
+      try {
+        const data = await fetchDrivers();
+        setDrivers(data);
+        setFilteredDrivers(data);
+      } catch (error) {
+        console.error('Error fetching drivers:', error);
+      }
+    };
+
+    loadDrivers();
+  }, []);
 
   const [filteredDrivers, setFilteredDrivers] = useState(drivers);
   const [searchTerm, setSearchTerm] = useState(''); // use state for search function

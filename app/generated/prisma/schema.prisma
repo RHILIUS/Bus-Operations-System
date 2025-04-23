@@ -26,10 +26,9 @@ model Fixed {
 }
 
 model Percentage {
-  PQuotaPolicyID String @id
+  PQuotaPolicyID String       @id
   Percentage     Float
-
-  quotaPolicy Quota_Policy @relation(fields: [PQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)
+  quotaPolicy    Quota_Policy @relation(fields: [PQuotaPolicyID], references: [QuotaPolicyID], onDelete: Cascade)
 }
 
 model Stop {
@@ -48,10 +47,10 @@ model Route {
   EndStopID   String
   RouteName   String
 
-  StartStop      Stop                 @relation("StartStop", fields: [StartStopID], references: [StopID])
-  EndStop        Stop                 @relation("EndStop", fields: [EndStopID], references: [StopID])
+  StartStop      Stop            @relation("StartStop", fields: [StartStopID], references: [StopID])
+  EndStop        Stop            @relation("EndStop", fields: [EndStopID], references: [StopID])
   RouteStops     RouteStop[]
-  BusAssignments BusRouteAssignment[]
+  BusAssignments BusAssignment[]
 }
 
 model RouteStop {
@@ -59,16 +58,16 @@ model RouteStop {
   RouteID     String
   StopID      String
   StopOrder   Int
+  Route       Route  @relation(fields: [RouteID], references: [RouteID])
+  Stop        Stop   @relation(fields: [StopID], references: [StopID])
 
-  Route Route @relation(fields: [RouteID], references: [RouteID])
-  Stop  Stop  @relation(fields: [StopID], references: [StopID])
-
-  @@unique([RouteID, StopID]) // ensures no duplicate Stop in same Route
+  @@unique([RouteID, StopID])
 }
 
 model BusAssignment {
   BusAssignmentID String   @id
   BusID           String
+  RouteID         String
   AssignmentDate  DateTime
   Battery         Boolean
   Lights          Boolean
@@ -81,32 +80,22 @@ model BusAssignment {
   TireCondition   Boolean
   Self            Boolean
 
+  Route                Route                 @relation(fields: [RouteID], references: [RouteID])
   RegularBusAssignment RegularBusAssignment?
 
   @@index([BusID])
 }
 
 model RegularBusAssignment {
-  RegularBusAssignmentID String @id
+  RegularBusAssignmentID String        @id
   DriverID               String
   ConductorID            String
   QuotaPolicyID          String
   Change                 Float
   TripRevenue            Float
-
-  BusAssignment       BusAssignment        @relation(fields: [RegularBusAssignmentID], references: [BusAssignmentID])
-  quotaPolicy         Quota_Policy         @relation(fields: [QuotaPolicyID], references: [QuotaPolicyID])
-  BusRouteAssignments BusRouteAssignment[]
+  quotaPolicy            Quota_Policy  @relation(fields: [QuotaPolicyID], references: [QuotaPolicyID])
+  BusAssignment          BusAssignment @relation(fields: [RegularBusAssignmentID], references: [BusAssignmentID])
 
   @@index([DriverID])
   @@index([ConductorID])
-}
-
-model BusRouteAssignment {
-  BusRouteAssignmentID String @id
-  BusAssignmentID      String
-  RouteID              String
-
-  Route                Route                @relation(fields: [RouteID], references: [RouteID])
-  RegularBusAssignment RegularBusAssignment @relation(fields: [BusAssignmentID], references: [RegularBusAssignmentID])
 }

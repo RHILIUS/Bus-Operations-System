@@ -50,7 +50,7 @@ model Route {
   StartStop     Stop               @relation("StartStop", fields: [StartStopID], references: [StopID])
   EndStop       Stop               @relation("EndStop", fields: [EndStopID], references: [StopID])
   RouteStops    RouteStop[]
-  BusAssignments BusRouteAssignment[]
+  BusAssignments BusAssignment[]
 }
 
 model RouteStop {
@@ -66,7 +66,8 @@ model RouteStop {
 
 model BusAssignment {
   BusAssignmentID String @id
-  BusID           String 
+  BusID           String
+  RouteID               String 
   AssignmentDate  DateTime
   Battery         Boolean
   Lights          Boolean
@@ -79,6 +80,7 @@ model BusAssignment {
   TireCondition   Boolean
   Self            Boolean
 
+  Route                Route                 @relation(fields: [RouteID], references: [RouteID])
   RegularBusAssignment RegularBusAssignment?
 
   @@index([BusID])
@@ -91,19 +93,9 @@ model RegularBusAssignment {
   QuotaPolicyID          String 
   Change                 Float
   TripRevenue            Float
-  BusRouteAssignments    BusRouteAssignment[]
   quotaPolicy            Quota_Policy         @relation(fields: [QuotaPolicyID], references: [QuotaPolicyID])
   BusAssignment          BusAssignment        @relation(fields: [RegularBusAssignmentID], references: [BusAssignmentID])
 
   @@index([DriverID])
   @@index([ConductorID])
-}
-
-model BusRouteAssignment {
-  BusRouteAssignmentID String @id
-  BusAssignmentID       String
-  RouteID               String
-
-  Route                Route                 @relation(fields: [RouteID], references: [RouteID])
-  RegularBusAssignment RegularBusAssignment  @relation(fields: [BusAssignmentID], references: [RegularBusAssignmentID])
 }
