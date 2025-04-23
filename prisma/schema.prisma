@@ -67,7 +67,7 @@ model RouteStop {
 model BusAssignment {
   BusAssignmentID String @id
   BusID           String
-  RouteID               String 
+  RouteID         String 
   AssignmentDate  DateTime
   Battery         Boolean
   Lights          Boolean

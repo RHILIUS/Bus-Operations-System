@@ -15,6 +15,14 @@ interface RegularBusAssignment {
   BusAssignment?: {
     BusID: string;
   } | null;
+  quotaPolicy?: {
+    Fixed?: {
+      Quota: string;
+    } | null;
+    Percentage?: {
+      Quota: string;
+    } | null;
+  } | null;
 }
 
 const BusAssignmentPage: React.FC = () => {
@@ -49,12 +57,62 @@ const BusAssignmentPage: React.FC = () => {
 
   const handleClear = () => {
     // Clear logic for resetting form values or handling state
-    console.log('Clear button clicked');
+    setSelectedBus(null);
+    setSelectedDriver(null);
+    setSelectedConductor(null);
   };
 
-  const handleAdd = () => {
-    // Add logic for adding data to the table will be implemented later
-    console.log('Add button clicked');
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission behavior
+  
+    // Gather the data to send to the API
+    const data = {
+      RouteID: 'RT-0001', // Replace with the selected route ID
+      BusID: selectedBus?.busId || '', // Use the selected bus ID
+      AssignmentDate: new Date().toISOString(), // Use the current date or a selected date
+      Battery: true, // Replace with actual form values
+      Lights: true,
+      Oil: true,
+      Water: true,
+      Break: true,
+      Air: true,
+      Gas: true,
+      Engine: true,
+      TireCondition: true,
+      Self: true,
+      DriverID: selectedDriver?.driver_id || '',
+      ConductorID: selectedConductor?.conductor_id || '',
+      QuotaPolicyID: 'QTA-0001', // Replace with the actual QuotaPolicyID
+      Change: 0.0,
+      TripRevenue: 1000.0,
+    };
+    
+    console.log('Data to be sent to API:', data); // Debugging
+
+    try {
+      // Send a POST request to the API route
+      const response = await fetch('/api/bus-assignment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to create BusAssignment');
+      }
+  
+      const result = await response.json();
+      console.log('New BusAssignment created:', result);
+  
+      // Optionally, reset the form or update the UI
+      handleClear();
+      alert('BusAssignment created successfully!');
+    } catch (error) {
+      console.error('Error creating BusAssignment:', error);
+      alert('Failed to create BusAssignment');
+    }
   };
 
   return (
@@ -79,7 +137,10 @@ const BusAssignmentPage: React.FC = () => {
                 <button className={styles.saveButton} onClick={() => setShowAssignBusModal(true)}>
                   + Assign Bus
                 </button>
-                <input type="text" placeholder="Bus ID" />
+                {/* <input type="text" value={selectedBus.busId} placeholder="Bus ID" /> */}
+                <div className={styles.outputField}>
+                  {selectedBus ? selectedBus.busId : 'None Selected'}
+                </div>
               </div>
             </div>
 
@@ -93,7 +154,10 @@ const BusAssignmentPage: React.FC = () => {
                 <button className={styles.saveButton} onClick={() => setShowAssignDriverModal(true)}>
                   + Assign Driver
                 </button>
-                <input type="text" placeholder="Name" />
+                {/* <input type="text" placeholder="Name" /> */}
+                <div className={styles.outputField}>
+                  {selectedDriver ? selectedDriver.name : 'None Selected'}
+                </div>
               </div>
             </div>
 
@@ -107,7 +171,10 @@ const BusAssignmentPage: React.FC = () => {
                 <button className={styles.saveButton} onClick={() => setShowAssignConductorModal(true)}>
                   + Assign Conductor
                 </button>
-                <input type="text" placeholder="Name" />
+                {/* <input type="text" placeholder="Name" /> */}
+                <div className={styles.outputField}>
+                  {selectedConductor ? selectedConductor.name : 'None Selected'}
+                </div>
               </div>
             </div>
           </div>
@@ -146,8 +213,8 @@ const BusAssignmentPage: React.FC = () => {
 
               {/* Buttons */}
               <div className={styles.buttonColumn}>
-                <button className={styles.clearButton}>Clear</button>
-                <button className={styles.addButton}>Add</button>
+                <button className={styles.clearButton} onClick={handleClear}>Clear</button>
+                <button type="submit" className={styles.addButton} onClick={handleAdd}>Add</button>
               </div>
             </div>
 
@@ -169,9 +236,18 @@ const BusAssignmentPage: React.FC = () => {
               <tbody>
                 {busAssignments.map((assignment) => (
                   <tr key={assignment.RegularBusAssignmentID} className={styles.tableRow}>
+                    <td>{assignment.RegularBusAssignmentID}</td>
                     <td>{assignment.BusAssignment?.BusID}</td>
                     <td>{assignment.DriverID}</td>
                     <td>{assignment.ConductorID}</td>
+                    <td>no route yet</td>
+                    <td>
+                      {assignment.quotaPolicy?.Fixed
+                        ? `Fixed: ${assignment.quotaPolicy.Fixed.Quota}`
+                        : assignment.quotaPolicy?.Percentage
+                        ? `Percentage: ${assignment.quotaPolicy.Percentage.Quota}`
+                        : 'No Quota'}
+                    </td>
                     <td className={styles.actions}>
                       <button className={styles.editBtn}>
                         <img src="/assets/images/edit.png" alt="Edit" />
