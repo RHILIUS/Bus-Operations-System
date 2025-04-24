@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './bus-route-assignment.module.css';
+import SearchBar from '@/components/ui/SearchBar';
 
 interface BusRouteAssignment {
   BusRouteAssignmentID: string;
@@ -26,6 +27,7 @@ const BusRouteAssignmentPage: React.FC = () => {
   const [busRouteAssignments, setAssignments] = useState<BusRouteAssignment[]>([]);
   const [selectedBusAssignmentID, setSelectedBusAssignmentID] = useState<number | null>(null);
   const [selectedRouteID, setSelectedRouteID] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -74,11 +76,7 @@ const BusRouteAssignmentPage: React.FC = () => {
               <select className={styles.select}>
                 <option>Route</option>
               </select>
-              <input
-                type="text"
-                placeholder="Search"
-                className={styles.input}
-              />
+              <SearchBar></SearchBar>
             </div>
 
             {/* Form section */}
@@ -117,6 +115,7 @@ const BusRouteAssignmentPage: React.FC = () => {
                 </select>
               </div>
             </div>
+
 
             {/* Action buttons */}
             <div className={styles.actionButtons}>

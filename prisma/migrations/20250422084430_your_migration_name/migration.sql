@@ -56,6 +56,7 @@ CREATE TABLE "RouteStop" (
 CREATE TABLE "BusAssignment" (
     "BusAssignmentID" TEXT NOT NULL,
     "BusID" TEXT NOT NULL,
+    "RouteID" TEXT NOT NULL,
     "AssignmentDate" TIMESTAMP(3) NOT NULL,
     "Battery" BOOLEAN NOT NULL,
     "Lights" BOOLEAN NOT NULL,
@@ -81,15 +82,6 @@ CREATE TABLE "RegularBusAssignment" (
     "TripRevenue" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "RegularBusAssignment_pkey" PRIMARY KEY ("RegularBusAssignmentID")
-);
-
--- CreateTable
-CREATE TABLE "BusRouteAssignment" (
-    "BusRouteAssignmentID" TEXT NOT NULL,
-    "BusAssignmentID" TEXT NOT NULL,
-    "RouteID" TEXT NOT NULL,
-
-    CONSTRAINT "BusRouteAssignment_pkey" PRIMARY KEY ("BusRouteAssignmentID")
 );
 
 -- CreateIndex
@@ -123,13 +115,10 @@ ALTER TABLE "RouteStop" ADD CONSTRAINT "RouteStop_RouteID_fkey" FOREIGN KEY ("Ro
 ALTER TABLE "RouteStop" ADD CONSTRAINT "RouteStop_StopID_fkey" FOREIGN KEY ("StopID") REFERENCES "Stop"("StopID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "RegularBusAssignment" ADD CONSTRAINT "RegularBusAssignment_RegularBusAssignmentID_fkey" FOREIGN KEY ("RegularBusAssignmentID") REFERENCES "BusAssignment"("BusAssignmentID") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "BusAssignment" ADD CONSTRAINT "BusAssignment_RouteID_fkey" FOREIGN KEY ("RouteID") REFERENCES "Route"("RouteID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RegularBusAssignment" ADD CONSTRAINT "RegularBusAssignment_QuotaPolicyID_fkey" FOREIGN KEY ("QuotaPolicyID") REFERENCES "Quota_Policy"("QuotaPolicyID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BusRouteAssignment" ADD CONSTRAINT "BusRouteAssignment_RouteID_fkey" FOREIGN KEY ("RouteID") REFERENCES "Route"("RouteID") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "BusRouteAssignment" ADD CONSTRAINT "BusRouteAssignment_BusAssignmentID_fkey" FOREIGN KEY ("BusAssignmentID") REFERENCES "RegularBusAssignment"("RegularBusAssignmentID") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "RegularBusAssignment" ADD CONSTRAINT "RegularBusAssignment_RegularBusAssignmentID_fkey" FOREIGN KEY ("RegularBusAssignmentID") REFERENCES "BusAssignment"("BusAssignmentID") ON DELETE RESTRICT ON UPDATE CASCADE;

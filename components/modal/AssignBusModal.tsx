@@ -1,9 +1,18 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import SearchBar from '@/components/ui/SearchBar';
 import DropdownButton from '../ui/DropdownButton';
+import { fetchBuses } from '../../lib/fetchBuses';
+
+interface Bus {
+  busId: string;
+  route: string;
+  type: string;
+  capacity: number;
+  image: string | null;
+}
 
 const AssignBusModal = ({ 
   onClose,
@@ -12,12 +21,22 @@ const AssignBusModal = ({
   onClose: () => void;
   onAssign: (bus: any) => void; 
 }) => {
-  const buses = [
-    { busId: 'PQA-1004', route: 'Sapang Palay to PITX', type: 'Aircon', capacity: 50, image: null },
-    { busId: 'PQA-1005', route: 'Sapang Palay to Divisoria', type: 'Non-Aircon', capacity: 45, image: null },
-    { busId: 'PQA-1006', route: 'PITX to Balagtas', type: 'Aircon', capacity: 52, image: null },
-    { busId: 'PQA-1007', route: 'Divisoria to San Jose del Monte', type: 'Non-Aircon', capacity: 48, image: null },
-  ];
+
+  const [buses, setBuses] = useState<Bus[]>([]);
+
+  useEffect(() => {
+    const loadBuses = async () => {
+      try {
+        const data = await fetchBuses();
+        setBuses(data);
+        setFilteredBuses(data); 
+      } catch (error) {
+        console.error('Error fetching buses:', error);
+      }
+    };
+  
+    loadBuses();
+  }, []);
 
   const [filteredBuses, setFilteredBuses] = useState(buses);
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,6 +67,13 @@ const AssignBusModal = ({
       action: () => {
         const nonAirconOnly = buses.filter(bus => bus.type === 'Non-Aircon');
         setFilteredBuses(nonAirconOnly);
+      },
+    },
+
+    {
+      name: 'All',
+      action: () => {
+        setFilteredBuses(buses);
       },
     },
   ];
