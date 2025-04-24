@@ -62,7 +62,48 @@ export async function POST(request: Request) {
     const newBusAssignmentID = `BA-${newIdNumber.toString().padStart(4, '0')}`; // e.g., "BA-0002"
     console.log('Generated new BusAssignmentID:', newBusAssignmentID); // Debugging
 
-    // Step 4: Create the new BusAssignment record along with RegularBusAssignment
+    console.log('Querying the latest QuotaPolicyID...'); // Debugging
+    const latestQuotaPolicy = await prisma.quota_Policy.findFirst({
+      orderBy: {
+        QuotaPolicyID: 'desc', // Sort by QuotaPolicyID in descending order
+      },
+    });
+
+    console.log('Latest QuotaPolicy:', latestQuotaPolicy); // Debugging
+
+    // Step 5: Extract the numeric part and increment it
+    let newQuotaPolicyNumber = 1; // Default to 1 if no records exist
+    if (latestQuotaPolicy) {
+      const latestQuotaPolicyId = latestQuotaPolicy.QuotaPolicyID; // e.g., "QP-0001"
+      console.log('Latest QuotaPolicyID:', latestQuotaPolicyId); // Debugging
+
+      const numericPart = parseInt(latestQuotaPolicyId.split('-')[1], 10); // Extract "0001" and convert to number
+      console.log('Extracted numeric part for QuotaPolicy:', numericPart); // Debugging
+
+      newQuotaPolicyNumber = numericPart + 1; // Increment the number
+      console.log('New numeric part for QuotaPolicy:', newQuotaPolicyNumber); // Debugging
+    }
+
+    // Step 6: Format the new QuotaPolicyID
+    const newQuotaPolicyID = `QTA-${newQuotaPolicyNumber.toString().padStart(4, '0')}`; // e.g., "QP-0002"
+    console.log('Generated new QuotaPolicyID:', newQuotaPolicyID); // Debugging
+
+    // Step 7: Create a new QuotaPolicy
+    console.log('Creating new QuotaPolicy...'); // Debugging
+    const newQuotaPolicy = await prisma.quota_Policy.create({
+      data: {
+        QuotaPolicyID: newQuotaPolicyID, // Use the newly generated QuotaPolicyID
+        StartDate: new Date(),
+        EndDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Example: 1 year validity
+        ...(data.QuotaPolicy.type === 'Fixed'
+          ? { Fixed: { create: { Quota: parseFloat(data.QuotaPolicy.value) } } }
+          : { Percentage: { create: { Percentage: parseFloat(data.QuotaPolicy.value) / 100 } } }),
+      },
+    });
+
+    console.log('New QuotaPolicy created:', newQuotaPolicy); // Debugging
+
+    // Step 5: Create the new BusAssignment record along with RegularBusAssignment
     console.log('Creating new BusAssignment record...'); // Debugging
     const newAssignment = await prisma.busAssignment.create({
       data: {
@@ -84,7 +125,7 @@ export async function POST(request: Request) {
           create: {
             DriverID: data.DriverID,
             ConductorID: data.ConductorID,
-            QuotaPolicyID: data.QuotaPolicyID, // Link to the correct Quota_Policy
+            QuotaPolicyID: newQuotaPolicy.QuotaPolicyID, // Link the newly created QuotaPolicy
             Change: data.Change,
             TripRevenue: data.TripRevenue,
           },

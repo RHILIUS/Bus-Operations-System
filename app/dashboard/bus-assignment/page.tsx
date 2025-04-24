@@ -20,7 +20,7 @@ interface RegularBusAssignment {
       Quota: string;
     } | null;
     Percentage?: {
-      Quota: string;
+      Percentage: string;
     } | null;
   } | null;
 }
@@ -36,22 +36,29 @@ const BusAssignmentPage: React.FC = () => {
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [selectedConductor, setSelectedConductor] = useState(null);
 
+  // Edit mode state
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editAssignment, setEditAssignment] = useState<RegularBusAssignment | null>(null);
 
-  useEffect(() => {
-    const fetchAssignments = async () => {
-      try {
-        const response = await fetch('/api/bus-assignment');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch assignments: ${response.statusText}`);
-        }
-        const data = await response.json();
-        console.log('Fetched assignments:', data);
-        setAssignments(data);
-      } catch (error) {
-        console.error('Error fetching assignments:', error);
+  const [quotaType, setQuotaType] = useState('Fixed'); // Default to 'Fixed'
+  const [quotaValue, setQuotaValue] = useState(''); // Default to an empty string
+
+  const fetchAssignments = async () => {
+    try {
+      const response = await fetch('/api/bus-assignment');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch assignments: ${response.statusText}`);
       }
-    };
+      const data = await response.json();
+      console.log('Fetched assignments:', data);
+      setAssignments(data); // Update the table data
+    } catch (error) {
+      console.error('Error fetching assignments:', error);
+    }
+  };
 
+  // **Initial data fetch on component mount**
+  useEffect(() => {
     fetchAssignments();
   }, []);
 
@@ -82,9 +89,12 @@ const BusAssignmentPage: React.FC = () => {
       Self: true,
       DriverID: selectedDriver?.driver_id || '',
       ConductorID: selectedConductor?.conductor_id || '',
-      QuotaPolicyID: 'QTA-0001', // Replace with the actual QuotaPolicyID
       Change: 0.0,
       TripRevenue: 1000.0,
+      QuotaPolicy: {
+        type: quotaType, // 'Fixed' or 'Percentage'
+        value: quotaValue, // The entered quota value
+      },
     };
     
     console.log('Data to be sent to API:', data); // Debugging
@@ -109,10 +119,22 @@ const BusAssignmentPage: React.FC = () => {
       // Optionally, reset the form or update the UI
       handleClear();
       alert('BusAssignment created successfully!');
+      // Refresh the table data
+      fetchAssignments();
     } catch (error) {
       console.error('Error creating BusAssignment:', error);
       alert('Failed to create BusAssignment');
     }
+  };
+
+  const handleEdit = (assignment: RegularBusAssignment) => {
+    setIsEditMode(true);
+    setEditAssignment(assignment);
+
+    // Populate the form with the selected assignment's values
+    setSelectedBus({ busId: assignment.BusAssignment?.BusID });
+    setSelectedDriver({ driver_id: assignment.DriverID });
+    setSelectedConductor({ conductor_id: assignment.ConductorID });
   };
 
   return (
@@ -202,12 +224,20 @@ const BusAssignmentPage: React.FC = () => {
                     <img src="/assets/images/philippine-peso.png" alt="Quota Icon" className={styles.tabIcon} />
                     Quota
                   </div>
-                  <select className={styles.selectInput}>
-                    <option value="">Select Quota Type</option>
-                    <option value="daily">Fixed</option>
-                    <option value="weekly">Percentage</option>
+                  <select
+                    className={styles.selectInput}
+                    value={quotaType}
+                    onChange={(e) => setQuotaType(e.target.value)} // Update quota type
+                  >
+                    <option value="Fixed">Fixed</option>
+                    <option value="Percentage">Percentage</option>
                   </select>
-                  <input type="text" placeholder="Value" />
+                  <input
+                    type="number"
+                    placeholder="Value"
+                    value={quotaValue}
+                    onChange={(e) => setQuotaValue(e.target.value)} // Update quota value
+                  />
                 </div>
               </div>
 
@@ -245,11 +275,14 @@ const BusAssignmentPage: React.FC = () => {
                       {assignment.quotaPolicy?.Fixed
                         ? `Fixed: ${assignment.quotaPolicy.Fixed.Quota}`
                         : assignment.quotaPolicy?.Percentage
-                        ? `Percentage: ${assignment.quotaPolicy.Percentage.Quota}`
+                        ? `Percentage: ${(parseFloat(assignment.quotaPolicy.Percentage.Percentage) * 100)}%`
                         : 'No Quota'}
                     </td>
                     <td className={styles.actions}>
-                      <button className={styles.editBtn}>
+                      <button
+                        className={styles.editBtn}
+                        onClick={() => handleEdit(assignment)}
+                      >
                         <img src="/assets/images/edit.png" alt="Edit" />
                       </button>
                       <button className={styles.deleteBtn}>
