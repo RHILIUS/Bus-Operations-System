@@ -25,16 +25,53 @@ interface RegularBusAssignment {
   } | null;
 }
 
+interface Bus {
+  busId: string;
+  route: string;
+  type: string;
+  capacity: number;
+  image: string | null;
+}
+
+interface Driver {
+  driver_id: string;
+  name: string;
+  job: string;
+  contactNo: string;
+  address: string;
+  image: string | null; 
+}
+
+interface Conductor {
+  conductor_id: string;
+  name: string;
+  job: string;
+  contactNo: string;
+  address: string;
+  image: string | null;
+}
+
+interface Route {
+  route_id: string;
+  routeName: string;
+}
+
+
 const BusAssignmentPage: React.FC = () => {
+
+  // Flags for modal
   const [busAssignments, setAssignments] = useState<RegularBusAssignment[]>([]);
   const [showAssignBusModal, setShowAssignBusModal] = useState(false);
   const [showAssignDriverModal, setShowAssignDriverModal] = useState(false);
   const [showAssignConductorModal, setShowAssignConductorModal] = useState(false);
+  const [showAssignRouteModal, setShowAssignRouteModal] = useState(false);
+
 
   // current record
-  const [selectedBus, setSelectedBus] = useState(null);
-  const [selectedDriver, setSelectedDriver] = useState(null);
-  const [selectedConductor, setSelectedConductor] = useState(null);
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
+  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+  const [selectedConductor, setSelectedConductor] = useState<Conductor | null>(null);
+  const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
 
 
   useEffect(() => {
@@ -188,10 +225,13 @@ const BusAssignmentPage: React.FC = () => {
                     <img src="/assets/images/assignedroute.png" alt="Route Icon" className={styles.tabIcon} />
                     Route
                   </div>
-                  <button className={styles.saveButton}>
+                  <button className={styles.saveButton} onClick={() => setShowAssignRouteModal(true)}>
                     + Assign Route
                   </button>
-                  <input type="text" placeholder="Route Name" />
+                  {/* <input type="text" placeholder="Route Name" /> */}
+                  <div className={styles.outputField}>
+                    {selectedRoute ? selectedRoute.routeName : 'None Selected'}
+                  </div>
                 </div>
               </div>
 
@@ -277,7 +317,7 @@ const BusAssignmentPage: React.FC = () => {
             <AssignDriverModal 
               onClose={() => setShowAssignDriverModal(false)} 
               onAssign={(driver) => {
-                alert(`Assigned Conductor: ${driver.name}`);
+                alert(`Assigned Driver: ${driver.name}`);
                 setSelectedDriver(driver); // store or use it as needed
                 setShowAssignDriverModal(false); // close modal
               }}
@@ -293,6 +333,17 @@ const BusAssignmentPage: React.FC = () => {
               }} 
             />
           )}
+          {showAssignRouteModal && (
+            <AssignRouteModal 
+              onClose={() => setShowAssignRouteModal(false)}
+              onAssign={(route) => {
+                alert(`Assigned Route: ${route.routeName}`);
+                setSelectedRoute(route); // store or use it as needed
+                setShowAssignRouteModal(false); // close modal
+              }} 
+            />
+          )}
+          
 
         </div>
       </div>
