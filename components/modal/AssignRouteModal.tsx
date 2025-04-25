@@ -1,17 +1,21 @@
 'use client';
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
 
-
 interface Route {
-  routeID: string;
-  routeName: string;
-  isActive: boolean;
-  startPoint: string;
-  endPoint: string;
+  RouteID: string;
+  RouteName: string;
+  StartStop: {
+    StopID: string;
+    StopName: string;
+  };
+  EndStop: {
+    StopID: string;
+    StopName: string;
+  };
   roundTrip: boolean;
   noOfBus: number;
   image: string | null;
@@ -22,30 +26,39 @@ const AssignRouteModal = ({
   onAssign, 
 }: { 
   onClose: () => void;
-  onAssign: (route: any) => void; 
- }) => {
+  onAssign: (route: Route) => void; 
+}) => {
+  const [routes, setRoutes] = useState<Route[]>([]); // State for all routes
+  const [filteredRoutes, setFilteredRoutes] = useState<Route[]>([]); // State for filtered routes
+  const [searchTerm, setSearchTerm] = useState(''); // State for search input
 
-  // Sample data
-  const routes = [  
-    { routeID: 'ROUTE123' , routeName: 'Sapang Palay - PITX', isActive: true, startPoint: 'Sapang Palay', endPoint: 'PITX', roundTrip: true,  noOfBus: 5 , image: null},
-    { routeID: 'ROUTE345' ,routeName: 'Sapang Palay - Divisoria',isActive: true, startPoint: 'Sapang Palay', endPoint: 'Divisoria', roundTrip: false, noOfBus: 12, image: null},
-    { routeID: 'ROUTE567' ,routeName: 'Fairview - Litex', isActive: true, startPoint: 'Fairview, Quezon City', endPoint: 'Litex Commonwealth', roundTrip: true, noOfBus: 20, image: null},
-  
-  ];
+  // Fetch routes from the database
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const response = await fetch('/api/route-management'); // Replace with your API endpoint
+        if (!response.ok) {
+          throw new Error('Failed to fetch routes');
+        }
+        const data: Route[] = await response.json();
+        setRoutes(data); // Set the fetched routes
+        setFilteredRoutes(data); // Initialize filtered routes
+      } catch (error) {
+        console.error('Error fetching routes:', error);
+      }
+    };
 
-  
-  const [filteredRoutes, setFilteredRoutes] = useState(routes); // use state for filter function
-  const [searchTerm, setSearchTerm] = useState(''); // use state for search function
+    fetchRoutes();
+  }, []);
 
   const dropdownItems = [
     {
       name: 'Alphabetical',
       action: () => {
-        const sorted = [...filteredRoutes].sort((a, b) => a.routeName.localeCompare(b.routeName));
+        const sorted = [...filteredRoutes].sort((a, b) => a.RouteName.localeCompare(b.RouteName));
         setFilteredRoutes(sorted);
       },
     },
-
     {
       name: 'Round Trip Only',
       action: () => {
@@ -65,15 +78,13 @@ const AssignRouteModal = ({
       action: () => {
         setFilteredRoutes(routes);
       },
-    }
-   
+    },
   ];
-  
+
   return (
-    // Modal
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-white/20">
       <main className="w-[720px] h-[600px] rounded-lg bg-white shadow-lg p-4 flex flex-col">
-        {/*  Search Bar */}
+        {/* Search Bar */}
         <header className='mb-4'>  
           <SearchBar 
             placeholder='Search Route' 
@@ -81,12 +92,12 @@ const AssignRouteModal = ({
             onChange={(e) => {
               const text = e.target.value;
               setSearchTerm(text);
-          
-              // Filter buses
+
+              // Filter routes based on search term
               const filtered = routes.filter((route) =>
-                route.routeName.toLowerCase().includes(text.toLowerCase()) ||
-                route.startPoint.toLowerCase().includes(text.toLowerCase()) ||
-                route.endPoint.toLowerCase().includes(text.toLowerCase())
+                route.RouteName.toLowerCase().includes(text.toLowerCase()) ||
+                route.StartStop.StopName.toLowerCase().includes(text.toLowerCase()) ||
+                route.EndStop.StopName.toLowerCase().includes(text.toLowerCase())
               );
               setFilteredRoutes(filtered);
             }}
@@ -96,21 +107,18 @@ const AssignRouteModal = ({
         {/* Title and Filter section */}
         <nav className='px-3 flex justify-between items-center mb-2'>
           <div className='font-medium text-lg'>Routes</div>
-          {/* Filter */}
           <div className='flex items-center'>
             <div className='font-medium mr-3'>Filter</div>
             <DropdownButton dropdownItems={dropdownItems}></DropdownButton>
           </div>
         </nav>
 
-        {/* Bus List Section */}
+        {/* Route List Section */}
         <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
           {filteredRoutes.map((route, index) => (
-            // Each Bus
             <article key={index} className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between">
-              {/* Bus Info */}
+              {/* Route Info */}
               <div className="flex items-center gap-3">
-                {/* Bus Icon */}
                 <div className="bg-gray-200 rounded-2xl h-20 w-20 flex items-center relative overflow-hidden">
                   <Image
                     src={route.image || '/assets/images/bus-fallback.png'}
@@ -119,24 +127,20 @@ const AssignRouteModal = ({
                     fill
                   />
                 </div>
-                {/* Bus Details */}
                 <div className='flex flex-col items-start'>
                   <div className="flex gap-2 items-center">
-                    <div>{route.routeName}</div>
-                    <div className="text-sm text-gray-400">{route.roundTrip? 'Round Trip': 'One-way Trip'}</div>
+                    <div>{route.RouteName}</div>
                   </div>
-                  <div className="text-sm text-gray-400">{`${route.noOfBus} buses`}</div>
-                  <div className="text-sm text-gray-400">{route.isActive? 'Active': 'Inactive'}</div>
+                  <div className="text-sm text-gray-400">{`Start: ${route.StartStop.StopName}`}</div>
+                  <div className="text-sm text-gray-400">{`End: ${route.EndStop.StopName}`}</div>
                 </div>
               </div>
 
               {/* Assign Button */}
               <Button
                 text='Assign'
-                onClick = {() => onAssign(route)}
-
+                onClick={() => onAssign(route)}
               ></Button>
-                    
             </article>
           ))}
         </section>
@@ -145,11 +149,8 @@ const AssignRouteModal = ({
         <footer className='flex justify-end'>
           <Button onClick={onClose} text='Cancel' bgColor='bg-gray-200' textColor='text-gray-700'></Button>
         </footer>
-
       </main>
     </div>
-    
-
   );
 };
 

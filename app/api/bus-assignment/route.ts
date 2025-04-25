@@ -6,8 +6,8 @@ export async function GET() {
     const assignments = await prisma.regularBusAssignment.findMany({
         include: {
             BusAssignment: {
-                select: {
-                    BusID: true,
+                include: {
+                  Route: true,
                 }
             },
             quotaPolicy: {

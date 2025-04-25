@@ -14,6 +14,9 @@ interface RegularBusAssignment {
   ConductorID: string;
   BusAssignment?: {
     BusID: string;
+    Route? : {
+      RouteName: string;
+    } | null;
   } | null;
   quotaPolicy?: {
     Fixed?: {
@@ -104,17 +107,15 @@ const BusAssignmentPage: React.FC = () => {
     setSelectedBus(null);
     setSelectedDriver(null);
     setSelectedConductor(null);
+    setSelectedRoute(null);
   };
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission behavior
-
-    // Prepare the quota value
-    const numericQuotaValue =
   
     // Gather the data to send to the API
     const data = {
-      RouteID: 'RT-0001', // Replace with the selected route ID
+      RouteID: selectedRoute?.RouteID || '', // Replace with the selected route ID
       BusID: selectedBus?.busId || '', // Use the selected bus ID
       AssignmentDate: new Date().toISOString(), // Use the current date or a selected date
       Battery: true, // Replace with actual form values
@@ -133,12 +134,12 @@ const BusAssignmentPage: React.FC = () => {
       TripRevenue: 1000.0,
       QuotaPolicy: {
         type: quotaType, // 'Fixed' or 'Percentage'
-        value: quotaValue, // Divide percentage by 100, // The entered quota value
+        value: quotaValue, // The processed quota value
       },
     };
-    
+  
     console.log('Data to be sent to API:', data); // Debugging
-
+  
     try {
       // Send a POST request to the API route
       const response = await fetch('/api/bus-assignment', {
@@ -255,7 +256,7 @@ const BusAssignmentPage: React.FC = () => {
                   </button>
                   {/* <input type="text" placeholder="Route Name" /> */}
                   <div className={styles.outputField}>
-                    {selectedRoute ? selectedRoute.routeName : 'None Selected'}
+                    {selectedRoute ? selectedRoute.RouteName : 'None Selected'}
                   </div>
                 </div>
               </div>
@@ -362,7 +363,7 @@ const BusAssignmentPage: React.FC = () => {
                     <td>{assignment.BusAssignment?.BusID}</td>
                     <td>{assignment.DriverID}</td>
                     <td>{assignment.ConductorID}</td>
-                    <td>no route yet</td>
+                    <td>{assignment.BusAssignment?.Route?.RouteName}</td>
                     <td>
                       {assignment.quotaPolicy?.Fixed
                         ? `Fixed: ${assignment.quotaPolicy.Fixed.Quota}`
@@ -422,7 +423,7 @@ const BusAssignmentPage: React.FC = () => {
             <AssignRouteModal 
               onClose={() => setShowAssignRouteModal(false)}
               onAssign={(route) => {
-                alert(`Assigned Route: ${route.routeName}`);
+                alert(`Assigned Route: ${route.RouteName}`);
                 setSelectedRoute(route); // store or use it as needed
                 setShowAssignRouteModal(false); // close modal
               }} 
