@@ -71,6 +71,9 @@ const BusAssignmentPage: React.FC = () => {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission behavior
+
+    // Prepare the quota value
+    const numericQuotaValue =
   
     // Gather the data to send to the API
     const data = {
@@ -93,7 +96,7 @@ const BusAssignmentPage: React.FC = () => {
       TripRevenue: 1000.0,
       QuotaPolicy: {
         type: quotaType, // 'Fixed' or 'Percentage'
-        value: quotaValue, // The entered quota value
+        value: quotaValue, // Divide percentage by 100, // The entered quota value
       },
     };
     
@@ -227,16 +230,65 @@ const BusAssignmentPage: React.FC = () => {
                   <select
                     className={styles.selectInput}
                     value={quotaType}
-                    onChange={(e) => setQuotaType(e.target.value)} // Update quota type
+                    onChange={(e) => {
+                      setQuotaType(e.target.value);
+                      setQuotaValue(''); // Reset quota value when type changes
+                    }}
                   >
                     <option value="Fixed">Fixed</option>
                     <option value="Percentage">Percentage</option>
                   </select>
                   <input
                     type="number"
-                    placeholder="Value"
+                    placeholder={quotaType === 'Fixed' ? 'Enter Fixed Value' : 'Enter Percentage (1-99)'}
                     value={quotaValue}
-                    onChange={(e) => setQuotaValue(e.target.value)} // Update quota value
+                    onChange={(e) => {
+                      const value = e.target.value;
+
+                      // Validation for Fixed
+                      if (quotaType === 'Fixed') {
+                        if (value && (!/^\d+(\.\d{1,2})?$/.test(value) || parseFloat(value) <= 0)) {
+                          alert('Fixed value must be greater than 0 and have up to 2 decimal places.');
+                          return;
+                        }
+                      }
+
+                      // Validation for Percentage
+                      if (quotaType === 'Percentage') {
+                        if (value && (parseInt(value, 10) < 1 || parseInt(value, 10) > 99)) {
+                          alert('Percentage value must be between 1 and 99.');
+                          return;
+                        }
+                      }
+
+                      setQuotaValue(value); // Update quota value if valid
+                    }}
+                    onInput={(e) => {
+                      const input = e.target as HTMLInputElement;
+
+                      // Prevent negative numbers
+                      if (input.value.includes('-')) {
+                        input.value = input.value.replace('-', '');
+                      }
+
+                      // Prevent invalid decimal places for Fixed
+                      if (quotaType === 'Fixed' && !/^\d+(\.\d{0,2})?$/.test(input.value)) {
+                        input.value = input.value.slice(0, -1);
+                      }
+
+                      // Prevent values outside 1-99 for Percentage
+                      if (quotaType === 'Percentage') {
+                        const numericValue = parseInt(input.value, 10);
+                        if (numericValue < 1) {
+                          input.value = '1';
+                        } else if (numericValue > 99) {
+                          input.value = '99';
+                        }
+                      }
+                    }}
+                    step={quotaType === 'Fixed' ? '0.01' : '1'} // Allow up to 2 decimal places for Fixed, whole numbers for Percentage
+                    min={quotaType === 'Fixed' ? '0.01' : '1'} // Minimum value
+                    max={quotaType === 'Percentage' ? '99' : undefined} // Maximum value for Percentage
                   />
                 </div>
               </div>
