@@ -43,6 +43,12 @@ const AssignBusModal = ({
 
   const dropdownItems = [
     {
+      name: 'All',
+      action: () => {
+        setFilteredBuses(buses);
+      },
+    },
+    {
       name: 'Alphabetical',
       action: () => {
         const sorted = [...filteredBuses].sort((a, b) => a.busId.localeCompare(b.busId));
