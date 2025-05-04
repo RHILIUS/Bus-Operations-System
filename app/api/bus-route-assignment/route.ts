@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/client'; // Importing the Prisma client instance to interact with the database
+// import { NextResponse } from 'next/server';
+// import prisma from '@/client'; // Importing the Prisma client instance to interact with the database
 
 export async function GET() {
   // try {
