@@ -25,9 +25,10 @@ interface Route {
 }
 
 interface Stop {
-  stopID: string;
-  stopName: string;
-  location: string;
+  StopID: string;
+  StopName: string;
+  Location: string;
+  image: string | null;
 }
 
 const mockRoutes: Route[] = Array.from({ length: 100 }, (_, i) => ({
