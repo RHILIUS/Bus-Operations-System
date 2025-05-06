@@ -9,7 +9,6 @@ import AssignRouteModal from '@/components/modal/AssignRouteModal';
 // import Button from "@/components/ui/Button";
 import styles from './bus-assignment.module.css';
 
-
 interface RegularBusAssignment {
   RegularBusAssignmentID: string;
   DriverID: string;
@@ -117,7 +116,7 @@ const BusAssignmentPage: React.FC = () => {
   
     // Gather the data to send to the API
     const data = {
-      RouteID: selectedRoute?.RouteID || '', // Replace with the selected route ID
+      RouteID: selectedRoute?.routeID || '', // Replace with the selected route ID
       BusID: selectedBus?.busId || '', // Use the selected bus ID
       AssignmentDate: new Date().toISOString(), // Use the current date or a selected date
       Battery: true, // Replace with actual form values
