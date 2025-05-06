@@ -56,10 +56,20 @@ interface Conductor {
 }
 
 interface Route {
-  routeID: string;
-  routeName: string;
+  RouteID: string;
+  RouteName: string;
+  StartStop: {
+    StopID: string;
+    StopName: string;
+  };
+  EndStop: {
+    StopID: string;
+    StopName: string;
+  };
+  roundTrip: boolean;
+  noOfBus: number;
+  image: string | null;
 }
-
 
 const BusAssignmentPage: React.FC = () => {
 
@@ -116,7 +126,7 @@ const BusAssignmentPage: React.FC = () => {
   
     // Gather the data to send to the API
     const data = {
-      RouteID: selectedRoute?.routeID || '', // Replace with the selected route ID
+      RouteID: selectedRoute?.RouteID || '', // Replace with the selected route ID
       BusID: selectedBus?.busId || '', // Use the selected bus ID
       AssignmentDate: new Date().toISOString(), // Use the current date or a selected date
       Battery: true, // Replace with actual form values
@@ -174,9 +184,10 @@ const BusAssignmentPage: React.FC = () => {
     setEditAssignment(assignment);
 
     // Populate the form with the selected assignment's values
-    setSelectedBus({ busId: assignment.BusAssignment?.BusID });
-    setSelectedDriver({ driver_id: assignment.DriverID });
-    setSelectedConductor({ conductor_id: assignment.ConductorID });
+    setSelectedBus({ busId: assignment.BusAssignment?.BusID ?? '', route: '', type: '', capacity: 0, image: null }); 
+    setSelectedDriver({ driver_id: assignment.DriverID ?? '', name: '', job: '', contactNo: '', address: '', image: null });
+    setSelectedConductor({ conductor_id: assignment.ConductorID ?? '', name: '', job: '', contactNo: '', address: '', image: null });
+    
   };
 
   return (
@@ -429,7 +440,6 @@ const BusAssignmentPage: React.FC = () => {
             />
           )}
           
-
         </div>
       </div>
     </div>
