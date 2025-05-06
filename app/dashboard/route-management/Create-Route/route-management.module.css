@@ -1,57 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cooper+Hewitt&display=swap');
 
-/* Global styles wrapped for module compatibility */
-:global(body) {
-  font-family: 'Cooper Hewitt', sans-serif;
-}
-
-:global(body), :global(html) {
-  min-height: 100%;
-  overflow-y: auto;
-}
-
-:global(h2) {
-  font-family: 'Open Sans', sans-serif;
-}
-
-/*PAGINATION*/
-
-/* General pagination styles */
-:global(.pagination .page-link) {
-  background-color: #961c1e;
-  color: white;
-  border: 1px solid #961c1e;
-  transition: all 0.3s ease;
-}
-
-/* Hover effect */
-:global(.pagination .page-link:hover) {
-  background-color: white;
-  color: #961c1e;
-}
-
-/* Active page (selected number) */
-:global(.pagination .page-item.active .page-link) {
-  background-color: white !important;
-  color: #961c1e !important;
-  border: 2px solid #961c1e;
-  font-weight: bold;
-}
-
-/*TABLE*/
-
-/* Full red background and white text for table header */
-:global(.custom-table thead) {
-  background-color: #961c1e !important;
-}
-
-:global(.custom-table thead th) {
-  background-color: #961c1e !important;
-  color: white !important;
-  border-color: #dee2e6 !important; /* Light gray border for contrast */
-}
-
 /* Local class styles */
 .custom-button {
   display: flex;

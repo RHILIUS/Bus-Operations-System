@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import React, { useState } from 'react';
@@ -5,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './route-management.module.css';
 import ShowStopsModal from '@/components/modal/ShowStopsModal';
 import AssignBusModal from '@/components/modal/AssignBusModal';
+
+import '../../../../styles/globals.css';
 
 import {
   DragDropContext,
@@ -22,12 +25,11 @@ interface Route {
 }
 
 interface Stop {
-  stopID: string;
-  stopName: string;
-  location: string;
+  StopID: string;
+  StopName: string;
+  Location: string;
   image: string | null;
 }
-
 
 const mockRoutes: Route[] = Array.from({ length: 100 }, (_, i) => ({
   name: `Route ${i + 1}`,
@@ -275,14 +277,14 @@ const CreateRoutePage: React.FC = () => {
               onClose={() => setShowStopsModal(false) } 
               onAssign={(stop) => {
                 if (stopType === 'start') {
-                  setStartStop(stop.stopName); // or however you want to use it
+                  setStartStop(stop.StopName); // or however you want to use it
                   setSelectedStartStop(stop);  // optionally store the whole object
                 } else if (stopType === 'end') {
-                  setEndStop(stop.stopName);
+                  setEndStop(stop.StopName);
                   setSelectedEndStop(stop);
                 } else if (stopType === 'between' && selectedStopIndex !== null) {
                   const updatedStops = [...stopsBetween];
-                  updatedStops[selectedStopIndex] = stop.stopName;
+                  updatedStops[selectedStopIndex] = stop.StopName;
                   setStopsBetween(updatedStops);
                   // optionally setSelectedStopBetween(stop); if you want to track them
                 }
