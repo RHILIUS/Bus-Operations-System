@@ -107,39 +107,40 @@ const CreateRoutePage: React.FC = () => {
 
           {/* Stops Between Section */}
           <h5 className="mb-2">Stops Between</h5>
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="stops">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {stopsBetween.map((stop, index) => (
-                    <Draggable key={index.toString()} draggableId={index.toString()} index={index}>
-                      {(provided) => (
-                        <div
-                          className="d-flex align-items-center mb-2"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                        >
-                          <span {...provided.dragHandleProps} className="me-2">⋮⋮</span>
-                          <input
-                            type="text"
-                            className="form-control me-2"
-                            placeholder={`Stop ${index + 1}`}
-                            value={stop}
-                            onChange={(e) => handleStopChange(e.target.value, index)}
-                          />
-                        <button className="btn btn-danger" onClick={() => handleRemoveStop(index)}>
-                            <img src="/assets/images/close-line.png" alt="Remove Stop" className="icon-small" />
-                        </button>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-
+          <div className="stops-scroll-container">
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="stops">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {stopsBetween.map((stop, index) => (
+                      <Draggable key={index.toString()} draggableId={index.toString()} index={index}>
+                        {(provided) => (
+                          <div
+                            className="d-flex align-items-center mb-2"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                          >
+                            <span {...provided.dragHandleProps} className="me-2">⋮⋮</span>
+                            <input
+                              type="text"
+                              className="form-control me-2"
+                              placeholder={`Stop ${index + 1}`}
+                              value={stop}
+                              onChange={(e) => handleStopChange(e.target.value, index)}
+                            />
+                          <button className="btn btn-danger" onClick={() => handleRemoveStop(index)}>
+                              <img src="/assets/images/close-line.png" alt="Remove Stop" className="icon-small" />
+                          </button>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </div>
           <div className="my-2">
             <button className="btn btn-success" onClick={handleAddStop}>
                 <img src="/assets/images/add-line.png" alt="Add Stop" className="icon-small" />
