@@ -8,6 +8,7 @@ import AssignRouteModal from '@/components/modal/AssignRouteModal';
 // import Button from "@/components/ui/Button";
 import styles from './bus-assignment.module.css';
 
+
 interface RegularBusAssignment {
   RegularBusAssignmentID: string;
   DriverID: string;
@@ -153,8 +154,6 @@ const BusAssignmentPage: React.FC = () => {
   };
 
   return (
-
-
     <div className="dashboard-content">
       <div className="center-box">
         <div className={styles.container}>

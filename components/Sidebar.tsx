@@ -1,30 +1,22 @@
 'use client';
 
-import Link from 'next/link'; // Importing the `Link` component from Next.js for navigation, so you can link to different pages.
-import { useState } from 'react'; // Importing `useState` from React to manage component state.
+import Link from 'next/link';
+import { useState } from 'react';
 
 interface SidebarProps {
   isCollapsed: boolean;
   setIsCollapsed: (val: boolean) => void;
 }
 
-// This defines the type for the `Sidebar` component's props. It expects `isCollapsed` (boolean for sidebar state) and `setIsCollapsed` (function to update the state).
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
-  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);   // Declares the `openSubMenu` state variable, which tracks which submenu is open.
-  const [activeItem, setActiveItem] = useState<string | null>(null);   // Declares the `activeItem` state variable to track which menu item is currently active.
+  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
+  const [activeItem, setActiveItem] = useState<string | null>(null);
 
-  const toggleSubMenu = (id: string) => {
-    setOpenSubMenu(prev => (prev === id ? null : id));
-  };
-
-  // Function to toggle the sidebar's collapsed state.
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-
   return (
-    // This is the main `div` for the sidebar. It applies the `'collapsed'` class if the sidebar is collapsed.
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`} id="sidebar">
       <div>
         <div className="logo">
@@ -32,53 +24,45 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         </div>
 
         <div className="nav-links">
-          {/* Assignment */}
-          <div
-            className={`nav-item module ${openSubMenu === 'assignment-submenu' ? 'active' : ''} ${activeItem === 'assignment' ? 'active' : ''}`}
-            onClick={() => {
-              toggleSubMenu('assignment-submenu');
-              setActiveItem('assignment');
-            }}
+          {/* Assignment (direct link to bus-assignment) */}
+          <Link
+            href="/dashboard/bus-assignment"
+            className={`nav-item module ${activeItem === 'assignment' ? 'active' : ''}`}
+            onClick={() => setActiveItem('assignment')}
           >
             <img src="/assets/images/assignmentbus.png" alt="Assignment" className="nav-icon" />
             <span className="nav-text">Assignment</span>
-          </div>
-
-          {openSubMenu === 'assignment-submenu' && (
-            <div className="sub-menu active">
-              <Link
-                href="/dashboard/bus-assignment"
-                className={`sub-item ${activeItem === 'bus-assignment' ? 'active' : ''}`}
-                onClick={() => setActiveItem('bus-assignment')}
-              >
-                Bus Driver/Conductor Assignment
-              </Link>
-              <Link
-                href="/dashboard/bus-route-assignment"
-                className={`sub-item ${activeItem === 'bus-route-assignment' ? 'active' : ''}`}
-                onClick={() => setActiveItem('bus-route-assignment')}
-              >
-                Bus Route Assignment
-              </Link>
-              <Link
-                href="/dashboard/qouta-assignment"
-                className={`sub-item ${activeItem === 'qouta-assignment' ? 'active' : ''}`}
-                onClick={() => setActiveItem('qouta-assignment')}
-              >
-                Quota Assignment
-              </Link>
-            </div>
-          )}
+          </Link>
 
           {/* Route Management */}
-          <Link
-            href="/dashboard/route-management"
-            className={`nav-item ${activeItem === 'route-management' ? 'active' : ''}`}
-            onClick={() => setActiveItem('route-management')}
+          <div
+            className={`nav-item module ${openSubMenu === 'route-management-submenu' ? 'active' : ''} ${activeItem === 'route-management' ? 'active' : ''}`}
+            onClick={() => {
+              setOpenSubMenu(prev => (prev === 'route-management-submenu' ? null : 'route-management-submenu'));
+              setActiveItem('route-management');
+            }}
           >
             <img src="/assets/images/routemanagement.png" alt="Route Management" className="nav-icon" />
             <span className="nav-text">Route Management</span>
-          </Link>
+          </div>
+          {openSubMenu === 'route-management-submenu' && (
+            <div className="sub-menu active">
+              <Link
+                href="/dashboard/route-management/Create-Stop"
+                className={`sub-item ${activeItem === 'create-stop' ? 'active' : ''}`}
+                onClick={() => setActiveItem('create-stop')}
+              >
+                Create Stop
+              </Link>
+              <Link
+                href="/dashboard/route-management/Create-Route"
+                className={`sub-item ${activeItem === 'create-route' ? 'active' : ''}`}
+                onClick={() => setActiveItem('create-route')}
+              >
+                Create Route
+              </Link>
+            </div>
+          )}
 
           {/* GPS */}
           <Link
