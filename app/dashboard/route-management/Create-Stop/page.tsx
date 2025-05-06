@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './route-management.module.css';
 
-import '../styles/globals.css';
+import '../../../../styles/globals.css';
 
 interface Stop {
   name: string;
