@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './route-management.module.css';
+import ShowStopsModal from '@/components/modal/ShowStopsModal';
+import AssignBusModal from '@/components/modal/AssignBusModal';
+
 import {
   DragDropContext,
   Droppable,
@@ -10,12 +13,21 @@ import {
   DropResult,
 } from '@hello-pangea/dnd';
 
+
 interface Route {
   name: string;
   startStop: string;
   endStop: string;
   stopsBetween: string[];
 }
+
+interface Stop {
+  stopID: string;
+  stopName: string;
+  location: string;
+  image: string | null;
+}
+
 
 const mockRoutes: Route[] = Array.from({ length: 100 }, (_, i) => ({
   name: `Route ${i + 1}`,
@@ -33,6 +45,17 @@ const CreateRoutePage: React.FC = () => {
   const [stopsBetween, setStopsBetween] = useState<string[]>(['']);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(mockRoutes.length / ITEMS_PER_PAGE);
+
+  // Use State for modal
+  const [showStopsModal, setShowStopsModal] = useState(false);
+  const [showAssignBusModal, setShowAssignBusModal] = useState(false);
+
+  // Current record
+  const [selectedStartStop, setSelectedStartStop] = useState<Stop | null>(null);
+  const [selectedEndStop, setSelectedEndStop] = useState<Stop | null>(null);
+  const [selectedStopBetween, setSelectedStopBetween] = useState<Stop | null>(null);
+  const [stopType, setStopType] = useState<'start' | 'end' | 'between' | null>(null);
+  const [selectedStopIndex, setSelectedStopIndex] = useState<number | null>(null); // for between stops
 
   const currentRoutes = mockRoutes.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -75,6 +98,12 @@ const CreateRoutePage: React.FC = () => {
         <div className="card-body">
           {/* Create Route Section */}
           <h2 className={styles.stopTitle}>CREATE ROUTE</h2>
+          <button className={styles.saveButton} onClick={() => setShowAssignBusModal(true)}>
+            + Assign Bus
+          </button>
+          <button className={styles.saveButton} onClick={() => setShowStopsModal(true)}>
+            + Assign Stop
+          </button>
           <div className="row g-3 mb-3">
             <div className="col-md-4">
               <input
@@ -92,6 +121,10 @@ const CreateRoutePage: React.FC = () => {
                 placeholder="Start Stop"
                 value={startStop}
                 onChange={(e) => setStartStop(e.target.value)}
+                onClick={() => {
+                  setStopType('start');
+                  setShowStopsModal(true);
+                }}
               />
             </div>
             <div className="col-md-4">
@@ -101,6 +134,10 @@ const CreateRoutePage: React.FC = () => {
                 placeholder="End Stop"
                 value={endStop}
                 onChange={(e) => setEndStop(e.target.value)}
+                onClick={() => {
+                  setStopType('end');
+                  setShowStopsModal(true);
+                }}
               />
             </div>
           </div>
@@ -127,6 +164,11 @@ const CreateRoutePage: React.FC = () => {
                               placeholder={`Stop ${index + 1}`}
                               value={stop}
                               onChange={(e) => handleStopChange(e.target.value, index)}
+                              onClick={() => {
+                                setStopType('between');
+                                setSelectedStopIndex(index);
+                                setShowStopsModal(true);
+                              }}
                             />
                           <button className="btn btn-danger" onClick={() => handleRemoveStop(index)}>
                               <img src="/assets/images/close-line.png" alt="Remove Stop" className="icon-small" />
@@ -226,6 +268,41 @@ const CreateRoutePage: React.FC = () => {
               </li>
             </ul>
           </nav>
+
+          {/* Modals */}
+          {showStopsModal && (
+            <ShowStopsModal 
+              onClose={() => setShowStopsModal(false) } 
+              onAssign={(stop) => {
+                if (stopType === 'start') {
+                  setStartStop(stop.stopName); // or however you want to use it
+                  setSelectedStartStop(stop);  // optionally store the whole object
+                } else if (stopType === 'end') {
+                  setEndStop(stop.stopName);
+                  setSelectedEndStop(stop);
+                } else if (stopType === 'between' && selectedStopIndex !== null) {
+                  const updatedStops = [...stopsBetween];
+                  updatedStops[selectedStopIndex] = stop.stopName;
+                  setStopsBetween(updatedStops);
+                  // optionally setSelectedStopBetween(stop); if you want to track them
+                }
+              
+                // Reset modal and selection state
+                setStopType(null);
+                setSelectedStopIndex(null);
+                setShowStopsModal(false);
+              }}
+            />
+          )}
+          {showAssignBusModal && (
+            <AssignBusModal 
+              onClose={() => setShowAssignBusModal(false) } 
+              onAssign={(bus) => {
+                alert(`Assigned Bus: ${bus.busId}`);
+                setShowAssignBusModal(false); // close modal
+              }}
+            />
+          )}
         </div>
       </div>
     </div>
