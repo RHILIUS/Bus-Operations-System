@@ -6,7 +6,7 @@ import styles from './route-management.module.css';
 import ShowStopsModal from '@/components/modal/ShowStopsModal';
 import AssignBusModal from '@/components/modal/AssignBusModal';
 
-import '../styles/globals.css';
+import '../../../../styles/globals.css';
 
 import {
   DragDropContext,
