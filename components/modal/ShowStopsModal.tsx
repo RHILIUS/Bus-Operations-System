@@ -5,11 +5,10 @@ import Button from '@/components/ui/Button';
 import SearchBar from '@/components/ui/SearchBar';
 import DropdownButton from '../ui/DropdownButton';
 
-
 interface Stop {
-  stopID: string;
-  stopName: string;
-  location: string;
+  StopID: string;
+  StopName: string;
+  Location: string;
   image: string | null;
 }
 
@@ -18,30 +17,28 @@ const ShowStopsModal = ({
   onAssign, 
 }: { 
   onClose: () => void;
-  onAssign: (stop: any) => void; 
+  onAssign: (stop: Stop) => void; 
 }) => {
 
-  // Sample Data for Stops
-  const stops = [
-    {
-      stopID: "1",
-      stopName: "Main Street",
-      location: "Downtown",
-      image: null
-    },
-    {
-      stopID: "2",
-      stopName: "2nd Avenue",
-      location: "East Side",
-      image: null
-    },
-    {
-      stopID: "3",
-      stopName: "Park Lane",
-      location: "Uptown",
-      image: null
-    }
-  ];
+  const [stops, setStops] = useState<Stop[]>([]);
+
+  useEffect(() => {
+    const loadStops = async () => {
+      try {
+        const res = await fetch('/api/stops');
+        if (!res.ok) {
+          throw new Error('Failed to fetch stops');
+        }
+        const data = await res.json();
+        setStops(data);
+        setFilteredStops(data);
+      } catch (error) {
+        console.error('Error fetching stops:', error);
+      }
+    };
+
+    loadStops();
+  }, []);
 
   const [filteredStops, setFilteredStops] = useState(stops);
   const [searchTerm, setSearchTerm] = useState('');
@@ -56,7 +53,7 @@ const ShowStopsModal = ({
     {
       name: 'Alphabetical',
       action: () => {
-        const sorted = [...filteredStops].sort((a, b) => a.stopName.localeCompare(b.stopName));
+        const sorted = [...filteredStops].sort((a, b) => a.StopName.localeCompare(b.StopName));
         setFilteredStops(sorted);
       },
     },
@@ -74,9 +71,9 @@ const ShowStopsModal = ({
               const text = e.target.value;
               setSearchTerm(text);
               const filtered = stops.filter((stop) =>
-                stop.stopID.toLowerCase().includes(text.toLowerCase()) ||
-                stop.stopName.toLowerCase().includes(text.toLowerCase()) ||
-                stop.location.toLowerCase().includes(text.toLowerCase())
+                stop.StopID.toLowerCase().includes(text.toLowerCase()) ||
+                stop.StopName.toLowerCase().includes(text.toLowerCase()) ||
+                stop.Location.toLowerCase().includes(text.toLowerCase())
               );
               setFilteredStops(filtered);
             }}
@@ -112,11 +109,11 @@ const ShowStopsModal = ({
                 {/* Stop Details */}
                 <div className='flex flex-col items-start'>
                   <div className="flex gap-2 items-center">
-                    <div>{stop.stopName}</div>
+                    <div>{stop.StopName}</div>
                     <div className="text-sm text-gray-400">Stop</div>
                   </div>
-                  <div className="text-sm text-gray-400">{`Id: ${stop.stopID}`}</div>
-                  <div className="text-sm text-gray-400">{`${stop.location}`}</div>
+                  <div className="text-sm text-gray-400">{`Id: ${stop.StopID}`}</div>
+                  <div className="text-sm text-gray-400">{`${stop.Location}`}</div>
                 </div>
               </div>
               {/* Assign Button */}

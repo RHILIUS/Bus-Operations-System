@@ -20,7 +20,7 @@ const AssignConductorModal = ({
   onAssign, 
 }: { 
   onClose: () => void;
-  onAssign: (conductor: any) => void; 
+  onAssign: (conductor: Conductor) => void; 
 }
   
 ) => {
