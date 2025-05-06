@@ -15,13 +15,16 @@ interface RegularBusAssignment {
   ConductorID: string;
   BusAssignment?: {
     BusID: string;
+    Route? : {
+      RouteName: string;
+    } | null;
   } | null;
   quotaPolicy?: {
     Fixed?: {
       Quota: string;
     } | null;
     Percentage?: {
-      Quota: string;
+      Percentage: string;
     } | null;
   } | null;
 }
@@ -74,22 +77,29 @@ const BusAssignmentPage: React.FC = () => {
   const [selectedConductor, setSelectedConductor] = useState<Conductor | null>(null);
   const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
 
+  // Edit mode state
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editAssignment, setEditAssignment] = useState<RegularBusAssignment | null>(null);
 
-  useEffect(() => {
-    const fetchAssignments = async () => {
-      try {
-        const response = await fetch('/api/bus-assignment');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch assignments: ${response.statusText}`);
-        }
-        const data = await response.json();
-        console.log('Fetched assignments:', data);
-        setAssignments(data);
-      } catch (error) {
-        console.error('Error fetching assignments:', error);
+  const [quotaType, setQuotaType] = useState('Fixed'); // Default to 'Fixed'
+  const [quotaValue, setQuotaValue] = useState(''); // Default to an empty string
+
+  const fetchAssignments = async () => {
+    try {
+      const response = await fetch('/api/bus-assignment');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch assignments: ${response.statusText}`);
       }
-    };
+      const data = await response.json();
+      console.log('Fetched assignments:', data);
+      setAssignments(data); // Update the table data
+    } catch (error) {
+      console.error('Error fetching assignments:', error);
+    }
+  };
 
+  // **Initial data fetch on component mount**
+  useEffect(() => {
     fetchAssignments();
   }, []);
 
@@ -98,6 +108,7 @@ const BusAssignmentPage: React.FC = () => {
     setSelectedBus(null);
     setSelectedDriver(null);
     setSelectedConductor(null);
+    setSelectedRoute(null);
   };
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -105,7 +116,7 @@ const BusAssignmentPage: React.FC = () => {
   
     // Gather the data to send to the API
     const data = {
-      RouteID: 'RT-0001', // Replace with the selected route ID
+      RouteID: selectedRoute?.RouteID || '', // Replace with the selected route ID
       BusID: selectedBus?.busId || '', // Use the selected bus ID
       AssignmentDate: new Date().toISOString(), // Use the current date or a selected date
       Battery: true, // Replace with actual form values
@@ -120,13 +131,16 @@ const BusAssignmentPage: React.FC = () => {
       Self: true,
       DriverID: selectedDriver?.driver_id || '',
       ConductorID: selectedConductor?.conductor_id || '',
-      QuotaPolicyID: 'QTA-0001', // Replace with the actual QuotaPolicyID
       Change: 0.0,
       TripRevenue: 1000.0,
+      QuotaPolicy: {
+        type: quotaType, // 'Fixed' or 'Percentage'
+        value: quotaValue, // The processed quota value
+      },
     };
-    
+  
     console.log('Data to be sent to API:', data); // Debugging
-
+  
     try {
       // Send a POST request to the API route
       const response = await fetch('/api/bus-assignment', {
@@ -147,10 +161,22 @@ const BusAssignmentPage: React.FC = () => {
       // Optionally, reset the form or update the UI
       handleClear();
       alert('BusAssignment created successfully!');
+      // Refresh the table data
+      fetchAssignments();
     } catch (error) {
       console.error('Error creating BusAssignment:', error);
       alert('Failed to create BusAssignment');
     }
+  };
+
+  const handleEdit = (assignment: RegularBusAssignment) => {
+    setIsEditMode(true);
+    setEditAssignment(assignment);
+
+    // Populate the form with the selected assignment's values
+    setSelectedBus({ busId: assignment.BusAssignment?.BusID });
+    setSelectedDriver({ driver_id: assignment.DriverID });
+    setSelectedConductor({ conductor_id: assignment.ConductorID });
   };
 
   return (
@@ -229,7 +255,7 @@ const BusAssignmentPage: React.FC = () => {
                   </button>
                   {/* <input type="text" placeholder="Route Name" /> */}
                   <div className={styles.outputField}>
-                    {selectedRoute ? selectedRoute.routeName : 'None Selected'}
+                    {selectedRoute ? selectedRoute.RouteName : 'None Selected'}
                   </div>
                 </div>
               </div>
@@ -241,12 +267,69 @@ const BusAssignmentPage: React.FC = () => {
                     <img src="/assets/images/philippine-peso.png" alt="Quota Icon" className={styles.tabIcon} />
                     Quota
                   </div>
-                  <select className={styles.selectInput}>
-                    <option value="">Select Quota Type</option>
-                    <option value="daily">Fixed</option>
-                    <option value="weekly">Percentage</option>
+                  <select
+                    className={styles.selectInput}
+                    value={quotaType}
+                    onChange={(e) => {
+                      setQuotaType(e.target.value);
+                      setQuotaValue(''); // Reset quota value when type changes
+                    }}
+                  >
+                    <option value="Fixed">Fixed</option>
+                    <option value="Percentage">Percentage</option>
                   </select>
-                  <input type="text" placeholder="Value" />
+                  <input
+                    type="number"
+                    placeholder={quotaType === 'Fixed' ? 'Enter Fixed Value' : 'Enter Percentage (1-99)'}
+                    value={quotaValue}
+                    onChange={(e) => {
+                      const value = e.target.value;
+
+                      // Validation for Fixed
+                      if (quotaType === 'Fixed') {
+                        if (value && (!/^\d+(\.\d{1,2})?$/.test(value) || parseFloat(value) <= 0)) {
+                          alert('Fixed value must be greater than 0 and have up to 2 decimal places.');
+                          return;
+                        }
+                      }
+
+                      // Validation for Percentage
+                      if (quotaType === 'Percentage') {
+                        if (value && (parseInt(value, 10) < 1 || parseInt(value, 10) > 99)) {
+                          alert('Percentage value must be between 1 and 99.');
+                          return;
+                        }
+                      }
+
+                      setQuotaValue(value); // Update quota value if valid
+                    }}
+                    onInput={(e) => {
+                      const input = e.target as HTMLInputElement;
+
+                      // Prevent negative numbers
+                      if (input.value.includes('-')) {
+                        input.value = input.value.replace('-', '');
+                      }
+
+                      // Prevent invalid decimal places for Fixed
+                      if (quotaType === 'Fixed' && !/^\d+(\.\d{0,2})?$/.test(input.value)) {
+                        input.value = input.value.slice(0, -1);
+                      }
+
+                      // Prevent values outside 1-99 for Percentage
+                      if (quotaType === 'Percentage') {
+                        const numericValue = parseInt(input.value, 10);
+                        if (numericValue < 1) {
+                          input.value = '1';
+                        } else if (numericValue > 99) {
+                          input.value = '99';
+                        }
+                      }
+                    }}
+                    step={quotaType === 'Fixed' ? '0.01' : '1'} // Allow up to 2 decimal places for Fixed, whole numbers for Percentage
+                    min={quotaType === 'Fixed' ? '0.01' : '1'} // Minimum value
+                    max={quotaType === 'Percentage' ? '99' : undefined} // Maximum value for Percentage
+                  />
                 </div>
               </div>
 
@@ -279,16 +362,19 @@ const BusAssignmentPage: React.FC = () => {
                     <td>{assignment.BusAssignment?.BusID}</td>
                     <td>{assignment.DriverID}</td>
                     <td>{assignment.ConductorID}</td>
-                    <td>no route yet</td>
+                    <td>{assignment.BusAssignment?.Route?.RouteName}</td>
                     <td>
                       {assignment.quotaPolicy?.Fixed
                         ? `Fixed: ${assignment.quotaPolicy.Fixed.Quota}`
                         : assignment.quotaPolicy?.Percentage
-                        ? `Percentage: ${assignment.quotaPolicy.Percentage.Quota}`
+                        ? `Percentage: ${(parseFloat(assignment.quotaPolicy.Percentage.Percentage) * 100)}%`
                         : 'No Quota'}
                     </td>
                     <td className={styles.actions}>
-                      <button className={styles.editBtn}>
+                      <button
+                        className={styles.editBtn}
+                        onClick={() => handleEdit(assignment)}
+                      >
                         <img src="/assets/images/edit.png" alt="Edit" />
                       </button>
                       <button className={styles.deleteBtn}>
@@ -336,7 +422,7 @@ const BusAssignmentPage: React.FC = () => {
             <AssignRouteModal 
               onClose={() => setShowAssignRouteModal(false)}
               onAssign={(route) => {
-                alert(`Assigned Route: ${route.routeName}`);
+                alert(`Assigned Route: ${route.RouteName}`);
                 setSelectedRoute(route); // store or use it as needed
                 setShowAssignRouteModal(false); // close modal
               }} 
