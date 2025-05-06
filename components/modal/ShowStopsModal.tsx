@@ -4,76 +4,57 @@ import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import SearchBar from '@/components/ui/SearchBar';
 import DropdownButton from '../ui/DropdownButton';
-import { fetchBuses } from '../../lib/fetchBuses';
 
-interface Bus {
-  busId: string;
-  route: string;
-  type: string;
-  capacity: number;
+interface Stop {
+  StopID: string;
+  StopName: string;
+  Location: string;
   image: string | null;
 }
 
-const AssignBusModal = ({ 
+const ShowStopsModal = ({ 
   onClose,
   onAssign, 
 }: { 
   onClose: () => void;
-  onAssign: (bus: Bus) => void; 
+  onAssign: (stop: Stop) => void; 
 }) => {
 
-  const [buses, setBuses] = useState<Bus[]>([]);
+  const [stops, setStops] = useState<Stop[]>([]);
 
   useEffect(() => {
-    const loadBuses = async () => {
+    const loadStops = async () => {
       try {
-        const data = await fetchBuses();
-        setBuses(data);
-        setFilteredBuses(data); 
+        const res = await fetch('/api/stops');
+        if (!res.ok) {
+          throw new Error('Failed to fetch stops');
+        }
+        const data = await res.json();
+        setStops(data);
+        setFilteredStops(data);
       } catch (error) {
-        console.error('Error fetching buses:', error);
+        console.error('Error fetching stops:', error);
       }
     };
-  
-    loadBuses();
+
+    loadStops();
   }, []);
 
-  const [filteredBuses, setFilteredBuses] = useState(buses);
+  const [filteredStops, setFilteredStops] = useState(stops);
   const [searchTerm, setSearchTerm] = useState('');
 
   const dropdownItems = [
     {
       name: 'All',
       action: () => {
-        setFilteredBuses(buses);
+        setFilteredStops(stops);
       },
     },
     {
       name: 'Alphabetical',
       action: () => {
-        const sorted = [...filteredBuses].sort((a, b) => a.busId.localeCompare(b.busId));
-        setFilteredBuses(sorted);
-      },
-    },
-    {
-      name: 'Aircon',
-      action: () => {
-        const airconOnly = buses.filter(bus => bus.type === 'Aircon');
-        setFilteredBuses(airconOnly);
-      },
-    },
-    {
-      name: 'Non-Aircon',
-      action: () => {
-        const nonAirconOnly = buses.filter(bus => bus.type === 'Non-Aircon');
-        setFilteredBuses(nonAirconOnly);
-      },
-    },
-
-    {
-      name: 'All',
-      action: () => {
-        setFilteredBuses(buses);
+        const sorted = [...filteredStops].sort((a, b) => a.StopName.localeCompare(b.StopName));
+        setFilteredStops(sorted);
       },
     },
   ];
@@ -84,61 +65,61 @@ const AssignBusModal = ({
         {/* Search Bar */}
         <header className="mb-4">
           <SearchBar
-            placeholder="Search Bus"
+            placeholder="Search Stop"
             value={searchTerm}
             onChange={(e) => {
               const text = e.target.value;
               setSearchTerm(text);
-              const filtered = buses.filter((bus) =>
-                bus.busId.toLowerCase().includes(text.toLowerCase()) ||
-                bus.route.toLowerCase().includes(text.toLowerCase()) ||
-                bus.type.toLowerCase().includes(text.toLowerCase())
+              const filtered = stops.filter((stop) =>
+                stop.StopID.toLowerCase().includes(text.toLowerCase()) ||
+                stop.StopName.toLowerCase().includes(text.toLowerCase()) ||
+                stop.Location.toLowerCase().includes(text.toLowerCase())
               );
-              setFilteredBuses(filtered);
+              setFilteredStops(filtered);
             }}
           />
         </header>
 
         {/* Title and Filter section */}
         <nav className="px-3 flex justify-between items-center mb-2">
-          <div className="font-medium text-lg">Available Buses</div>
+          <div className="font-medium text-lg">Available Stops</div>
           <div className="flex items-center">
             <div className="font-medium mr-3">Filter</div>
             <DropdownButton dropdownItems={dropdownItems} />
           </div>
         </nav>
 
-        {/* Bus List Section */}
+        {/* Stop List Section */}
         <section className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 mb-4">
-          {filteredBuses.map((bus, index) => (
+          {filteredStops.map((stop, index) => (
             <article
               key={index}
               className="rounded-lg my-1 px-3 flex items-center h-20 bg-gray-50 hover:bg-gray-100 cursor-pointer text-black justify-between"
             >
               <div className="flex items-center gap-3">
-                {/* Bus Icon */}
+                {/* Stop Icon */}
                 <div className="bg-gray-200 rounded-2xl h-20 w-20 flex items-center relative overflow-hidden">
                   <Image
-                    src={bus.image || '/assets/images/bus-fallback.png'}
+                    src={stop.image || '/assets/images/bus-fallback.png'}
                     alt="Bus"
                     className="object-cover"
                     fill
                   />
                 </div>
-                {/* Bus Details */}
+                {/* Stop Details */}
                 <div className='flex flex-col items-start'>
                   <div className="flex gap-2 items-center">
-                    <div>{bus.busId}</div>
-                    <div className="text-sm text-gray-400">{bus.route}</div>
+                    <div>{stop.StopName}</div>
+                    <div className="text-sm text-gray-400">Stop</div>
                   </div>
-                  <div className="text-sm text-gray-400">{bus.type}</div>
-                  <div className="text-sm text-gray-400">{`${bus.capacity} seats`}</div>
+                  <div className="text-sm text-gray-400">{`Id: ${stop.StopID}`}</div>
+                  <div className="text-sm text-gray-400">{`${stop.Location}`}</div>
                 </div>
               </div>
               {/* Assign Button */}
               <Button 
                 text="Assign"
-                onClick={() => onAssign(bus)}
+                onClick={() => onAssign(stop)}
               />
               
             </article>
@@ -159,4 +140,4 @@ const AssignBusModal = ({
   );
 };
 
-export default AssignBusModal;
+export default ShowStopsModal;

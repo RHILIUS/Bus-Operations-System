@@ -106,7 +106,6 @@ body {
   overflow-y: auto; /* Allow content to scroll */
   display: flex;
   justify-content: center;
-  align-items: center;
   width: 100%;
   height: auto; /* Allow the content to expand */
 }
