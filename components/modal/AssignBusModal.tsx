@@ -19,7 +19,7 @@ const AssignBusModal = ({
   onAssign, 
 }: { 
   onClose: () => void;
-  onAssign: (bus: any) => void; 
+  onAssign: (bus: Bus) => void; 
 }) => {
 
   const [buses, setBuses] = useState<Bus[]>([]);
