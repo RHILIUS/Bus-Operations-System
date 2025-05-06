@@ -56,7 +56,7 @@ interface Conductor {
 }
 
 interface Route {
-  route_id: string;
+  routeID: string;
   routeName: string;
 }
 
