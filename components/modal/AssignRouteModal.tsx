@@ -5,7 +5,6 @@ import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import DropdownButton from '../ui/DropdownButton';
 
-
 interface Route {
   routeID: string;
   routeName: string;
