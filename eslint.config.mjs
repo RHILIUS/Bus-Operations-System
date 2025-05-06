@@ -13,4 +13,9 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
-export default eslintConfig;
+export default [
+  {
+    ignores: ["app/generated/**"], // ⬅️ Ignore Prisma generated files
+  },
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+];
