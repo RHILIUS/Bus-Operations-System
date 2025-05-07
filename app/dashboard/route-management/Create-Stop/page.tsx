@@ -1,37 +1,60 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './route-management.module.css';
 
 interface Stop {
-  name: string;
-  longitude: string;
-  latitude: string;
+  StopID: number;
+  StopName: string;
+  Location: string;
 }
 
 const mockStops: Stop[] = Array.from({ length: 150 }, (_, i) => ({
-  name: `Stop ${i + 1}`,
-  longitude: (120 + Math.random()).toFixed(6),
-  latitude: (14 + Math.random()).toFixed(6),
+  StopName: `Stop ${i + 1}`,
+  Location: "utot"
 }));
 
 const ITEMS_PER_PAGE = 10;
 
 const RouteManagementPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(mockStops.length / ITEMS_PER_PAGE);
+  const ITEMS_PER_PAGE = 10; // Number of items per page
+  const [stops, setStops] = useState<Stop[]>([]); // All stops
+  const [displayedStops, setDisplayedStops] = useState<Stop[]>([]); // Stops for the current page
 
-  const currentStops = mockStops.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const totalPages = Math.ceil(stops.length / ITEMS_PER_PAGE);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
+
+  // Update displayed stops whenever the current page changes
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    setDisplayedStops(stops.slice(startIndex, endIndex));
+  }, [currentPage, stops]);
+
+  const fetchAssignments = async () => {
+    try {
+      const response = await fetch('/api/stops');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch assignments: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setStops(data); // Update the full stops list
+    } catch (error) {
+      console.error('Error fetching assignments:', error);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
 
   return (
     <div className={`card mx-auto ${styles.wideCard}`}>
@@ -93,11 +116,11 @@ const RouteManagementPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {currentStops.map((stop, index) => (
-                <tr key={index}>
-                  <td>{stop.name}</td>
-                  <td>{stop.longitude}</td>
-                  <td>{stop.latitude}</td>
+            {displayedStops.map((stop) => (
+                <tr key={stop.StopID}>
+                  <td>{stop.StopName}</td>
+                  <td>{stop.Location}</td>
+                  <td>{stop.Location}</td>
                   <td className="text-center">
                     <div className="d-inline-flex align-items-center gap-1">
                       <button className="btn btn-sm btn-primary p-1">
@@ -119,7 +142,7 @@ const RouteManagementPage: React.FC = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+                ))}
             </tbody>
           </table>
 

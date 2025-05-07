@@ -231,12 +231,7 @@ const CreateRoutePage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {currentRoutes.map((route, index) => (
-                <tr key={index}>
-                  <td>{route.name}</td>
-                  <td>{route.startStop}</td>
-                  <td>{route.endStop}</td>
-                  <td>{route.stopsBetween.length}</td>
+                <tr>
                   <td className="text-center">
                     <div className="d-inline-flex align-items-center gap-1">
                       <button className="btn btn-sm btn-primary p-1">
@@ -248,7 +243,6 @@ const CreateRoutePage: React.FC = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
             </tbody>
           </table>
 
