@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cooper+Hewitt&display=swap');
+
+body {
+  font-family: 'Cooper Hewitt', sans-serif;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+html {
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+h2 {
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Pagination */
+.pagination .page-link {
+  background-color: #961c1e;
+  color: white;
+  border: 1px solid #961c1e;
+  transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+  background-color: white;
+  color: #961c1e;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: white !important;
+  color: #961c1e !important;
+  border: 2px solid #961c1e;
+  font-weight: bold;
+}
+
+/* Table */
+.custom-table thead {
+  background-color: #961c1e !important;
+}
+
+.custom-table thead th {
+  background-color: #961c1e !important;
+  color: white !important;
+  border-color: #dee2e6 !important;
+}

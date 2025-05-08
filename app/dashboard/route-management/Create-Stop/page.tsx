@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './route-management.module.css';
 
+import '../../../../styles/globals.css';
+
 interface Stop {
   StopID: number;
   StopName: string;
