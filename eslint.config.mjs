@@ -13,12 +13,13 @@ export default [
   {
     ignores: ["app/generated/**"], // Ignore Prisma generated files
   },
-  // Add custom rules
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+
+  // ⬇️ Put custom overrides after the presets
   {
     files: ["**/*.ts", "**/*.tsx"],
     rules: {
-      "@typescript-eslint/no-unused-vars": "off", // or "warn", or use the pattern-based config below
+      "@typescript-eslint/no-unused-vars": "off", // or use warn with patterns
     },
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
