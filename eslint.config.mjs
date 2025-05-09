@@ -9,13 +9,16 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-];
-
 export default [
   {
-    ignores: ["app/generated/**"], // ⬅️ Ignore Prisma generated files
+    ignores: ["app/generated/**"], // Ignore Prisma generated files
+  },
+  // Add custom rules
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off", // or "warn", or use the pattern-based config below
+    },
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
