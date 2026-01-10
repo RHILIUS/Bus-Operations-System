@@ -107,6 +107,7 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
 
         <div className={styles.body}>
           {/* Bus Info */}
+          <div className={styles.section}>
           <div className={styles.infoRow}>
             <div className={styles.infoGroup}>
               <div className={styles.infoLabel}>Bus</div>
@@ -133,9 +134,10 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
               <div className={styles.infoValue}>{currentTime}</div>
             </div>
           </div>
+          </div>
 
           {/* Vehicle Condition Section */}
-          <div>
+          <div className={styles.section}>
             <div className={styles.sectionTitle}>Vehicle Condition Check</div>
             <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '12px' }}>
               ✓ Check = OK (No damage) | ☐ Unchecked = Damage/Issue found
@@ -169,6 +171,7 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
           )}
 
           {/* Notes */}
+          <div className={styles.section}>
           <div className={styles.noteGroup}>
             <div className={styles.noteLabel}>Notes (Optional)</div>
             <textarea
@@ -178,14 +181,13 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
               placeholder="Add any additional notes about the vehicle condition..."
             />
           </div>
+          </div>
         </div>
 
         <div className={styles.footer}>
-          <button className={styles.cancelBtn} onClick={onClose}>
-            Cancel
-          </button>
+          <div className={styles.currentTime}>{currentTime}</div>
           <button
-            className={styles.saveBtn}
+            className={styles.completeBtn}
             onClick={handleSave}
             disabled={saving}
           >
