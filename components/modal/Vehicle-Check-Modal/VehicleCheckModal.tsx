@@ -118,8 +118,6 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
                 <div className={styles.infoLabel}>Route</div>
                 <div className={styles.infoValue}>{busInfo.route}</div>
               </div>
-            </div>
-            <div className={styles.infoRow}>
               <div className={styles.infoGroup}>
                 <div className={styles.infoLabel}>Driver</div>
                 <div className={styles.infoValue}>{busInfo.driver}</div>
@@ -131,42 +129,8 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
             </div>
           </div>
 
-          {/* Vehicle Condition Section - Full Width */}
-          <div className={styles.section} style={{ gridColumn: '1 / -1' }}>
-            <div className={styles.sectionTitle}>Vehicle Condition Check</div>
-            <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '12px' }}>
-              ✓ Check = OK (No damage) | ☐ Unchecked = Damage/Issue found
-            </p>
-            <div className={styles.conditionGrid}>
-              {conditionItems.map((item) => (
-                <div key={item} className={styles.conditionRow}>
-                  <span className={styles.conditionLabel}>{item}</span>
-                  <input
-                    type="checkbox"
-                    className={styles.checkbox}
-                    checked={vehicleCondition[item] ?? true}
-                    onChange={() => toggleVehicleCondition(item)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Damage Warning */}
-          {hasDamage && (
-            <div className={styles.damageSummary} style={{ gridColumn: '1 / -1' }}>
-              <div className={styles.damageSummaryTitle}>⚠️ Damage Detected</div>
-              <div className={styles.damageSummaryList}>
-                Issues found: {damageItems.join(', ')}
-              </div>
-              <p style={{ fontSize: '0.85rem', marginTop: '8px' }}>
-                A damage report will be created for maintenance review.
-              </p>
-            </div>
-          )}
-
-          {/* Notes - Second Column */}
-          <div className={styles.section} style={{ gridColumn: '1 / -1' }}>
+          {/* Vehicle Condition Section */}
+          <div className={styles.section}>
             <div className={styles.sectionTitle}>Vehicle Condition Check</div>
             <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '12px' }}>
               ✓ Check = OK (No damage) | ☐ Unchecked = Damage/Issue found
@@ -199,17 +163,15 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
             </div>
           )}
 
-          {/* Notes - Second Column */}
-          <div className={styles.section} style={{ gridColumn: '1 / -1' }}>
+          {/* Notes */}
+          <div className={styles.section}>
             <div className={styles.sectionTitle}>Additional Notes</div>
-            <div className={styles.noteGroup}>
-              <textarea
-                className={styles.noteInput}
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Add any additional notes about the vehicle condition..."
-              />
-            </div>
+            <textarea
+              className={styles.noteInput}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Add any additional notes about the vehicle condition..."
+            />
           </div>
         </div>
 
