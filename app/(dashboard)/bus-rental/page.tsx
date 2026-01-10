@@ -52,7 +52,8 @@ export default function BusRentalPage() {
   const [homeAddress, setHomeAddress] = useState("");
   const [validIdType, setValidIdType] = useState("");
   const [validIdNumber, setValidIdNumber] = useState("");
-  const [validIdImage, setValidIdImage] = useState<string | null>(null);
+  const [validIdImage, setValidIdImage] = useState<File | null>(null);
+  const [validIdImagePreview, setValidIdImagePreview] = useState<string | null>(null);
   const [showValidIdModal, setShowValidIdModal] = useState(false);
   const [busType, setBusType] = useState<BusType | "">("");
   const [selectedBusId, setSelectedBusId] = useState("");
@@ -596,6 +597,7 @@ export default function BusRentalPage() {
     setValidIdType("");
     setValidIdNumber("");
     setValidIdImage(null);
+    setValidIdImagePreview(null);
     setBusType("");
     setSelectedBusId("");
     setRentalDate("");
@@ -675,37 +677,42 @@ export default function BusRentalPage() {
             // Still save to database with auto-rejected status
             const token = await fetchBackendToken();
             if (token) {
-              const rentalData = {
-                CustomerName: customerName.trim(),
-                CustomerContact: contact.trim(),
-                CustomerEmail: email.trim(),
-                CustomerAddress: homeAddress.trim(),
-                ValidIDType: validIdType.trim(),
-                ValidIDNumber: validIdNumber.trim(),
-                ValidIDImage: validIdImage,
-                PickupLocation: pickupLocation.trim(),
-                DropoffLocation: destination.trim(),
-                NumberOfPassengers: parseInt(passengers, 10),
-                RentalDate: new Date(rentalDate).toISOString(),
-                Duration: parseInt(duration, 10),
-                DistanceKM: parseInt(distance, 10),
-                RentalPrice: price,
-                BusID: selectedBusId,
-                SpecialRequirements: `Bus Type: ${busType}, Note: ${note}. AUTO-REJECTED: ${vicinityValidation.reasons.join('; ')}`,
-                PickupLatitude: pickupLat || null,
-                PickupLongitude: pickupLng || null,
-                DropoffLatitude: destLat || null,
-                DropoffLongitude: destLng || null,
-                Status: 'Rejected',
-                RejectionReason: `Auto-Rejected (Outside Vicinity): ${vicinityValidation.reasons.join('; ')}`
-              };
+              const formData = new FormData();
+              
+              formData.append('CustomerName', customerName.trim());
+              formData.append('CustomerContact', contact.trim());
+              formData.append('CustomerEmail', email.trim());
+              formData.append('HomeAddress', homeAddress.trim());
+              formData.append('IDType', validIdType.trim());
+              formData.append('IDNumber', validIdNumber.trim());
+              
+              if (validIdImage) {
+                formData.append('IDImage', validIdImage);
+              }
+              
+              formData.append('PickupLocation', pickupLocation.trim());
+              formData.append('DropoffLocation', destination.trim());
+              formData.append('RouteName', `${pickupLocation.trim()} to ${destination.trim()}`);
+              formData.append('NumberOfPassengers', passengers);
+              formData.append('RentalDate', new Date(rentalDate).toISOString());
+              formData.append('Duration', duration);
+              formData.append('DistanceKM', distance);
+              formData.append('TotalRentalAmount', price.toString());
+              formData.append('BusID', selectedBusId);
+              formData.append('SpecialRequirements', `Bus Type: ${busType}, Note: ${note}. AUTO-REJECTED: ${vicinityValidation.reasons.join('; ')}`);
+              
+              if (pickupLat) formData.append('Pickuplatitude', pickupLat);
+              if (pickupLng) formData.append('Pickuplongitude', pickupLng);
+              if (destLat) formData.append('Dropofflatitude', destLat);
+              if (destLng) formData.append('Dropofflongitude', destLng);
+              
+              formData.append('Status', 'Rejected');
 
               const baseURL = getBackendBaseURL();
               await fetch(`${baseURL}/api/rental-request`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify(rentalData)
+                body: formData
               });
             }
             
@@ -741,39 +748,45 @@ export default function BusRentalPage() {
         throw new Error('Authentication failed');
       }
 
-      // Prepare rental request data
-      const rentalData = {
-        CustomerName: customerName.trim(),
-        CustomerContact: contact.trim(),
-        CustomerEmail: email.trim(),
-        CustomerAddress: homeAddress.trim(),
-        ValidIDType: validIdType.trim(),
-        ValidIDNumber: validIdNumber.trim(),
-        ValidIDImage: validIdImage,
-        PickupLocation: pickupLocation.trim(),
-        DropoffLocation: destination.trim(),
-        NumberOfPassengers: parseInt(passengers, 10),
-        RentalDate: new Date(rentalDate).toISOString(),
-        Duration: parseInt(duration, 10),
-        DistanceKM: parseInt(distance, 10),
-        RentalPrice: price,
-        BusID: selectedBusId,
-        SpecialRequirements: `Bus Type: ${busType}, Note: ${note}`,
-        PickupLatitude: pickupLat || null,
-        PickupLongitude: pickupLng || null,
-        DropoffLatitude: destLat || null,
-        DropoffLongitude: destLng || null,
-      };
+      // Prepare rental request data using FormData
+      const formData = new FormData();
+      
+      // Add all required fields to FormData
+      formData.append('CustomerName', customerName.trim());
+      formData.append('CustomerContact', contact.trim());
+      formData.append('CustomerEmail', email.trim());
+      formData.append('HomeAddress', homeAddress.trim());
+      formData.append('IDType', validIdType.trim());
+      formData.append('IDNumber', validIdNumber.trim());
+      
+      // Add the File object directly
+      if (validIdImage) {
+        formData.append('IDImage', validIdImage);
+      }
+      
+      formData.append('PickupLocation', pickupLocation.trim());
+      formData.append('DropoffLocation', destination.trim());
+      formData.append('RouteName', `${pickupLocation.trim()} to ${destination.trim()}`);
+      formData.append('NumberOfPassengers', passengers);
+      formData.append('RentalDate', new Date(rentalDate).toISOString());
+      formData.append('Duration', duration);
+      formData.append('DistanceKM', distance);
+      formData.append('TotalRentalAmount', price.toString());
+      formData.append('BusID', selectedBusId);
+      formData.append('SpecialRequirements', `Bus Type: ${busType}, Note: ${note}`);
+      
+      // Add coordinates
+      if (pickupLat) formData.append('Pickuplatitude', pickupLat);
+      if (pickupLng) formData.append('Pickuplongitude', pickupLng);
+      if (destLat) formData.append('Dropofflatitude', destLat);
+      if (destLng) formData.append('Dropofflongitude', destLng);
 
-      // Make API call
+      // Make API call - don't set Content-Type header, browser will set it with boundary
       const baseURL = getBackendBaseURL();
       const response = await fetch(`${baseURL}/api/rental-request`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         credentials: 'include',
-        body: JSON.stringify(rentalData)
+        body: formData
       });
 
       if (!response.ok) {
@@ -795,7 +808,7 @@ export default function BusRentalPage() {
         homeAddress,
         validIdType,
         validIdNumber,
-        validIdImage,
+        validIdImage: validIdImagePreview,
         busType,
         busName: selectedBusData?.name || 'N/A',
         rentalDate,
@@ -999,10 +1012,13 @@ export default function BusRentalPage() {
                                 setErrors({ ...errors, validIdImage: 'Please upload a valid image file' });
                                 return;
                               }
-                              // Convert to base64
+                              // Store the File object for upload
+                              setValidIdImage(file);
+                              
+                              // Create preview URL for display
                               const reader = new FileReader();
                               reader.onloadend = () => {
-                                setValidIdImage(reader.result as string);
+                                setValidIdImagePreview(reader.result as string);
                                 const newErrors = { ...errors };
                                 delete newErrors.validIdImage;
                                 setErrors(newErrors);
@@ -1018,7 +1034,7 @@ export default function BusRentalPage() {
                             <AlertCircle className={styles.errorIcon} /> {errors.validIdImage}
                           </p>
                         )}
-                        {validIdImage && (
+                        {validIdImagePreview && (
                           <div style={{ 
                             position: 'relative', 
                             marginTop: '0.5rem',
@@ -1031,7 +1047,10 @@ export default function BusRentalPage() {
                               <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#059669' }}>✓ Image Uploaded</span>
                               <button
                                 type="button"
-                                onClick={() => setValidIdImage(null)}
+                                onClick={() => {
+                                  setValidIdImage(null);
+                                  setValidIdImagePreview(null);
+                                }}
                                 style={{
                                   padding: '0.25rem 0.75rem',
                                   fontSize: '0.75rem',
@@ -1047,7 +1066,7 @@ export default function BusRentalPage() {
                               </button>
                             </div>
                             <img
-                              src={validIdImage}
+                              src={validIdImagePreview}
                               alt="Valid ID Preview"
                               style={{
                                 width: '100%',
@@ -1525,11 +1544,11 @@ export default function BusRentalPage() {
                   </span>
                 </div>
 
-                {validIdImage && (
+                {validIdImagePreview && (
                   <div className={styles.previewRow} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
                     <span className={styles.previewLabel} style={{ marginBottom: '0.5rem' }}>ID Image</span>
                     <img
-                      src={validIdImage}
+                      src={validIdImagePreview}
                       alt="Valid ID"
                       style={{
                         width: '100%',
