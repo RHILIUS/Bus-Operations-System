@@ -14,7 +14,7 @@ export interface BusAssignment {
   Lights: boolean;
   Oil: boolean;
   Water: boolean;
-  Break: boolean;
+  Brake: boolean;
   Air: boolean;
   Gas: boolean;
   Engine: boolean;

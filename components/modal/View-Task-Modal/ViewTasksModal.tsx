@@ -4,19 +4,33 @@ import React, { useState, useEffect } from 'react';
 import styles from './view-task-modal.module.css';
 
 const BASE_URL = process.env.NEXT_PUBLIC_Backend_BaseURL?.replace(/['"]/g, "");
-const TASKS_URL = `${BASE_URL}/api/tasks`;
+const TASK_MANAGEMENT_URL = `${BASE_URL}/api/task-management`;
+
+interface TaskTool {
+  TaskToolID?: string;
+  ToolID?: string | null;
+  QuantityUsed?: number | null;
+  Unit?: string | null;
+  SourceType?: string | null;
+  CostPerUnit?: number | null;
+  TotalCost?: number | null;
+  Notes?: string | null;
+}
 
 interface Task {
-  id?: string; // Optional because new tasks don't have IDs yet
-  task_no?: string;
-  task_name: string;
-  task_type: string;
-  task_description?: string;
-  assignee: string;
-  status: 'Pending' | 'InProgress' | 'Completed';
-  priority?: string;
-  estimated_hours?: number;
-  isNew?: boolean; // Flag for newly added tasks not yet saved
+  TaskID?: string;
+  TaskName: string;
+  TaskType: 'Inspection' | 'Repair' | 'Replacement' | 'Cleaning' | 'Testing' | 'Documentation' | null;
+  TaskDescription?: string | null;
+  AssignedTo: string;
+  Status: 'Pending' | 'InProgress' | 'Completed' | 'Cancelled';
+  StartDate?: string | null;
+  CompletedDate?: string | null;
+  EstimatedHours?: number | null;
+  ActualHours?: number | null;
+  Notes?: string | null;
+  ToolsUsed?: TaskTool[];
+  isNew?: boolean;
 }
 
 interface WorkOrder {
@@ -27,7 +41,7 @@ interface WorkOrder {
   priority: string;
   overall_status: 'Pending' | 'In Progress' | 'Done';
   tasks: Task[];
-  maintenanceWorkId?: string; // Add this to pass the actual ID
+  maintenanceWorkId?: string;
 }
 
 interface ViewTasksModalProps {
@@ -35,7 +49,7 @@ interface ViewTasksModalProps {
   onClose: () => void;
   workOrder: WorkOrder;
   onUpdateTasks: (tasks: Task[]) => Promise<void>;
-  onAddTask: (task: Omit<Task, 'id' | 'task_no'>) => Promise<void>;
+  onAddTask: (task: Omit<Task, 'TaskID'>) => Promise<void>;
 }
 
 const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
@@ -47,14 +61,18 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
 }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
-  const [newTask, setNewTask] = useState({
-    task_name: '',
-    task_type: 'General',
-    task_description: '',
-    assignee: '',
-    status: 'Pending' as 'Pending' | 'InProgress' | 'Completed',
-    priority: '',
-    estimated_hours: undefined as number | undefined
+  const [newTask, setNewTask] = useState<Omit<Task, 'TaskID' | 'isNew'>>({
+    TaskName: '',
+    TaskType: 'Inspection',
+    TaskDescription: '',
+    AssignedTo: '',
+    Status: 'Pending',
+    EstimatedHours: null,
+    ActualHours: null,
+    StartDate: null,
+    CompletedDate: null,
+    Notes: null,
+    ToolsUsed: []
   });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -64,14 +82,13 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
 
   // Fetch tasks when modal opens
   const fetchTasks = async () => {
-    // Use maintenanceWorkId if provided, otherwise use work_no
     const maintenanceWorkId = workOrder.maintenanceWorkId || workOrder.work_no;
     
     if (!maintenanceWorkId) return;
 
     setLoading(true);
     try {
-      const response = await fetch(`${TASKS_URL}?maintenanceWorkId=${maintenanceWorkId}`, {
+      const response = await fetch(`${TASK_MANAGEMENT_URL}`, {
         credentials: 'include',
       });
 
@@ -81,24 +98,35 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
 
       const data = await response.json();
 
-      // Transform API data to match frontend interface
-      const transformedTasks: Task[] = data.map((task: any) => ({
-        id: task.TaskID,
-        task_no: task.TaskNumber,
-        task_name: task.TaskName,
-        task_type: task.TaskType || 'General',
-        task_description: task.TaskDescription,
-        assignee: task.AssignedTo || '',
-        status: task.Status,
-        priority: task.Priority,
-        estimated_hours: task.EstimatedHours,
-        isNew: false // Existing tasks from DB
-      }));
+      // Find the maintenance work that matches our ID
+      const maintenanceWork = data.find((mw: any) => 
+        mw.MaintenanceWorkID === maintenanceWorkId
+      );
 
-      setTasks(transformedTasks);
+      if (maintenanceWork && maintenanceWork.Tasks) {
+        const transformedTasks: Task[] = maintenanceWork.Tasks.map((task: any) => ({
+          TaskID: task.TaskID,
+          TaskName: task.TaskName,
+          TaskType: task.TaskType,
+          TaskDescription: task.TaskDescription,
+          AssignedTo: task.AssignedTo || '',
+          Status: task.Status,
+          EstimatedHours: task.EstimatedHours,
+          ActualHours: task.ActualHours,
+          StartDate: task.StartDate,
+          CompletedDate: task.CompletedDate,
+          Notes: task.Notes,
+          ToolsUsed: task.ToolsUsed || [],
+          isNew: false
+        }));
+
+        setTasks(transformedTasks);
+      } else {
+        setTasks([]);
+      }
     } catch (error) {
       console.error('Error fetching tasks:', error);
-      // Don't show error, just log it - user can still add tasks
+      setTasks([]);
     } finally {
       setLoading(false);
     }
@@ -106,16 +134,20 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
 
   useEffect(() => {
     if (show) {
-      fetchTasks(); // Fetch tasks from API
+      fetchTasks();
       setShowAddTaskForm(false);
       setNewTask({
-        task_name: '',
-        task_type: 'General',
-        task_description: '',
-        assignee: '',
-        status: 'Pending',
-        priority: workOrder.priority || '', // Inherit from work order
-        estimated_hours: undefined
+        TaskName: '',
+        TaskType: 'Inspection',
+        TaskDescription: '',
+        AssignedTo: '',
+        Status: 'Pending',
+        EstimatedHours: null,
+        ActualHours: null,
+        StartDate: null,
+        CompletedDate: null,
+        Notes: null,
+        ToolsUsed: []
       });
     }
   }, [show, workOrder]);
@@ -128,9 +160,9 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
     return () => clearInterval(interval);
   }, [show]);
 
-  const handleTaskStatusChange = (taskIndex: number, newStatus: 'Pending' | 'InProgress' | 'Completed') => {
+  const handleTaskChange = (taskIndex: number, field: keyof Task, value: any) => {
     const updatedTasks = tasks.map((task, index) =>
-      index === taskIndex ? { ...task, status: newStatus } : task
+      index === taskIndex ? { ...task, [field]: value } : task
     );
     setTasks(updatedTasks);
   };
@@ -150,40 +182,47 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
   };
 
   const handleAddNewTask = () => {
-    if (!newTask.task_name.trim() || !newTask.assignee.trim()) {
+    if (!newTask.TaskName.trim() || !newTask.AssignedTo.trim()) {
       alert('Please fill in Task Name and Assignee');
       return;
     }
 
-    // Generate temporary task number for display
-    const taskNumber = `${workOrder.work_no}-T-${String(tasks.length + 1).padStart(3, '0')}`;
-
     const taskToAdd: Task = {
-      task_no: taskNumber,
-      task_name: newTask.task_name,
-      task_type: newTask.task_type,
-      task_description: newTask.task_description || undefined,
-      assignee: newTask.assignee,
-      status: newTask.status,
-      priority: newTask.priority || undefined,
-      estimated_hours: newTask.estimated_hours,
-      isNew: true // Flag to indicate this task hasn't been saved to DB yet
+      ...newTask,
+      isNew: true
     };
 
     setTasks([...tasks, taskToAdd]);
     
     // Reset form
     setNewTask({
-      task_name: '',
-      task_type: 'General',
-      task_description: '',
-      assignee: '',
-      status: 'Pending',
-      priority: workOrder.priority || '',
-      estimated_hours: undefined
+      TaskName: '',
+      TaskType: 'Inspection',
+      TaskDescription: '',
+      AssignedTo: '',
+      Status: 'Pending',
+      EstimatedHours: null,
+      ActualHours: null,
+      StartDate: null,
+      CompletedDate: null,
+      Notes: null,
+      ToolsUsed: []
     });
     
     setShowAddTaskForm(false);
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return '—';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return '—';
+    }
   };
 
   if (!show) return null;
@@ -202,20 +241,20 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
           {/* Work Order Info */}
           <div className={styles.workOrderInfo}>
             <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Work No:</span>
-              <span className={styles.infoValue}>{workOrder.work_no}</span>
-            </div>
-            <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Work Title:</span>
               <span className={styles.infoValue}>{workOrder.work_title}</span>
             </div>
             <div className={styles.infoRow}>
-              <span className={styles.infoLabel}>Bus No:</span>
+              <span className={styles.infoLabel}>Bus Plate Number:</span>
               <span className={styles.infoValue}>{workOrder.bus_no}</span>
             </div>
             <div className={styles.infoRow}>
               <span className={styles.infoLabel}>Priority:</span>
               <span className={`${styles.infoValue} ${styles.priority}`}>{workOrder.priority}</span>
+            </div>
+            <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>Status:</span>
+              <span className={styles.infoValue}>{workOrder.overall_status}</span>
             </div>
           </div>
 
@@ -244,8 +283,8 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
                       type="text"
                       className={styles.input}
                       placeholder="e.g., Replace brake pads"
-                      value={newTask.task_name}
-                      onChange={(e) => setNewTask({ ...newTask, task_name: e.target.value })}
+                      value={newTask.TaskName}
+                      onChange={(e) => setNewTask({ ...newTask, TaskName: e.target.value })}
                       disabled={saving}
                     />
                   </div>
@@ -254,74 +293,74 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
                     <label className={styles.label}>Task Type <span className={styles.required}>*</span></label>
                     <select
                       className={styles.select}
-                      value={newTask.task_type}
-                      onChange={(e) => setNewTask({ ...newTask, task_type: e.target.value })}
+                      value={newTask.TaskType || 'Inspection'}
+                      onChange={(e) => setNewTask({ ...newTask, TaskType: e.target.value as Task['TaskType'] })}
                       disabled={saving}
                     >
-                      <option value="General">General</option>
-                      <option value="Repair">Repair</option>
                       <option value="Inspection">Inspection</option>
+                      <option value="Repair">Repair</option>
                       <option value="Replacement">Replacement</option>
+                      <option value="Cleaning">Cleaning</option>
                       <option value="Testing">Testing</option>
+                      <option value="Documentation">Documentation</option>
                     </select>
                   </div>
                 </div>
 
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>Assignee <span className={styles.required}>*</span></label>
+                    <label className={styles.label}>Assigned To <span className={styles.required}>*</span></label>
                     <input
                       type="text"
                       className={styles.input}
                       placeholder="Mechanic name"
-                      value={newTask.assignee}
-                      onChange={(e) => setNewTask({ ...newTask, assignee: e.target.value })}
+                      value={newTask.AssignedTo}
+                      onChange={(e) => setNewTask({ ...newTask, AssignedTo: e.target.value })}
                       disabled={saving}
                     />
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>Priority</label>
-                    <select
-                      className={styles.select}
-                      value={newTask.priority}
-                      onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
-                      disabled={saving}
-                    >
-                      <option value="">Same as work order</option>
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                      <option value="Critical">Critical</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
                     <label className={styles.label}>Status</label>
                     <select
                       className={styles.select}
-                      value={newTask.status}
-                      onChange={(e) => setNewTask({ ...newTask, status: e.target.value as 'Pending' | 'InProgress' | 'Completed' })}
+                      value={newTask.Status}
+                      onChange={(e) => setNewTask({ ...newTask, Status: e.target.value as Task['Status'] })}
                       disabled={saving}
                     >
                       <option value="Pending">Pending</option>
                       <option value="InProgress">In Progress</option>
                       <option value="Completed">Completed</option>
+                      <option value="Cancelled">Cancelled</option>
                     </select>
                   </div>
+                </div>
 
+                <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.label}>Estimated Hours</label>
                     <input
                       type="number"
                       className={styles.input}
                       placeholder="e.g., 2.5"
-                      step="0.5"
+                      step="0.1"
                       min="0"
-                      value={newTask.estimated_hours || ''}
-                      onChange={(e) => setNewTask({ ...newTask, estimated_hours: e.target.value ? parseFloat(e.target.value) : undefined })}
+                      value={newTask.EstimatedHours || ''}
+                      onChange={(e) => setNewTask({ ...newTask, EstimatedHours: e.target.value ? parseFloat(e.target.value) : null })}
+                      disabled={saving}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Actual Hours</label>
+                    <input
+                      type="number"
+                      className={styles.input}
+                      placeholder="e.g., 3.0"
+                      step="0.1"
+                      min="0"
+                      value={newTask.ActualHours || ''}
+                      onChange={(e) => setNewTask({ ...newTask, ActualHours: e.target.value ? parseFloat(e.target.value) : null })}
                       disabled={saving}
                     />
                   </div>
@@ -332,9 +371,21 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
                   <textarea
                     className={styles.textarea}
                     placeholder="Additional details about this task..."
-                    value={newTask.task_description}
-                    onChange={(e) => setNewTask({ ...newTask, task_description: e.target.value })}
+                    value={newTask.TaskDescription || ''}
+                    onChange={(e) => setNewTask({ ...newTask, TaskDescription: e.target.value })}
                     rows={3}
+                    disabled={saving}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Notes</label>
+                  <textarea
+                    className={styles.textarea}
+                    placeholder="Additional notes..."
+                    value={newTask.Notes || ''}
+                    onChange={(e) => setNewTask({ ...newTask, Notes: e.target.value })}
+                    rows={2}
                     disabled={saving}
                   />
                 </div>
@@ -351,65 +402,120 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
 
             {/* Tasks Table */}
             <div className={styles.tasksTableWrapper}>
-              <table className={styles.tasksTable}>
-                <thead>
-                  <tr>
-                    <th>Task No.</th>
-                    <th>Task Name</th>
-                    <th>Type</th>
-                    <th>Assignee</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tasks.length > 0 ? (
-                    tasks.map((task, index) => (
-                      <tr key={index} className={task.isNew ? styles.newTaskRow : ''}>
-                        <td>{task.task_no || '—'}</td>
-                        <td>
-                          {task.task_name}
-                          {task.isNew && <span className={styles.newBadge}>New</span>}
-                        </td>
-                        <td>
-                          <span className={task.task_type === 'Repair' ? styles.typeRepair : styles.typeGeneral}>
-                            {task.task_type}
-                          </span>
-                        </td>
-                        <td>{task.assignee}</td>
-                        <td>
-                          <select
-                            className={styles.statusSelect}
-                            value={task.status}
-                            onChange={(e) => handleTaskStatusChange(index, e.target.value as 'Pending' | 'InProgress' | 'Completed')}
-                            disabled={saving}
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="InProgress">In Progress</option>
-                            <option value="Completed">Completed</option>
-                          </select>
-                        </td>
-                        <td>
-                          <button
-                            className={styles.deleteBtn}
-                            onClick={() => handleDeleteTask(index)}
-                            disabled={saving}
-                            title="Delete task"
-                          >
-                            ✕
-                          </button>
+              {loading ? (
+                <div style={{ padding: '2rem', textAlign: 'center' }}>Loading tasks...</div>
+              ) : (
+                <table className={styles.tasksTable}>
+                  <thead>
+                    <tr>
+                      <th>Task Name</th>
+                      <th>Type</th>
+                      <th>Assigned To</th>
+                      <th>Status</th>
+                      <th>Est. Hours</th>
+                      <th>Actual Hours</th>
+                      <th>Start Date</th>
+                      <th>Completed Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tasks.length > 0 ? (
+                      tasks.map((task, index) => (
+                        <tr key={task.TaskID || index} className={task.isNew ? styles.newTaskRow : ''}>
+                          <td>
+                            <input
+                              type="text"
+                              className={styles.inlineInput}
+                              value={task.TaskName}
+                              onChange={(e) => handleTaskChange(index, 'TaskName', e.target.value)}
+                              disabled={saving}
+                            />
+                            {task.isNew && <span className={styles.newBadge}>New</span>}
+                          </td>
+                          <td>
+                            <select
+                              className={styles.inlineSelect}
+                              value={task.TaskType || 'Inspection'}
+                              onChange={(e) => handleTaskChange(index, 'TaskType', e.target.value)}
+                              disabled={saving}
+                            >
+                              <option value="Inspection">Inspection</option>
+                              <option value="Repair">Repair</option>
+                              <option value="Replacement">Replacement</option>
+                              <option value="Cleaning">Cleaning</option>
+                              <option value="Testing">Testing</option>
+                              <option value="Documentation">Documentation</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              className={styles.inlineInput}
+                              value={task.AssignedTo}
+                              onChange={(e) => handleTaskChange(index, 'AssignedTo', e.target.value)}
+                              disabled={saving}
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className={styles.statusSelect}
+                              value={task.Status}
+                              onChange={(e) => handleTaskChange(index, 'Status', e.target.value)}
+                              disabled={saving}
+                            >
+                              <option value="Pending">Pending</option>
+                              <option value="InProgress">In Progress</option>
+                              <option value="Completed">Completed</option>
+                              <option value="Cancelled">Cancelled</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              className={styles.inlineInput}
+                              value={task.EstimatedHours || ''}
+                              onChange={(e) => handleTaskChange(index, 'EstimatedHours', e.target.value ? parseFloat(e.target.value) : null)}
+                              step="0.1"
+                              min="0"
+                              disabled={saving}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              className={styles.inlineInput}
+                              value={task.ActualHours || ''}
+                              onChange={(e) => handleTaskChange(index, 'ActualHours', e.target.value ? parseFloat(e.target.value) : null)}
+                              step="0.1"
+                              min="0"
+                              disabled={saving}
+                            />
+                          </td>
+                          <td>{formatDate(task.StartDate ?? null)}</td>
+                          <td>{formatDate(task.CompletedDate ?? null)}</td>
+                          <td>
+                            <button
+                              className={styles.deleteBtn}
+                              onClick={() => handleDeleteTask(index)}
+                              disabled={saving}
+                              title="Delete task"
+                            >
+                              ✕
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={9} className={styles.noTasks}>
+                          No tasks added yet. Click &quot;Add Task&quot; to create one.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={6} className={styles.noTasks}>
-                        No tasks added yet. Click &quot;Add Task&quot; to create one.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>
@@ -419,7 +525,7 @@ const ViewTasksModal: React.FC<ViewTasksModalProps> = ({
           <button
             className={styles.saveBtn}
             onClick={handleSaveTasks}
-            disabled={saving}
+            disabled={saving || tasks.length === 0}
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>

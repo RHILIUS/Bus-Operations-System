@@ -3,6 +3,84 @@ import { getBackendBaseURL } from '@/lib/backend';
 const DAMAGE_REPORT_URL = `${getBackendBaseURL()}/api/damage-report`;
 
 /**
+ * Fetch all damage reports (optionally filtered by status)
+ */
+export const fetchDamageReports = async (status?: string) => {
+  try {
+    const url = status 
+      ? `${DAMAGE_REPORT_URL}?status=${encodeURIComponent(status)}`
+      : DAMAGE_REPORT_URL;
+    
+    const res = await fetch(url, {
+      credentials: 'include',
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to fetch damage reports');
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching damage reports:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update damage report status (Accepted or Rejected)
+ * The backend will automatically create MaintenanceWork if status is Accepted
+ */
+export const updateDamageReportStatus = async (
+  damageReportId: string,
+  status: 'Accepted' | 'Rejected'
+) => {
+  try {
+    const res = await fetch(`${DAMAGE_REPORT_URL}/${damageReportId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ status }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to update damage report status');
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error updating damage report status:', error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a damage report
+ */
+export const deleteDamageReport = async (damageReportId: string) => {
+  try {
+    const res = await fetch(`${DAMAGE_REPORT_URL}/${damageReportId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to delete damage report');
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error deleting damage report:', error);
+    throw error;
+  }
+};
+
+/**
  * Create a new damage report
  */
 export const createDamageReport = async (

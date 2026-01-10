@@ -49,3 +49,7 @@ export const BUSES_RENT_URL = `${BASE_URL}${process.env.NEXT_PUBLIC_BusesRent_En
 // Damage Reports
 export const DAMAGE_REPORT_URL = `${BASE_URL}/api/damage-report`;
 
+export const PERFORMANCE_REPORT_URL = `${BASE_URL}${process.env.NEXT_PUBLIC_Performance_Reports_Endpoint}`;
+export const MAINTENANCE_URL = `${BASE_URL}${process.env.NEXT_PUBLIC_Maitenance_Endpoint}`;
+export const TASK_REPORT_URL = `${BASE_URL}${process.env.NEXT_PUBLIC_Task_Reports_Endpoint}`;
+

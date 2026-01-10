@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './view-work-modal.module.css';
 
 interface MaintenanceRecord {
-  id: string; // Changed to string to match MaintenanceWorkID
+  id: string;
   work_no?: string;
   work_title?: string;
   bus_no: string;
@@ -23,9 +23,15 @@ interface MaintenanceRecord {
     engine: boolean;
     tireCondition: boolean;
     notes: string;
+    checkDate?: string;
+    reportedBy: string;
   };
   reportedBy?: string;
   workRemarks?: string;
+  assignedTo?: string;
+  estimatedCost?: number;
+  actualCost?: number;
+  completedDate?: string;
 }
 
 interface ViewWorkDetailsModalProps {
@@ -74,6 +80,14 @@ const ViewWorkDetailsModal: React.FC<ViewWorkDetailsModalProps> = ({
     });
   };
 
+  const formatCurrency = (amount?: number) => {
+    if (amount === undefined || amount === null) return 'N/A';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
+
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="View Work Details Modal">
       <div className={styles.modal}>
@@ -110,7 +124,7 @@ const ViewWorkDetailsModal: React.FC<ViewWorkDetailsModalProps> = ({
                 {record.priority ? (
                   <span
                     className={
-                      record.priority === 'High' || record.priority === 'Emergency'
+                      record.priority === 'High' || record.priority === 'Critical'
                         ? styles.priorityHigh
                         : record.priority === 'Medium'
                         ? styles.priorityMedium
@@ -132,6 +146,8 @@ const ViewWorkDetailsModal: React.FC<ViewWorkDetailsModalProps> = ({
                       ? styles.statusCompleted
                       : record.status === 'In Progress'
                       ? styles.statusInProgress
+                      : record.status === 'Cancelled'
+                      ? styles.statusCancelled
                       : styles.statusPending
                   }
                 >
@@ -149,10 +165,38 @@ const ViewWorkDetailsModal: React.FC<ViewWorkDetailsModalProps> = ({
                 <span className={styles.infoValue}>{formatDate(record.due_date)}</span>
               </div>
 
+              {record.completedDate && (
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Completed Date:</span>
+                  <span className={styles.infoValue}>{formatDate(record.completedDate)}</span>
+                </div>
+              )}
+
+              {record.assignedTo && (
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>Assigned To:</span>
+                  <span className={styles.infoValue}>{record.assignedTo}</span>
+                </div>
+              )}
+
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>Reported By:</span>
                 <span className={styles.infoValue}>{record.reportedBy || 'N/A'}</span>
               </div>
+
+              {(record.estimatedCost !== undefined || record.actualCost !== undefined) && (
+                <>
+                  <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}>Estimated Cost:</span>
+                    <span className={styles.infoValue}>{formatCurrency(record.estimatedCost)}</span>
+                  </div>
+
+                  <div className={styles.infoRow}>
+                    <span className={styles.infoLabel}>Actual Cost:</span>
+                    <span className={styles.infoValue}>{formatCurrency(record.actualCost)}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -171,6 +215,14 @@ const ViewWorkDetailsModal: React.FC<ViewWorkDetailsModalProps> = ({
             <div className={styles.section}>
               <h3 className={styles.sectionTitle}>Damage Report Summary</h3>
               
+              {record.damageReport.checkDate && (
+                <div style={{ marginBottom: '12px', padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+                  <p style={{ margin: 0, fontSize: '0.9em', color: '#666' }}>
+                    <strong>Check Date:</strong> {formatDate(record.damageReport.checkDate)}
+                  </p>
+                </div>
+              )}
+              
               <div className={styles.damageGrid}>
                 {damageItems.map((item) => (
                   <div key={item.label} className={styles.damageItem}>
@@ -186,6 +238,14 @@ const ViewWorkDetailsModal: React.FC<ViewWorkDetailsModalProps> = ({
                 <div className={styles.notesSection}>
                   <p className={styles.notesLabel}><strong>Notes:</strong></p>
                   <p className={styles.notesText}>{record.damageReport.notes}</p>
+                </div>
+              )}
+
+              {record.damageReport.reportedBy && (
+                <div style={{ marginTop: '12px', padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+                  <p style={{ margin: 0, fontSize: '0.9em', color: '#666' }}>
+                    <strong>Damage Reported By:</strong> {record.damageReport.reportedBy}
+                  </p>
                 </div>
               )}
             </div>
