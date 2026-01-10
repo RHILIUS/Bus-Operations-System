@@ -73,10 +73,10 @@ useEffect(() => {
           customerName: r.CustomerName ?? 'N/A',
           contactNo: r.CustomerContact ?? 'N/A',
           email: r.CustomerEmail ?? 'N/A',
-          homeAddress: r.CustomerAddress ?? 'N/A',
-          validIdType: r.ValidIDType ?? 'N/A',
-          validIdNumber: r.ValidIDNumber ?? 'N/A',
-          validIdImage: r.ValidIDImage ?? null,
+          homeAddress: r.HomeAddress ?? 'N/A',
+          validIdType: r.IDType ?? 'N/A',
+          validIdNumber: r.IDNumber ?? 'N/A',
+          validIdImage: r.IDImageUrl ?? null,
           busType: r.BusType ?? 'N/A',
           bus: r.PlateNumber ?? 'N/A',
           rentalDate: r.RentalDate
@@ -87,7 +87,7 @@ useEffect(() => {
           destination: r.DropoffLocation ?? '',
           pickupLocation: r.PickupLocation ?? '',
           passengers: Number(r.NumberOfPassengers ?? 0),
-          price: Number(r.RentalPrice ?? 0),
+          price: Number(r.TotalRentalAmount ?? 0),
           note: r.SpecialRequirements ?? '',
           status: r.Status ?? 'Completed',
           driver: r.RentalBusAssignment?.RentalDrivers
