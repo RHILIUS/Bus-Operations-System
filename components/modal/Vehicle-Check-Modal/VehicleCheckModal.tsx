@@ -108,36 +108,65 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
         <div className={styles.body}>
           {/* Bus Info */}
           <div className={styles.section}>
-          <div className={styles.infoRow}>
-            <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Bus</div>
-              <div className={styles.infoValue}>{busInfo.busNumber}</div>
+            <div className={styles.sectionTitle}>Bus Information</div>
+            <div className={styles.infoRow}>
+              <div className={styles.infoGroup}>
+                <div className={styles.infoLabel}>Bus</div>
+                <div className={styles.infoValue}>{busInfo.busNumber}</div>
+              </div>
+              <div className={styles.infoGroup}>
+                <div className={styles.infoLabel}>Route</div>
+                <div className={styles.infoValue}>{busInfo.route}</div>
+              </div>
             </div>
-            <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Route</div>
-              <div className={styles.infoValue}>{busInfo.route}</div>
+            <div className={styles.infoRow}>
+              <div className={styles.infoGroup}>
+                <div className={styles.infoLabel}>Driver</div>
+                <div className={styles.infoValue}>{busInfo.driver}</div>
+              </div>
+              <div className={styles.infoGroup}>
+                <div className={styles.infoLabel}>Conductor</div>
+                <div className={styles.infoValue}>{busInfo.conductor}</div>
+              </div>
             </div>
-          </div>
-          <div className={styles.infoRow}>
-            <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Driver</div>
-              <div className={styles.infoValue}>{busInfo.driver}</div>
-            </div>
-            <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Conductor</div>
-              <div className={styles.infoValue}>{busInfo.conductor}</div>
-            </div>
-          </div>
-          <div className={styles.infoRow}>
-            <div className={styles.infoGroup}>
-              <div className={styles.infoLabel}>Check Date/Time</div>
-              <div className={styles.infoValue}>{currentTime}</div>
-            </div>
-          </div>
           </div>
 
-          {/* Vehicle Condition Section */}
-          <div className={styles.section}>
+          {/* Vehicle Condition Section - Full Width */}
+          <div className={styles.section} style={{ gridColumn: '1 / -1' }}>
+            <div className={styles.sectionTitle}>Vehicle Condition Check</div>
+            <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '12px' }}>
+              ✓ Check = OK (No damage) | ☐ Unchecked = Damage/Issue found
+            </p>
+            <div className={styles.conditionGrid}>
+              {conditionItems.map((item) => (
+                <div key={item} className={styles.conditionRow}>
+                  <span className={styles.conditionLabel}>{item}</span>
+                  <input
+                    type="checkbox"
+                    className={styles.checkbox}
+                    checked={vehicleCondition[item] ?? true}
+                    onChange={() => toggleVehicleCondition(item)}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Damage Warning */}
+          {hasDamage && (
+            <div className={styles.damageSummary} style={{ gridColumn: '1 / -1' }}>
+              <div className={styles.damageSummaryTitle}>⚠️ Damage Detected</div>
+              <div className={styles.damageSummaryList}>
+                Issues found: {damageItems.join(', ')}
+              </div>
+              <p style={{ fontSize: '0.85rem', marginTop: '8px' }}>
+                A damage report will be created for maintenance review.
+              </p>
+            </div>
+          )}
+
+          {/* Notes - Second Column */}
+          <div className={styles.section} style={{ gridColumn: '1 / -1' }}>
             <div className={styles.sectionTitle}>Vehicle Condition Check</div>
             <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '12px' }}>
               ✓ Check = OK (No damage) | ☐ Unchecked = Damage/Issue found
@@ -170,17 +199,17 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
             </div>
           )}
 
-          {/* Notes */}
-          <div className={styles.section}>
-          <div className={styles.noteGroup}>
-            <div className={styles.noteLabel}>Notes (Optional)</div>
-            <textarea
-              className={styles.noteInput}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Add any additional notes about the vehicle condition..."
-            />
-          </div>
+          {/* Notes - Second Column */}
+          <div className={styles.section} style={{ gridColumn: '1 / -1' }}>
+            <div className={styles.sectionTitle}>Additional Notes</div>
+            <div className={styles.noteGroup}>
+              <textarea
+                className={styles.noteInput}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Add any additional notes about the vehicle condition..."
+              />
+            </div>
           </div>
         </div>
 
