@@ -8,7 +8,7 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
   
   // If 401, token expired - try to refresh
   if (response.status === 401) {
-    const refreshResponse = await fetch(`${Backend_BaseURL}/api/auth/refresh`, {
+    const refreshResponse = await fetch(`${Backend_BaseURL}/api/Refresh-Token`, {
       method: 'POST',
       credentials: 'include',
     });
