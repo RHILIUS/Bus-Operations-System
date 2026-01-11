@@ -217,8 +217,8 @@ const PendingRentalPage: React.FC = () => {
         throw new Error('Authentication failed');
       }
 
-      // Send payment instructions email
-      await sendEmail(token, {
+      // Send payment instructions email (removed token parameter)
+      await sendEmail({
         to: rentalForEmail.email,
         subject: 'Bus Rental Request Approved - Payment Instructions',
         html: emailContent,
