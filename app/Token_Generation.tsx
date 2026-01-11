@@ -18,15 +18,15 @@ export default function Token_Generation() {
         if (response.ok) {
           const data = await response.json();
           
-          // Store accessToken in memory
-          authStore.setAccessToken(data.accessToken);
-          
-          // Optionally store role if returned
-          if (data.role) {
-            authStore.setRole(data.role);
+          // Check if refresh was successful
+          if (data.success && data.accessToken) {
+            // Store accessToken in memory
+            authStore.setAccessToken(data.accessToken);
+            
+            console.log('Access token initialized successfully');
+          } else {
+            console.log('Token refresh failed:', data.message);
           }
-          
-          console.log('Access token initialized successfully');
         } else {
           console.log('No active session - user needs to login');
         }
@@ -38,6 +38,5 @@ export default function Token_Generation() {
     initializeAuth();
   }, []);
 
-  // This component doesn't render anything visible
   return null;
 }
