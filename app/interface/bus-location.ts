@@ -1,11 +1,17 @@
 export interface BusLocation {
-  StopID: any;
+  // For custom user-created locations (stored in localStorage)
   id: string;
   name: string;
   latitude: number;
   longitude: number;
   type: 'pickup' | 'destination' | 'both';
   isActive: boolean;
+  
+  // For API locations from STOPS_URL (optional, only present in API data)
+  StopID?: string;
+  StopName?: string;
+  
+  // Metadata
   createdAt?: string;
   updatedAt?: string;
 }

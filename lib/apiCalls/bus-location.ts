@@ -21,24 +21,30 @@ function saveLocalStorageLocations(locations: BusLocation[]): void {
   }
 }
 
-export async function fetchBusLocations(): Promise<BusLocation[]> {
+export async function fetchBusLocations(): Promise<any[]> {
   try {
-    // Backend API call would go here
-      const response = await fetch(STOPS_URL, {
-        credentials: 'include',
-      });
-    if (response.ok) return await response.json();
+    // Fetch from backend API (STOPS_URL returns StopID/StopName format)
+    const response = await fetch(STOPS_URL, {
+      credentials: 'include',
+    });
+    
+    if (response.ok) {
+      const apiData = await response.json();
+      // Return API data as-is (with StopID/StopName format)
+      return apiData;
+    }
 
-    return getLocalStorageLocations();
+    // Fallback: return empty array if API fails
+    return [];
   } catch (error) {
     console.error('Error fetching bus locations:', error);
-    return getLocalStorageLocations();
+    return [];
   }
 }
 
 export async function createBusLocation(data: CreateBusLocationDTO): Promise<BusLocation> {
   try {
-    // Backend API call would go here
+    // Backend API call would go here in the future
     // const response = await fetch('/api/bus-locations', {
     //   method: 'POST',
     //   headers: { 'Content-Type': 'application/json' },
@@ -46,10 +52,15 @@ export async function createBusLocation(data: CreateBusLocationDTO): Promise<Bus
     // });
     // if (response.ok) return await response.json();
     
+    // For now, use localStorage for custom locations
     const locations = getLocalStorageLocations();
     const newLocation: BusLocation = {
-      ...data,
       id: `loc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      StopID: undefined, // Custom locations don't have StopID
+      name: data.name,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      type: data.type,
       isActive: data.isActive ?? true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -65,7 +76,7 @@ export async function createBusLocation(data: CreateBusLocationDTO): Promise<Bus
 
 export async function updateBusLocation(data: UpdateBusLocationDTO): Promise<BusLocation> {
   try {
-    // Backend API call would go here
+    // Backend API call would go here in the future
     // const response = await fetch(`/api/bus-locations/${data.id}`, {
     //   method: 'PATCH',
     //   headers: { 'Content-Type': 'application/json' },
@@ -73,15 +84,17 @@ export async function updateBusLocation(data: UpdateBusLocationDTO): Promise<Bus
     // });
     // if (response.ok) return await response.json();
     
+    // For now, use localStorage for custom locations
     const locations = getLocalStorageLocations();
     const index = locations.findIndex(loc => loc.id === data.id);
     if (index === -1) {
       throw new Error('Location not found');
     }
     
-    const updatedLocation = {
+    const updatedLocation: BusLocation = {
       ...locations[index],
       ...data,
+      id: data.id, // Preserve the original ID
       updatedAt: new Date().toISOString(),
     };
     locations[index] = updatedLocation;
@@ -95,12 +108,13 @@ export async function updateBusLocation(data: UpdateBusLocationDTO): Promise<Bus
 
 export async function deleteBusLocation(id: string): Promise<void> {
   try {
-    // Backend API call would go here
+    // Backend API call would go here in the future
     // const response = await fetch(`/api/bus-locations/${id}`, {
     //   method: 'DELETE',
     // });
     // if (response.ok) return;
     
+    // For now, use localStorage for custom locations
     const locations = getLocalStorageLocations();
     const filtered = locations.filter(loc => loc.id !== id);
     saveLocalStorageLocations(filtered);

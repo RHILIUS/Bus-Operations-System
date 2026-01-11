@@ -94,7 +94,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
     const lng = parseFloat(apiLocation.longitude);
     
     return {
-      id: id,
+      id: String(id), // Ensure it's a string
       name: name,
       latitude: lat,
       longitude: lng,
@@ -106,14 +106,17 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
   };
 
   // Helper function to normalize database BusLocation to UnifiedLocation
-  const normalizeDatabaseLocation = (dbLocation: BusLocation): UnifiedLocation => {
+  const normalizeDatabaseLocation = (dbLocation: any): UnifiedLocation => {
+    // For localStorage custom locations, use the 'id' field
+    const locationId = dbLocation.id || dbLocation.StopID;
+    
     return {
-      id: dbLocation.id,
-      name: dbLocation.name,
-      latitude: dbLocation.latitude,
-      longitude: dbLocation.longitude,
-      type: dbLocation.type,
-      isActive: dbLocation.isActive,
+      id: String(locationId),
+      name: dbLocation.name || dbLocation.StopName || 'Unnamed',
+      latitude: typeof dbLocation.latitude === 'number' ? dbLocation.latitude : parseFloat(dbLocation.latitude),
+      longitude: typeof dbLocation.longitude === 'number' ? dbLocation.longitude : parseFloat(dbLocation.longitude),
+      type: dbLocation.type || 'both',
+      isActive: dbLocation.isActive !== false,
       source: 'database',
       canEdit: true, // Database locations can be edited
     };
@@ -122,30 +125,49 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
   const loadAllLocations = async () => {
     setLoadingLocations(true);
     try {
-      // Fetch from existing bus-location API (this already uses STOPS_URL internally)
+      // First, try to load custom locations from localStorage
+      const customLocations: UnifiedLocation[] = [];
+      try {
+        const stored = localStorage.getItem('bus_locations_cache');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          console.log('Loaded custom locations from localStorage:', parsed);
+          
+          // These are custom user-created locations with 'id' field
+          const custom = parsed
+            .filter((loc: any) => loc.id && !loc.StopID) // Only custom locations (have id, no StopID)
+            .map((loc: any) => normalizeDatabaseLocation(loc));
+          
+          customLocations.push(...custom);
+          console.log('Normalized custom locations:', custom);
+        }
+      } catch (storageError) {
+        console.warn('Failed to load from localStorage:', storageError);
+      }
+
+      // Fetch from API (STOPS_URL - returns StopID/StopName format)
       const apiData = await fetchBusLocations();
-      console.log('Fetched bus locations (raw data):', apiData);
+      console.log('Fetched API locations (raw data):', apiData);
 
-      let unified: UnifiedLocation[] = [];
+      let apiLocations: UnifiedLocation[] = [];
 
-      // Check if data has StopID field (API format) or regular id field (database format)
+      // Check if data has StopID field (API format from STOPS_URL)
       if (apiData && apiData.length > 0) {
         const firstItem = apiData[0];
         
         if (firstItem.StopID) {
           // This is API format with StopID/StopName
           console.log('Detected API format (StopID/StopName)');
-          unified = apiData
+          apiLocations = apiData
             .map((stop: any) => normalizeApiLocation(stop))
             .filter((loc: UnifiedLocation) => !isNaN(loc.latitude) && !isNaN(loc.longitude));
-        } else if (firstItem.id) {
-          // This is database format with id/name
-          console.log('Detected database format (id/name)');
-          unified = apiData.map((loc: any) => normalizeDatabaseLocation(loc));
         }
       }
 
-      console.log('Unified locations (before filtering):', unified);
+      // Combine: custom locations first (user created), then API locations
+      let unified = [...customLocations, ...apiLocations];
+      
+      console.log('Combined locations (custom + API):', unified);
 
       // Filter by type if needed
       if (locationType) {
@@ -156,7 +178,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
         unified = unified.filter(loc => loc.isActive !== false);
       }
 
-      console.log('Unified locations (after filtering):', unified);
+      console.log('Final unified locations (after filtering):', unified);
       setUnifiedLocations(unified);
     } catch (error) {
       console.error('Error loading locations:', error);
