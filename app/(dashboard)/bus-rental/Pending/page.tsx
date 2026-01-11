@@ -5,59 +5,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './pending.module.css';
 import '../../../../styles/globals.css';
 import { Loading, FilterDropdown, PaginationComponent, Swal } from '@/shared/imports';
-import { FilterSection } from '@/components/ui/FilterDropDown/FilterDropdown'; // ✅ Proper import
+import { FilterSection } from '@/components/ui/FilterDropDown/FilterDropdown';
 import { fetchRentalRequestsByStatus, updateRentalRequest } from '@/lib/apiCalls/rental-request';
+import { sendEmail } from '@/lib/apiCalls/send-email';
 import { fetchBackendToken } from '@/lib/backend';
 import RouteMapModal from '@/components/modal/Route-Map-Modal/RouteMapModal';
 import CustomerInfoModal from '@/components/modal/Customer-Info-Modal/CustomerInfoModal';
 import PaymentEmailModal from '@/components/modal/Payment-Email-Modal/PaymentEmailModal';
 
-// Geocoding cache for performance optimization
-const GEOCODING_CACHE_KEY = 'geocoding_cache_v1';
-const CACHE_EXPIRY_DAYS = 30;
-
-interface GeocodeCache {
-  [coordinates: string]: {
-    name: string;
-    timestamp: number;
-  };
-}
-
-const loadGeocodeCache = (): GeocodeCache => {
-  try {
-    const cached = localStorage.getItem(GEOCODING_CACHE_KEY);
-    if (cached) {
-      const cache: GeocodeCache = JSON.parse(cached);
-      const now = Date.now();
-      const expiryTime = CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
-      
-      // Filter out expired entries
-      const validCache: GeocodeCache = {};
-      Object.entries(cache).forEach(([coords, data]) => {
-        if (now - data.timestamp < expiryTime) {
-          validCache[coords] = data;
-        }
-      });
-      
-      return validCache;
-    }
-  } catch (error) {
-    console.error('Failed to load geocode cache:', error);
-  }
-  return {};
-};
-
-const saveGeocodeCache = (cache: GeocodeCache) => {
-  try {
-    localStorage.setItem(GEOCODING_CACHE_KEY, JSON.stringify(cache));
-  } catch (error) {
-    console.error('Failed to save geocode cache:', error);
-  }
-};
-
-const geocodeCache: GeocodeCache = loadGeocodeCache();
-
-// --- BusRental Interface ---
 interface BusRental {
   id: string;
   customerName: string;
@@ -102,111 +57,89 @@ const PendingRentalPage: React.FC = () => {
     sortBy: 'created_newest',
   });
 
-useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchRentalRequestsByStatus('Pending');
 
-      const data = await fetchRentalRequestsByStatus('Pending');
-
-      if (!Array.isArray(data)) {
-        throw new Error('Invalid response format from server.');
-      }
-
-      // Parse coordinates and fetch city name using reverse geocoding with caching
-      const parseLocation = async (locationStr: string) => {
-        if (!locationStr) return { name: 'N/A', lat: undefined, lng: undefined };
-        
-        const coordPattern = /^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/;
-        const match = locationStr.trim().match(coordPattern);
-        
-        if (match) {
-          const lat = parseFloat(match[1]);
-          const lng = parseFloat(match[2]);
-          const cacheKey = `${lat.toFixed(6)},${lng.toFixed(6)}`;
-          
-          // Check cache first
-          if (geocodeCache[cacheKey]) {
-            return { name: geocodeCache[cacheKey].name, lat, lng };
-          }
-          
-          try {
-            // Use Nominatim reverse geocoding API to get city/municipality name
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`,
-              { headers: { 'User-Agent': 'BOMS-App' } }
-            );
-            
-            if (response.ok) {
-              const data = await response.json();
-              const address = data.address;
-              // Get city, municipality, or town name
-              const locationName = address.city || address.municipality || address.town || address.village || address.county || 'Unknown Location';
-              
-              // Save to cache
-              geocodeCache[cacheKey] = {
-                name: locationName,
-                timestamp: Date.now()
-              };
-              saveGeocodeCache(geocodeCache);
-              
-              return { name: locationName, lat, lng };
-            }
-          } catch (error) {
-            console.error('Reverse geocoding error:', error);
-          }
-          
-          // Fallback if geocoding fails
-          return { name: 'Custom Location', lat, lng };
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid response format from server.');
         }
-        
-        return { name: locationStr, lat: undefined, lng: undefined };
-      };
 
-      const mappedData: BusRental[] = await Promise.all(data.map(async (r: any) => {
-        const pickupData = await parseLocation(r.PickupLocation ?? '');
-        const dropoffData = await parseLocation(r.DropoffLocation ?? '');
+        const mappedData: BusRental[] = data.map((r: any) => {
 
-        return {
-          id: r.RentalRequestID ?? '',
-          customerName: r.CustomerName ?? 'N/A',
-          contactNo: r.CustomerContact ?? 'N/A',
-          email: r.CustomerEmail ?? 'N/A',
-          homeAddress: r.CustomerAddress ?? 'N/A',
-          validIdType: r.ValidIDType ?? 'N/A',
-          validIdNumber: r.ValidIDNumber ?? 'N/A',
-          validIdImage: r.ValidIDImage ?? null,
-          busType: r.BusType ?? 'N/A',
-          bus: r.PlateNumber ?? 'N/A',
-          rentalDate: r.RentalDate ? new Date(r.RentalDate).toISOString().split('T')[0] : '',
-          duration: r.Duration ? `${r.Duration} day${r.Duration > 1 ? 's' : ''}` : '',
-          distance: r.DistanceKM ? `${r.DistanceKM} km` : '',
-          destination: dropoffData.name,
-          pickupLocation: pickupData.name,
-          pickupLat: pickupData.lat,
-          pickupLng: pickupData.lng,
-          dropoffLat: dropoffData.lat,
-          dropoffLng: dropoffData.lng,
-          passengers: Number(r.NumberOfPassengers ?? 0),
-          price: Number(r.RentalPrice ?? 0),
-          note: r.SpecialRequirements ?? '',
-          status: r.Status ?? 'Pending',
-        };
-      }));
 
-      setRentals(mappedData);
-    } catch (err: any) {
-      console.error('Error fetching rentals:', err);
-      Swal.fire('Error', err.message || 'Failed to load rentals.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
+              // Parse RouteName to extract pickup and dropoff locations
+              const parseRouteName = (routeName: string) => {
+                if (!routeName) return { pickup: 'N/A', dropoff: 'N/A' };
+                
+                // Support multiple separators: "to", "→", "->", "-", "—"
+                const separators = [' to ', '→', '->', '—', ' - '];
+                
+                for (const separator of separators) {
+                  if (routeName.includes(separator)) {
+                    const parts = routeName.split(separator);
+                    if (parts.length >= 2) {
+                      return {
+                        pickup: parts[0].trim(),
+                        dropoff: parts.slice(1).join(separator).trim() // Handle multiple separators
+                      };
+                    }
+                  }
+                }
+                
+                // If no separator found, return the whole string as pickup
+                return { pickup: routeName.trim(), dropoff: 'N/A' };
+              };
 
-  fetchData();
-}, []);
+          const { pickup: pickupName, dropoff: dropoffName } = parseRouteName(r.RouteName || '');
+          
+          // Parse coordinates for map functionality
+          const pickupLat = r.Pickuplatitude ? parseFloat(r.Pickuplatitude) : undefined;
+          const pickupLng = r.Pickuplongitude ? parseFloat(r.Pickuplongitude) : undefined;
+          const dropoffLat = r.Dropofflatitude ? parseFloat(r.Dropofflatitude) : undefined;
+          const dropoffLng = r.Dropofflongitude ? parseFloat(r.Dropofflongitude) : undefined;
 
-  // --- FilterDropdown configuration ---
+          return {
+            id: r.RentalRequestID ?? '',
+            customerName: r.CustomerName ?? 'N/A',
+            contactNo: r.CustomerContact ?? 'N/A',
+            email: r.CustomerEmail ?? 'N/A',
+            homeAddress: r.HomeAddress ?? 'N/A',
+            validIdType: r.IDType ?? 'N/A',
+            validIdNumber: r.IDNumber ?? 'N/A',
+            validIdImage: r.IDImageUrl ?? null,
+            busType: r.BusType ?? 'N/A',
+            bus: r.PlateNumber ?? 'N/A',
+            rentalDate: r.RentalDate ? new Date(r.RentalDate).toISOString().split('T')[0] : '',
+            duration: r.Duration ? `${r.Duration} day${r.Duration > 1 ? 's' : ''}` : '',
+            distance: r.DistanceKM ? `${r.DistanceKM} km` : '',
+            destination: dropoffName,
+            pickupLocation: pickupName,
+            pickupLat: pickupLat,
+            pickupLng: pickupLng,
+            dropoffLat: dropoffLat,
+            dropoffLng: dropoffLng,
+            passengers: Number(r.NumberOfPassengers ?? 0),
+            price: Number(r.TotalRentalAmount ?? 0),
+            note: r.SpecialRequirements ?? '',
+            status: r.Status ?? 'Pending',
+          };
+        });
+
+        setRentals(mappedData);
+      } catch (err: any) {
+        console.error('Error fetching rentals:', err);
+        Swal.fire('Error', err.message || 'Failed to load rentals.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const filterSections: FilterSection[] = [
     {
       id: 'sortBy',
@@ -229,7 +162,6 @@ useEffect(() => {
     setCurrentPage(1);
   };
 
-  // --- Handle search & filtering logic ---
   useEffect(() => {
     try {
       let filtered = [...rentals];
@@ -262,7 +194,6 @@ useEffect(() => {
     }
   }, [rentals, searchQuery, activeFilters, currentPage, pageSize]);
 
-  // --- Approve Handler ---
   const handleApprove = async (id: string) => {
     const rental = rentals.find((r) => r.id === id);
     if (!rental) return Swal.fire('Error', 'Rental not found.', 'error');
@@ -271,37 +202,29 @@ useEffect(() => {
       return Swal.fire('Error', 'Rental is not pending.', 'warning');
     }
 
-    // Open payment email modal instead of immediately approving
     setRentalForEmail(rental);
     setShowPaymentEmailModal(true);
   };
 
-  // --- Send Payment Email Handler ---
   const handleSendPaymentEmail = async (emailContent: string) => {
     if (!rentalForEmail) return;
 
     try {
       setLoading(true);
       
-      // Get authentication token
       const token = await fetchBackendToken();
       if (!token) {
         throw new Error('Authentication failed');
       }
 
-      // TODO: Implement actual email sending API call
-      // For now, we'll just approve the rental
-      // const emailResponse = await fetch('/api/send-email', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     to: rentalForEmail.email,
-      //     subject: 'Bus Rental Request Approved - Booking Confirmation',
-      //     content: emailContent
-      //   })
-      // });
+      // Send payment instructions email
+      await sendEmail(token, {
+        to: rentalForEmail.email,
+        subject: 'Bus Rental Request Approved - Payment Instructions',
+        html: emailContent,
+      });
 
-      // Call the API to approve the rental request
+      // Approve the rental request
       await updateRentalRequest(token, rentalForEmail.id, { command: 'approve' });
 
       // Remove from local state since it's no longer pending
@@ -324,7 +247,6 @@ useEffect(() => {
     }
   };
 
-  // --- View Note Handler ---
   const handleViewNote = (note?: string) => {
     Swal.fire({
       title: 'Rental Note',
@@ -333,7 +255,6 @@ useEffect(() => {
     });
   };
 
-  // --- View Route Handler ---
   const handleViewRoute = (rental: BusRental) => {
     if (!rental.pickupLat || !rental.pickupLng || !rental.dropoffLat || !rental.dropoffLng) {
       Swal.fire({
@@ -347,13 +268,11 @@ useEffect(() => {
     setShowRouteMapModal(true);
   };
 
-  // --- View Customer Info Handler ---
   const handleViewCustomerInfo = (rental: BusRental) => {
     setSelectedCustomer(rental);
     setShowCustomerInfoModal(true);
   };
 
-  // --- Render UI ---
   return (
     <div className={styles.wideCard}>
       <div className={styles.cardBody}>
@@ -423,7 +342,7 @@ useEffect(() => {
                           title={rental.pickupLat && rental.dropoffLat ? 'Click to view route on map' : ''}
                         >
                           {rental.destination || 'N/A'}
-                          {rental.pickupLat && rental.dropoffLat && ' '}
+                          {rental.pickupLat && rental.dropoffLat && ' 🗺️'}
                         </div>
                       </td>
                       <td>
@@ -439,7 +358,7 @@ useEffect(() => {
                           title={rental.pickupLat && rental.dropoffLat ? 'Click to view route on map' : ''}
                         >
                           {rental.pickupLocation || 'N/A'}
-                          {rental.pickupLat && rental.dropoffLat && ' '}
+                          {rental.pickupLat && rental.dropoffLat && ' 🗺️'}
                         </div>
                       </td>
                       <td>{rental.passengers ?? 'N/A'}</td>
@@ -486,7 +405,6 @@ useEffect(() => {
         />
       </div>
 
-      {/* Route Map Modal */}
       {showRouteMapModal && selectedRental && selectedRental.pickupLat && selectedRental.pickupLng && selectedRental.dropoffLat && selectedRental.dropoffLng && (
         <RouteMapModal
           show={showRouteMapModal}
@@ -503,7 +421,6 @@ useEffect(() => {
         />
       )}
 
-      {/* Customer Info Modal */}
       {showCustomerInfoModal && selectedCustomer && (
         <CustomerInfoModal
           show={showCustomerInfoModal}
@@ -521,7 +438,6 @@ useEffect(() => {
         />
       )}
 
-      {/* Payment Email Modal */}
       {showPaymentEmailModal && rentalForEmail && (
         <PaymentEmailModal
           show={showPaymentEmailModal}

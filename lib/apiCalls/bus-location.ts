@@ -1,4 +1,5 @@
 import { BusLocation, CreateBusLocationDTO, UpdateBusLocationDTO } from '@/app/interface/bus-location';
+import { STOPS_URL } from '@/lib/urls';
 
 const STORAGE_KEY = 'bus_locations_cache';
 
@@ -23,9 +24,11 @@ function saveLocalStorageLocations(locations: BusLocation[]): void {
 export async function fetchBusLocations(): Promise<BusLocation[]> {
   try {
     // Backend API call would go here
-    // const response = await fetch('/api/bus-locations');
-    // if (response.ok) return await response.json();
-    
+      const response = await fetch(STOPS_URL, {
+        credentials: 'include',
+      });
+    if (response.ok) return await response.json();
+
     return getLocalStorageLocations();
   } catch (error) {
     console.error('Error fetching bus locations:', error);

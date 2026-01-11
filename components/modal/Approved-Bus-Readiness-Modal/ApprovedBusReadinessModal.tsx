@@ -22,6 +22,8 @@ interface ApprovedBusReadinessModalProps {
     vehicleCondition: Record<string, boolean>;
     personnelCondition: { driverReady: boolean };
   };
+  // ✅ NEW: Add assignedDriverIds prop to pass driver IDs from parent
+  assignedDriverIds?: { mainDriverId: string; assistantDriverId: string };
 }
 
 const ApprovedBusReadinessModal: React.FC<ApprovedBusReadinessModalProps> = ({
@@ -30,12 +32,14 @@ const ApprovedBusReadinessModal: React.FC<ApprovedBusReadinessModalProps> = ({
   busInfo,
   onSave,
   readiness,
+  assignedDriverIds,
 }) => {
+  // ✅ FIXED: Changed "Tire" to "TireCondition" to match backend field name
   const conditionItems = [
     "Battery", "Air",
     "Lights", "Gas",
     "Oil", "Engine",
-    "Water", "Tire",
+    "Water", "TireCondition",
     "Brake"
   ];
 
@@ -100,6 +104,11 @@ const ApprovedBusReadinessModal: React.FC<ApprovedBusReadinessModalProps> = ({
     gridRows.push(conditionItems.slice(i, i + 2));
   }
 
+  // ✅ Display friendly label for TireCondition
+  const getDisplayLabel = (item: string) => {
+    return item === 'TireCondition' ? 'Tire' : item;
+  };
+
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
@@ -151,7 +160,7 @@ const ApprovedBusReadinessModal: React.FC<ApprovedBusReadinessModalProps> = ({
                           onChange={() => toggleVehicleCondition(item)}
                         />
                         <label className="form-check-label" htmlFor={item}>
-                          {item}
+                          {getDisplayLabel(item)}
                         </label>
                       </div>
                     ))}

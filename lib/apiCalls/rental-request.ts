@@ -66,7 +66,6 @@ export const createRentalRequest = async (token: string, data: any) => {
   }
 };
 
-
 // ✅ Update an existing rental request (PUT)
 export const updateRentalRequest = async (
   token: string,
@@ -80,13 +79,16 @@ export const updateRentalRequest = async (
   }
 ) => {
   try {
+    // 🔍 DEBUG: Log the payload BEFORE sending
+    console.log('🚀 Sending payload to backend:', JSON.stringify(payload, null, 2));
+    
     const res = await fetch(`${RENTAL_REQUESTS_URL}/${rentalRequestId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      credentials: 'include', // <-- include cookies/session credentials
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
 

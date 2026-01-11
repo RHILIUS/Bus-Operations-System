@@ -15,51 +15,6 @@ import { FilterSection } from '@/components/ui/FilterDropDown/FilterDropdown';
 import { fetchRentalRequestsByStatus, updateRentalRequest } from '@/lib/apiCalls/rental-request';
 import { fetchBackendToken } from '@/lib/backend';
 
-// Geocoding cache for performance optimization
-const GEOCODING_CACHE_KEY = 'geocoding_cache_v1';
-const CACHE_EXPIRY_DAYS = 30;
-
-interface GeocodeCache {
-  [coordinates: string]: {
-    name: string;
-    timestamp: number;
-  };
-}
-
-const loadGeocodeCache = (): GeocodeCache => {
-  try {
-    const cached = localStorage.getItem(GEOCODING_CACHE_KEY);
-    if (cached) {
-      const cache: GeocodeCache = JSON.parse(cached);
-      const now = Date.now();
-      const expiryTime = CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
-      
-      // Filter out expired entries
-      const validCache: GeocodeCache = {};
-      Object.entries(cache).forEach(([coords, data]) => {
-        if (now - data.timestamp < expiryTime) {
-          validCache[coords] = data;
-        }
-      });
-      
-      return validCache;
-    }
-  } catch (error) {
-    console.error('Failed to load geocode cache:', error);
-  }
-  return {};
-};
-
-const saveGeocodeCache = (cache: GeocodeCache) => {
-  try {
-    localStorage.setItem(GEOCODING_CACHE_KEY, JSON.stringify(cache));
-  } catch (error) {
-    console.error('Failed to save geocode cache:', error);
-  }
-};
-
-const geocodeCache: GeocodeCache = loadGeocodeCache();
-
 interface Driver {
   id: string;
   name: string;
@@ -93,7 +48,7 @@ interface BusRental {
   passengers: number;
   price: number;
   note: string;
-  status: 'Not Ready' | 'Ready' | 'Not Started' | 'Ongoing' | 'Completed';
+  status: 'Not Ready' | 'Ready' | 'Ongoing' | 'Completed';
   assignedDrivers?: { mainDriver: Driver; assistantDriver: Driver };
   readinessDone?: boolean;
   damageCheckDone?: boolean;
@@ -119,7 +74,7 @@ const ApprovedNotReadyPage: React.FC = () => {
     sortBy: 'created_newest',
   });
   const [activeTab, setActiveTab] = useState<BusRental['status']>('Not Ready');
-  const tabs: BusRental['status'][] = ['Not Ready', 'Ready', 'Not Started', 'Ongoing', 'Completed'];
+  const tabs: BusRental['status'][] = ['Not Ready', 'Ready', 'Ongoing', 'Completed'];
   const activeTabIndex = tabs.indexOf(activeTab);
 
   // --- Fetch and validate data ---
@@ -127,11 +82,11 @@ const ApprovedNotReadyPage: React.FC = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetchRentalRequestsByStatus('Approved'); // API call
+      const res = await fetchRentalRequestsByStatus('Approved');
 
       if (!Array.isArray(res)) throw new Error('Invalid API response');
 
-      const mappedData: BusRental[] = await Promise.all(res.map(async (r: any) => {
+      const mappedData: BusRental[] = res.map((r: any) => {
         // Map first two drivers as mainDriver & assistantDriver
         const drivers = r.RentalBusAssignment?.RentalDrivers ?? [];
         const mainDriver = drivers[0]
@@ -153,148 +108,134 @@ const ApprovedNotReadyPage: React.FC = () => {
             }
           : null;
 
-        // Parse coordinates and fetch city name using reverse geocoding with caching
-        const parseLocation = async (locationStr: string) => {
-          if (!locationStr) return { name: 'N/A', lat: undefined, lng: undefined };
+
+        // Parse RouteName to extract pickup and dropoff locations
+        const parseRouteName = (routeName: string) => {
+          if (!routeName) return { pickup: 'N/A', dropoff: 'N/A' };
           
-          const coordPattern = /^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/;
-          const match = locationStr.trim().match(coordPattern);
+          // Support multiple separators: "to", "→", "->", "-", "—"
+          const separators = [' to ', '→', '->', '—', ' - '];
           
-          if (match) {
-            const lat = parseFloat(match[1]);
-            const lng = parseFloat(match[2]);
-            const cacheKey = `${lat.toFixed(6)},${lng.toFixed(6)}`;
-            
-            // Check cache first
-            if (geocodeCache[cacheKey]) {
-              return { name: geocodeCache[cacheKey].name, lat, lng };
-            }
-            
-            try {
-              // Use Nominatim reverse geocoding API to get city/municipality name
-              const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`,
-                { headers: { 'User-Agent': 'BOMS-App' } }
-              );
-              
-              if (response.ok) {
-                const data = await response.json();
-                const address = data.address;
-                // Get city, municipality, or town name
-                const locationName = address.city || address.municipality || address.town || address.village || address.county || 'Unknown Location';
-                
-                // Save to cache
-                geocodeCache[cacheKey] = {
-                  name: locationName,
-                  timestamp: Date.now()
+          for (const separator of separators) {
+            if (routeName.includes(separator)) {
+              const parts = routeName.split(separator);
+              if (parts.length >= 2) {
+                return {
+                  pickup: parts[0].trim(),
+                  dropoff: parts.slice(1).join(separator).trim() // Handle multiple separators
                 };
-                saveGeocodeCache(geocodeCache);
-                
-                return { name: locationName, lat, lng };
               }
-            } catch (error) {
-              console.error('Reverse geocoding error:', error);
             }
-            
-            // Fallback if geocoding fails
-            return { name: 'Custom Location', lat, lng };
           }
           
-          return { name: locationStr, lat: undefined, lng: undefined };
+          // If no separator found, return the whole string as pickup
+          return { pickup: routeName.trim(), dropoff: 'N/A' };
         };
 
-        const pickupData = await parseLocation(r.PickupLocation ?? '');
-        const dropoffData = await parseLocation(r.DropoffLocation ?? '');
+      const { pickup: pickupName, dropoff: dropoffName } = parseRouteName(r.RouteName || '');
+      
+      // Parse coordinates for map functionality
+      const pickupLat = r.Pickuplatitude ? parseFloat(r.Pickuplatitude) : undefined;
+      const pickupLng = r.Pickuplongitude ? parseFloat(r.Pickuplongitude) : undefined;
+      const dropoffLat = r.Dropofflatitude ? parseFloat(r.Dropofflatitude) : undefined;
+      const dropoffLng = r.Dropofflongitude ? parseFloat(r.Dropofflongitude) : undefined;
 
-        return {
-          id: r.RentalRequestID ?? '',
-          rentalBusAssignmentId: r.RentalBusAssignmentID ?? undefined,
-          customerName: r.CustomerName ?? 'N/A',
-          contactNo: r.CustomerContact ?? 'N/A',
-          email: r.CustomerEmail ?? 'N/A',
-          homeAddress: r.CustomerAddress ?? 'N/A',
-          validIdType: r.ValidIDType ?? 'N/A',
-          validIdNumber: r.ValidIDNumber ?? 'N/A',
-          validIdImage: r.ValidIDImage ?? null,
-          busType: r.BusType ?? 'N/A',
-          bus: r.PlateNumber ?? 'N/A',
-          rentalDate: r.RentalDate ? new Date(r.RentalDate).toISOString().split('T')[0] : '',
-          duration: r.Duration ? `${r.Duration} day${r.Duration > 1 ? 's' : ''}` : '',
-          distance: r.DistanceKM ? `${r.DistanceKM} km` : '',
-          destination: dropoffData.name,
-          pickupLocation: pickupData.name,
-          pickupLat: pickupData.lat,
-          pickupLng: pickupData.lng,
-          dropoffLat: dropoffData.lat,
-          dropoffLng: dropoffData.lng,
-          passengers: Number(r.NumberOfPassengers ?? 0),
-          price: Number(r.RentalPrice ?? 0),
-          note: r.SpecialRequirements ?? '',
-          // Determine status based on backend data
-          status: (() => {
-            const busStatus = r.RentalBusAssignment?.BusAssignment?.Status;
-            const hasReadinessChecks = r.RentalBusAssignment && (
-              r.RentalBusAssignment.Battery || r.RentalBusAssignment.Lights ||
-              r.RentalBusAssignment.Oil || r.RentalBusAssignment.Water ||
-              r.RentalBusAssignment.Break || r.RentalBusAssignment.Air ||
-              r.RentalBusAssignment.Gas || r.RentalBusAssignment.Engine ||
-              r.RentalBusAssignment.TireCondition
-            );
-            
-            if (busStatus === 'Completed') return 'Completed';
-            if (busStatus === 'InOperation') return 'Ongoing';
-            if (busStatus === 'NotStarted') return 'Not Started';
-            // If status is NotReady but has readiness checks completed, consider it Ready
-            if (busStatus === 'NotReady' && hasReadinessChecks) return 'Ready';
-            return 'Not Ready';
-          })() as 'Not Ready' | 'Ready' | 'Not Started' | 'Ongoing' | 'Completed',
-          assignedDrivers:
-            mainDriver && assistantDriver
-              ? { mainDriver, assistantDriver }
-              : drivers.length >= 2 
-              ? { 
-                  mainDriver: { 
-                    id: drivers[0].DriverID, 
-                    name: drivers[0].Driver?.DriverName || drivers[0].DriverID, 
-                    job: '', 
-                    contactNo: '', 
-                    address: '' 
-                  },
-                  assistantDriver: { 
-                    id: drivers[1].DriverID, 
-                    name: drivers[1].Driver?.DriverName || drivers[1].DriverID, 
-                    job: '', 
-                    contactNo: '', 
-                    address: '' 
-                  }
-                }
-              : undefined,
-          readinessDone: r.RentalBusAssignment && (
-                        r.RentalBusAssignment.Battery || r.RentalBusAssignment.Lights ||
-                        r.RentalBusAssignment.Oil || r.RentalBusAssignment.Water ||
-                        r.RentalBusAssignment.Break || r.RentalBusAssignment.Air ||
-                        r.RentalBusAssignment.Gas || r.RentalBusAssignment.Engine ||
-                        r.RentalBusAssignment.TireCondition
-                      ) || false,
-          damageCheckDone: false,
-          damageData: r.RentalBusAssignment
-            ? {
-                vehicleCondition: {
-                  Battery: r.RentalBusAssignment.Battery ?? false,
-                  Lights: r.RentalBusAssignment.Lights ?? false,
-                  Oil: r.RentalBusAssignment.Oil ?? false,
-                  Water: r.RentalBusAssignment.Water ?? false,
-                  Brake: r.RentalBusAssignment.Break ?? false,
-                  Air: r.RentalBusAssignment.Air ?? false,
-                  Gas: r.RentalBusAssignment.Gas ?? false,
-                  Engine: r.RentalBusAssignment.Engine ?? false,
-                  'Tire Condition': r.RentalBusAssignment.TireCondition ?? false,
+      return {
+        id: r.RentalRequestID ?? '',
+        rentalBusAssignmentId: r.RentalBusAssignmentID ?? undefined,
+        customerName: r.CustomerName ?? 'N/A',
+        contactNo: r.CustomerContact ?? 'N/A',
+        email: r.CustomerEmail ?? 'N/A',
+        homeAddress: r.HomeAddress ?? 'N/A',
+        validIdType: r.IDType ?? 'N/A',
+        validIdNumber: r.IDNumber ?? 'N/A',
+        validIdImage: r.IDImageUrl ?? null,
+        busType: r.BusType ?? 'N/A',
+        bus: r.PlateNumber ?? 'N/A',
+        rentalDate: r.RentalDate ? new Date(r.RentalDate).toISOString().split('T')[0] : '',
+        duration: r.Duration ? `${r.Duration} day${r.Duration > 1 ? 's' : ''}` : '',
+        distance: r.DistanceKM ? `${r.DistanceKM} km` : '',
+        destination: dropoffName,
+        pickupLocation: pickupName,
+        pickupLat: pickupLat,
+        pickupLng: pickupLng,
+        dropoffLat: dropoffLat,
+        dropoffLng: dropoffLng,
+        passengers: Number(r.NumberOfPassengers ?? 0),
+        price: Number(r.TotalRentalAmount ?? 0),
+        note: r.SpecialRequirements ?? '',
+        // Determine status based on backend data
+        status: (() => {
+          const busStatus = r.RentalBusAssignment?.BusAssignment?.Status;
+          const hasReadinessChecks = r.RentalBusAssignment?.BusAssignment && (
+            r.RentalBusAssignment.BusAssignment.Battery || 
+            r.RentalBusAssignment.BusAssignment.Lights ||
+            r.RentalBusAssignment.BusAssignment.Oil || 
+            r.RentalBusAssignment.BusAssignment.Water ||
+            r.RentalBusAssignment.BusAssignment.Brake ||
+            r.RentalBusAssignment.BusAssignment.Air ||
+            r.RentalBusAssignment.BusAssignment.Gas || 
+            r.RentalBusAssignment.BusAssignment.Engine ||
+            r.RentalBusAssignment.BusAssignment.TireCondition
+          );
+          
+          if (busStatus === 'Completed') return 'Completed';
+          if (busStatus === 'InOperation') return 'Ongoing';
+          if (busStatus === 'NotStarted') return hasReadinessChecks ? 'Ready' : 'Not Ready';
+          if (busStatus === 'NotReady' && hasReadinessChecks) return 'Ready';
+          return 'Not Ready';
+        })() as 'Not Ready' | 'Ready' | 'Ongoing' | 'Completed',
+        assignedDrivers:
+          mainDriver && assistantDriver
+            ? { mainDriver, assistantDriver }
+            : drivers.length >= 2 
+            ? { 
+                mainDriver: { 
+                  id: drivers[0].DriverID, 
+                  name: drivers[0].Driver?.DriverName || drivers[0].DriverID, 
+                  job: '', 
+                  contactNo: '', 
+                  address: '' 
                 },
-                note: r.RentalBusAssignment.Note ?? '',
+                assistantDriver: { 
+                  id: drivers[1].DriverID, 
+                  name: drivers[1].Driver?.DriverName || drivers[1].DriverID, 
+                  job: '', 
+                  contactNo: '', 
+                  address: '' 
+                }
               }
             : undefined,
-        };
-      }));
+        readinessDone: r.RentalBusAssignment?.BusAssignment && (
+          r.RentalBusAssignment.BusAssignment.Battery || 
+          r.RentalBusAssignment.BusAssignment.Lights ||
+          r.RentalBusAssignment.BusAssignment.Oil || 
+          r.RentalBusAssignment.BusAssignment.Water ||
+          r.RentalBusAssignment.BusAssignment.Brake ||
+          r.RentalBusAssignment.BusAssignment.Air ||
+          r.RentalBusAssignment.BusAssignment.Gas || 
+          r.RentalBusAssignment.BusAssignment.Engine ||
+          r.RentalBusAssignment.BusAssignment.TireCondition
+        ) || false,
+        damageCheckDone: false,
+        damageData: r.RentalBusAssignment?.BusAssignment
+          ? {
+              vehicleCondition: {
+                Battery: r.RentalBusAssignment.BusAssignment.Battery ?? false,
+                Lights: r.RentalBusAssignment.BusAssignment.Lights ?? false,
+                Oil: r.RentalBusAssignment.BusAssignment.Oil ?? false,
+                Water: r.RentalBusAssignment.BusAssignment.Water ?? false,
+                Brake: r.RentalBusAssignment.BusAssignment.Brake ?? false,
+                Air: r.RentalBusAssignment.BusAssignment.Air ?? false,
+                Gas: r.RentalBusAssignment.BusAssignment.Gas ?? false,
+                Engine: r.RentalBusAssignment.BusAssignment.Engine ?? false,
+                TireCondition: r.RentalBusAssignment.BusAssignment.TireCondition ?? false,
+              },
+              note: r.RentalBusAssignment.BusAssignment.Note ?? '',
+            }
+          : undefined,
+      };
+    });
 
       setRentals(mappedData);
     } catch (err: any) {
@@ -334,10 +275,8 @@ const ApprovedNotReadyPage: React.FC = () => {
   // --- Handle search & filtering logic ---
   useEffect(() => {
     try {
-      // Filter by current active tab first
       let filtered = rentals.filter(r => r.status === activeTab);
 
-      // Apply search query
       if (searchQuery) {
         const lower = searchQuery.toLowerCase();
         filtered = filtered.filter(
@@ -345,7 +284,6 @@ const ApprovedNotReadyPage: React.FC = () => {
         );
       }
 
-      // Apply sorting
       switch (activeFilters.sortBy) {
         case 'name_az':
           filtered.sort((a, b) => a.customerName.localeCompare(b.customerName));
@@ -357,7 +295,6 @@ const ApprovedNotReadyPage: React.FC = () => {
           break;
       }
 
-      // Apply pagination
       const start = (currentPage - 1) * pageSize;
       const end = start + pageSize;
       setDisplayedRentals(filtered.slice(start, end));
@@ -367,14 +304,6 @@ const ApprovedNotReadyPage: React.FC = () => {
       Swal.fire('Error', 'Failed to filter rentals.', 'error');
     }
   }, [rentals, searchQuery, activeFilters, currentPage, pageSize, activeTab]);
-
-  const handleViewNote = (note?: string) => {
-    Swal.fire({
-      title: 'Rental Note',
-      text: note || 'No note provided.',
-      icon: 'info',
-    });
-  };
 
   const handleViewCustomerInfo = (rental: BusRental) => {
     setSelectedCustomer(rental);
@@ -409,8 +338,6 @@ const ApprovedNotReadyPage: React.FC = () => {
   const handleDamageCheck = (rental?: BusRental) => {
     if (!rental) return Swal.fire('Error', 'Rental not found.', 'error');
     
-    // For Ongoing status, we allow damage check regardless of readiness flags
-    // since the rental is already in operation
     if (rental.status !== 'Ongoing' && (!rental.assignedDrivers || !rental.readinessDone)) {
       return Swal.fire(
         'Error',
@@ -430,16 +357,13 @@ const ApprovedNotReadyPage: React.FC = () => {
         badgeColor = styles.statusNotReady;
         break;
       case 'Ready':
-        badgeColor = styles.statusReady || styles.statusNotStarted; // fallback if no Ready style
-        break;
-      case 'Not Started':
-        badgeColor = styles.statusNotStarted;
+        badgeColor = styles.statusReady || styles.statusNotStarted;
         break;
       case 'Ongoing':
         badgeColor = styles.statusOngoing;
         break;
       case 'Completed':
-        badgeColor = styles.statusCompleted || styles.statusOngoing; // fallback to ongoing style
+        badgeColor = styles.statusCompleted || styles.statusOngoing;
         break;
     }
     return <span className={`${styles.statusBadge} ${badgeColor}`}>{status}</span>;
@@ -451,25 +375,40 @@ const ApprovedNotReadyPage: React.FC = () => {
     try {
       setLoading(true);
       
-      // Get authentication token
       const token = await fetchBackendToken();
       if (!token) {
         throw new Error('Authentication failed');
       }
 
-      // Handle special case for completing ongoing operations
+      // Debug: Log current rental state
+      console.log('🔍 Current rental state:', {
+        id: rental.id,
+        currentFrontendStatus: rental.status,
+        newFrontendStatus: newStatus,
+        hasDrivers: !!rental.assignedDrivers,
+        readinessDone: rental.readinessDone
+      });
+
       if (rental.status === 'Ongoing' && newStatus === 'Completed') {
-        // Use the 'complete' command for ongoing operations
         await updateRentalRequest(token, rental.id, {
           command: 'complete'
         });
+      } else if (rental.status === 'Ready' && newStatus === 'Ongoing') {
+        // Backend is at NotStarted, use the 'toInOperation' command
+        
+        if (!rental.assignedDrivers?.mainDriver || !rental.assignedDrivers?.assistantDriver) {
+          throw new Error('Drivers must be assigned before starting operation');
+        }
+
+        console.log('📤 Using toInOperation command to start operation');
+        
+        // Use the toInOperation command for NotStarted -> InOperation transition
+        await updateRentalRequest(token, rental.id, {
+          command: 'toInOperation'
+        });
       } else {
-        // Map frontend status to backend BusOperationStatus for other transitions
         let backendStatus = '';
         switch (newStatus) {
-          case 'Not Started':
-            backendStatus = 'NotStarted';
-            break;
           case 'Ongoing':
             backendStatus = 'InOperation';
             break;
@@ -480,22 +419,32 @@ const ApprovedNotReadyPage: React.FC = () => {
             throw new Error('Invalid status transition');
         }
 
-        // Update the bus assignment status in the backend
-        await updateRentalRequest(token, rental.id, {
+        const payload: any = {
           busAssignmentUpdates: {
             Status: backendStatus
           }
-        });
+        };
+
+        if (rental.assignedDrivers?.mainDriver && rental.assignedDrivers?.assistantDriver) {
+          payload.drivers = [
+            rental.assignedDrivers.mainDriver.id,
+            rental.assignedDrivers.assistantDriver.id
+          ];
+        } else {
+          throw new Error('Drivers must be assigned before starting operation');
+        }
+
+        console.log('📤 Sending payload:', payload);
+        await updateRentalRequest(token, rental.id, payload);
       }
 
-      // Update local state
       setRentals((prev) =>
         prev.map((r) => (r.id === rental.id ? { ...r, status: newStatus } : r))
       );
 
       Swal.fire('Success', `Rental status updated to ${newStatus}.`, 'success');
     } catch (error: any) {
-      console.error('Error updating status:', error);
+      console.error('❌ Error updating status:', error);
       Swal.fire('Error', error.message || 'Failed to update rental status.', 'error');
     } finally {
       setLoading(false);
@@ -506,7 +455,6 @@ const ApprovedNotReadyPage: React.FC = () => {
   const groupedRentals = {
     'Not Ready': rentals.filter(r => r.status === 'Not Ready'),
     'Ready': rentals.filter(r => r.status === 'Ready'),
-    'Not Started': rentals.filter(r => r.status === 'Not Started'),
     'Ongoing': rentals.filter(r => r.status === 'Ongoing'),
     'Completed': rentals.filter(r => r.status === 'Completed')
   };
@@ -515,7 +463,6 @@ const ApprovedNotReadyPage: React.FC = () => {
   const statusCounts = {
     'Not Ready': groupedRentals['Not Ready'].length,
     'Ready': groupedRentals['Ready'].length,
-    'Not Started': groupedRentals['Not Started'].length,
     'Ongoing': groupedRentals['Ongoing'].length,
     'Completed': groupedRentals['Completed'].length
   };
@@ -624,28 +571,11 @@ const ApprovedNotReadyPage: React.FC = () => {
                         className={styles.rejectBtn}
                         onClick={() => handleAssignDrivers(rental)}
                       >
-                        Assign Drivers
-                      </button>
-                      <button
-                        className={styles.checkBtn}
-                        disabled={!rental.assignedDrivers || !rental.assignedDrivers.mainDriver || !rental.assignedDrivers.assistantDriver}
-                        onClick={() => handleStatusUpdate(rental, 'Not Started')}
-                      >
-                        Mark as Not Started
+                        Reassign Drivers
                       </button>
                       <button
                         className={styles.confirmBtn}
                         disabled={!rental.assignedDrivers || !rental.assignedDrivers.mainDriver || !rental.assignedDrivers.assistantDriver}
-                        onClick={() => handleStatusUpdate(rental, 'Ongoing')}
-                      >
-                        Start Operation
-                      </button>
-                    </div>
-                  )}
-                  {rental.status === 'Not Started' && (
-                    <div className={styles.actionWrapper}>
-                      <button
-                        className={styles.confirmBtn}
                         onClick={() => handleStatusUpdate(rental, 'Ongoing')}
                       >
                         Start Operation
@@ -710,9 +640,8 @@ const ApprovedNotReadyPage: React.FC = () => {
           Manage rentals that are approved but in different readiness stages.
         </p>
 
-        {/* Status Tabs - Segmented Control with Sliding Indicator */}
+        {/* Status Tabs */}
         <div className={styles.tabContainer}>
-          {/* Sliding indicator background */}
           <div 
             className={styles.tabIndicator}
             style={{
@@ -737,7 +666,6 @@ const ApprovedNotReadyPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Active Tab Content */}
         <div className={styles.tabContentWrapper}>
           {loading ? (
             <Loading />
@@ -776,41 +704,47 @@ const ApprovedNotReadyPage: React.FC = () => {
               driver:
                 selectedRental.assignedDrivers?.mainDriver.name || 'Juan Dela Cruz',
             }}
-            onSave={async (data) => {
+           onSave={async (data) => {
               try {
                 setLoading(true);
                 
-                // Get authentication token
                 const token = await fetchBackendToken();
                 if (!token) {
                   throw new Error('Authentication failed');
                 }
 
-                // Update the bus assignment with readiness check data
-                await updateRentalRequest(token, selectedRental.id, {
+                const payload: any = {
                   busAssignmentUpdates: {
                     Battery: data.vehicleCondition.Battery || false,
                     Lights: data.vehicleCondition.Lights || false,
                     Oil: data.vehicleCondition.Oil || false,
                     Water: data.vehicleCondition.Water || false,
-                    Break: data.vehicleCondition.Brake || false,
+                    Brake: data.vehicleCondition.Brake || false,
                     Air: data.vehicleCondition.Air || false,
                     Gas: data.vehicleCondition.Gas || false,
                     Engine: data.vehicleCondition.Engine || false,
-                    TireCondition: data.vehicleCondition.Tire || false,
+                    TireCondition: data.vehicleCondition.TireCondition || false,
                     Self_Driver: data.personnelCondition.driverReady || false,
-                    // Don't update Status here - let the readiness checks indicate readiness
                   }
-                });
+                };
 
-                // Update local state
+                if (selectedRental.assignedDrivers?.mainDriver && selectedRental.assignedDrivers?.assistantDriver) {
+                  payload.drivers = [
+                    selectedRental.assignedDrivers.mainDriver.id,
+                    selectedRental.assignedDrivers.assistantDriver.id
+                  ];
+                  // Also update status to NotStarted when readiness is complete and drivers are assigned
+                  payload.busAssignmentUpdates.Status = 'NotStarted';
+                }
+
+                await updateRentalRequest(token, selectedRental.id, payload);
+
                 setRentals((prev) =>
                   prev.map((r) =>
                     r.id === selectedRental.id
                       ? { 
                           ...r, 
                           readinessDone: true, 
-                          // Only change to Ready if BOTH readiness AND drivers are complete
                           status: r.assignedDrivers && r.assignedDrivers.mainDriver && r.assignedDrivers.assistantDriver 
                             ? 'Ready' 
                             : 'Not Ready'
@@ -822,8 +756,8 @@ const ApprovedNotReadyPage: React.FC = () => {
                 setLoading(false);
                 setShowReadinessModal(false);
                 const hasDrivers = selectedRental.assignedDrivers && 
-                                 selectedRental.assignedDrivers.mainDriver && 
-                                 selectedRental.assignedDrivers.assistantDriver;
+                                selectedRental.assignedDrivers.mainDriver && 
+                                selectedRental.assignedDrivers.assistantDriver;
                 
                 await Swal.fire(
                   'Success',
@@ -839,7 +773,8 @@ const ApprovedNotReadyPage: React.FC = () => {
                 await Swal.fire('Error', error.message || 'Failed to update readiness.', 'error');
                 return false;
               }
-            }}
+            }
+          }
           />
         )}
 
@@ -852,30 +787,40 @@ const ApprovedNotReadyPage: React.FC = () => {
                 busName: selectedRental.bus,
                 status: selectedRental.status,
             }}
+            rentalDate={selectedRental.rentalDate}
+            duration={selectedRental.duration ? parseInt(selectedRental.duration.split(' ')[0]) : undefined}
             onSave={async (assignedDrivers) => {
                 try {
                     setLoading(true);
                     
-                    // Get authentication token
                     const token = await fetchBackendToken();
                     if (!token) {
                         throw new Error('Authentication failed');
                     }
 
-                    // Update the rental request with assigned drivers
-                    await updateRentalRequest(token, selectedRental.id, {
+                    // Simple payload: just send drivers array
+                    // Backend will handle it appropriately based on current status
+                    const payload: any = {
                         drivers: [assignedDrivers.mainDriver.id, assignedDrivers.assistantDriver.id]
-                    });
+                    };
 
-                    // Update local state
+                    // Only add status update if in Not Ready and readiness is done
+                    if (selectedRental.status === 'Not Ready' && selectedRental.readinessDone) {
+                        payload.busAssignmentUpdates = {
+                            Status: 'NotStarted'
+                        };
+                    }
+
+                    await updateRentalRequest(token, selectedRental.id, payload);
+
                     setRentals((prev) =>
                         prev.map((r) =>
                             r.id === selectedRental.id
                             ? { 
                                 ...r, 
                                 assignedDrivers,
-                                // Only change to Ready if BOTH readiness AND drivers are complete
-                                status: r.readinessDone ? 'Ready' : 'Not Ready'
+                                // Only change status if transitioning from Not Ready with readiness done
+                                status: (r.status === 'Not Ready' && r.readinessDone) ? 'Ready' : r.status
                               }
                             : r
                         )
@@ -883,11 +828,15 @@ const ApprovedNotReadyPage: React.FC = () => {
                     
                     setLoading(false);
                     setShowAssignDriversModal(false);
-                    const isReady = selectedRental.readinessDone;
+                    
+                    // Dynamic success message
+                    const isStatusChanged = selectedRental.status === 'Not Ready' && selectedRental.readinessDone;
                     await Swal.fire(
                       'Success', 
-                      isReady 
+                      isStatusChanged 
                         ? 'Drivers assigned! Status changed to Ready.' 
+                        : selectedRental.status === 'Ready'
+                        ? 'Drivers reassigned successfully!'
                         : 'Drivers assigned! Complete readiness check to change status to Ready.', 
                       'success'
                     );
@@ -916,18 +865,15 @@ const ApprovedNotReadyPage: React.FC = () => {
               try {
                 setLoading(true);
                 
-                // Get authentication token
                 const token = await fetchBackendToken();
                 if (!token) {
                   throw new Error('Authentication failed');
                 }
 
-                // Validate that we have the required RentalBusAssignmentID
                 if (!selectedRental.rentalBusAssignmentId) {
                   throw new Error('RentalBusAssignmentID is missing. Cannot save damage report.');
                 }
 
-                // Save the damage report for completed rental
                 await updateRentalRequest(token, selectedRental.id, {
                   rentalRequestUpdates: {
                     damageReport: {
@@ -938,7 +884,6 @@ const ApprovedNotReadyPage: React.FC = () => {
                   }
                 });
 
-                // Update local state - mark damage check as done
                 setRentals((prev) =>
                   prev.map((r) =>
                     r.id === selectedRental.id

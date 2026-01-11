@@ -53,3 +53,4 @@ export const PERFORMANCE_REPORT_URL = `${BASE_URL}${process.env.NEXT_PUBLIC_Perf
 export const MAINTENANCE_URL = `${BASE_URL}${process.env.NEXT_PUBLIC_Maitenance_Endpoint}`;
 export const TASK_REPORT_URL = `${BASE_URL}${process.env.NEXT_PUBLIC_Task_Reports_Endpoint}`;
 
+export const Send_EMAIL_URL = `${BASE_URL}${process.env.NEXT_PUBLIC_Send_Email_Endpoint}`;

@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Button from "@/components/ui/Button";
 import styles from "./assign-rental-driver.module.css";
 import Swal from 'sweetalert2';
+import { fetchRentDriversWithToken } from '@/lib/apiCalls/external';
+import { fetchBackendToken } from '@/lib/backend';
 
 interface Driver {
   id: string;
@@ -18,11 +20,13 @@ interface Driver {
 interface AssignRentalDriverModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (drivers: { mainDriver: Driver; assistantDriver: Driver }) => void;
+  onSave: (assignedDrivers: { mainDriver: Driver; assistantDriver: Driver }) => void;
   busData?: {
     busName: string;
     status: string;
   };
+  rentalDate?: string; // Optional: rental start date for filtering
+  duration?: number; // Optional: rental duration in days for filtering
 }
 
 const AssignRentalDriverModal: React.FC<AssignRentalDriverModalProps> = ({
@@ -30,6 +34,8 @@ const AssignRentalDriverModal: React.FC<AssignRentalDriverModalProps> = ({
   onClose,
   onSave,
   busData,
+  rentalDate,
+  duration,
 }) => {
   const [mainDriver, setMainDriver] = useState<Driver | null>(null);
   const [assistantDriver, setAssistantDriver] = useState<Driver | null>(null);
@@ -37,13 +43,64 @@ const AssignRentalDriverModal: React.FC<AssignRentalDriverModalProps> = ({
   const [currentTime, setCurrentTime] = useState(
     new Date().toLocaleString('en-US', { hour12: true })
   );
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // Demo driver list
-  const drivers: Driver[] = [
-    { id: '1', name: 'Juan Dela Cruz', job: 'Main Driver', contactNo: '09171234567', address: 'Quezon City', image: '/assets/images/busdriver.png' },
-    { id: '2', name: 'Pedro Santos', job: 'Backup Driver', contactNo: '09987654321', address: 'Makati City', image: '/assets/images/busdriver.png' },
-    { id: '3', name: 'Mario Reyes', job: 'Senior Driver', contactNo: '09221234567', address: 'Pasig City', image: '/assets/images/busdriver.png' },
-  ];
+  // Fetch drivers from API
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      if (!isOpen) return;
+
+      setLoading(true);
+      try {
+        const token = await fetchBackendToken();
+        if (!token) {
+          throw new Error('Authentication failed');
+        }
+
+        // Fetch available drivers with optional date/duration filtering
+        const driversData = await fetchRentDriversWithToken(
+          token,
+          rentalDate,
+          duration
+        );
+
+        // Map API response to Driver interface
+        const mappedDrivers: Driver[] = driversData.map((driver: any) => ({
+          id: driver.driver_id,
+          name: driver.name,
+          job: 'Driver', // Default job title
+          contactNo: driver.contactNo || 'N/A',
+          address: driver.address || 'N/A',
+          image: '/assets/images/busdriver.png' // Default image
+        }));
+
+        setDrivers(mappedDrivers);
+      } catch (error: any) {
+        console.error('Error fetching drivers:', error);
+        await Swal.fire({
+          icon: 'error',
+          title: 'Failed to Load Drivers',
+          text: error.message || 'Could not fetch available drivers. Please try again.',
+          confirmButtonColor: '#961c1e',
+          customClass: {
+            popup: styles['swal-popup']
+          },
+          didOpen: () => {
+            const container = document.querySelector('.swal2-container');
+            if (container) {
+              (container as HTMLElement).style.zIndex = '10000';
+            }
+          }
+        });
+        setDrivers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDrivers();
+  }, [isOpen, rentalDate, duration]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -125,8 +182,10 @@ const AssignRentalDriverModal: React.FC<AssignRentalDriverModalProps> = ({
   const handleConfirmAssignment = async () => {
     setShowConfirmation(false);
     
-    // Proceed with assignment
-    onSave({ mainDriver: mainDriver!, assistantDriver: assistantDriver! });
+    onSave({
+      mainDriver: mainDriver!,
+      assistantDriver: assistantDriver!
+    });
     
     await Swal.fire({
       icon: 'success',
@@ -162,85 +221,128 @@ const AssignRentalDriverModal: React.FC<AssignRentalDriverModalProps> = ({
 
         <div className={styles.body}>
           <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Available Drivers</h4>
-            <div className={styles.driverListContainer}>
-              {drivers.map(driver => {
-                const isMainDriver = mainDriver?.id === driver.id;
-                const isAssistantDriver = assistantDriver?.id === driver.id;
-                const cardClassName = `${styles.driverCard} ${
-                  isMainDriver ? styles.selectedMainDriver : 
-                  isAssistantDriver ? styles.selectedAssistantDriver : ''
-                }`;
-                
-                return (
-                  <div key={driver.id} className={cardClassName}>
-                    <div className={styles.driverInfo}>
-                      <div className={styles.driverImageContainer}>
-                        <Image src={driver.image || '/assets/images/busdriver.png'} alt="Driver" className={styles.driverImage} fill />
-                      </div>
-                      <div className={styles.driverDetails}>
-                        <div className={styles.driverName}>
-                          {driver.name}
-                          <span className={styles.driverJob}>{driver.job}</span>
-                          {isMainDriver && <span style={{ color: '#961c1e', fontWeight: 700, fontSize: '0.85rem' }}>• Main</span>}
-                          {isAssistantDriver && <span style={{ color: '#6c757d', fontWeight: 700, fontSize: '0.85rem' }}>• Assistant</span>}
+            <h4 className={styles.sectionTitle}>
+              Available Drivers
+              {rentalDate && duration && (
+                <span style={{ fontSize: '0.875rem', fontWeight: 'normal', marginLeft: '8px', color: '#6c757d' }}>
+                  (Filtered for {new Date(rentalDate).toLocaleDateString()} - {duration} days)
+                </span>
+              )}
+            </h4>
+            
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '2rem', color: '#6c757d' }}>
+                <div className="spinner-border" role="status">
+                  <span className="sr-only">Loading drivers...</span>
+                </div>
+                <p style={{ marginTop: '1rem' }}>Loading available drivers...</p>
+              </div>
+            ) : drivers.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem', color: '#6c757d' }}>
+                <p>No available drivers found.</p>
+                {rentalDate && duration && (
+                  <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                    Try adjusting the rental date or duration.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className={styles.driverListContainer}>
+                {drivers.map(driver => {
+                  const isMainDriver = mainDriver?.id === driver.id;
+                  const isAssistantDriver = assistantDriver?.id === driver.id;
+                  const cardClassName = `${styles.driverCard} ${
+                    isMainDriver ? styles.selectedMainDriver : 
+                    isAssistantDriver ? styles.selectedAssistantDriver : ''
+                  }`;
+                  
+                  return (
+                    <div key={driver.id} className={cardClassName}>
+                      <div className={styles.driverInfo}>
+                        <div className={styles.driverImageContainer}>
+                          <Image src={driver.image || '/assets/images/busdriver.png'} alt="Driver" className={styles.driverImage} fill />
                         </div>
-                        <div className={styles.driverContact}>{driver.contactNo}</div>
-                        <div className={styles.driverAddress}>{driver.address}</div>
+                        <div className={styles.driverDetails}>
+                          <div className={styles.driverName}>
+                            {driver.name}
+                            <span className={styles.driverJob}>{driver.job}</span>
+                            {isMainDriver && <span style={{ color: '#961c1e', fontWeight: 700, fontSize: '0.85rem' }}>• Main</span>}
+                            {isAssistantDriver && <span style={{ color: '#6c757d', fontWeight: 700, fontSize: '0.85rem' }}>• Assistant</span>}
+                          </div>
+                          <div className={styles.driverContact}>{driver.contactNo}</div>
+                          <div className={styles.driverAddress}>{driver.address}</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                        <button 
+                          className={isMainDriver ? styles.selectedDriverButton : ''}
+                          onClick={() => handleSelectDriver(driver, 'main')}
+                          style={{
+                            backgroundColor: isMainDriver ? '#10b981' : '#961C1E',
+                            borderColor: isMainDriver ? '#10b981' : '#961C1E',
+                            color: 'white',
+                            padding: '8px 14px',
+                            borderRadius: '6px',
+                            fontWeight: 500,
+                            fontSize: '0.875rem',
+                            transition: 'all 0.2s ease',
+                            whiteSpace: 'nowrap',
+                            minWidth: '140px',
+                            cursor: 'pointer',
+                            border: 'none',
+                          }}
+                        >
+                          {isMainDriver ? '✓ Main Selected' : 'Set as Main'}
+                        </button>
+                        <button 
+                          className={isAssistantDriver ? styles.selectedDriverButton : ''}
+                          onClick={() => handleSelectDriver(driver, 'assistant')}
+                          style={{
+                            backgroundColor: isAssistantDriver ? '#10b981' : '#961C1E',
+                            borderColor: isAssistantDriver ? '#10b981' : '#961C1E',
+                            color: 'white',
+                            padding: '8px 14px',
+                            borderRadius: '6px',
+                            fontWeight: 500,
+                            fontSize: '0.875rem',
+                            transition: 'all 0.2s ease',
+                            whiteSpace: 'nowrap',
+                            minWidth: '140px',
+                            cursor: 'pointer',
+                            border: 'none',
+                          }}
+                        >
+                          {isAssistantDriver ? '✓ Assistant Selected' : 'Set as Assistant'}
+                        </button>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                      <button 
-                        className={isMainDriver ? styles.selectedDriverButton : ''}
-                        onClick={() => handleSelectDriver(driver, 'main')}
-                        style={{
-                          backgroundColor: isMainDriver ? '#10b981' : '#961C1E',
-                          borderColor: isMainDriver ? '#10b981' : '#961C1E',
-                          color: 'white',
-                          padding: '8px 14px',
-                          borderRadius: '6px',
-                          fontWeight: 500,
-                          fontSize: '0.875rem',
-                          transition: 'all 0.2s ease',
-                          whiteSpace: 'nowrap',
-                          minWidth: '140px',
-                          cursor: 'pointer',
-                          border: 'none',
-                        }}
-                      >
-                        {isMainDriver ? '✓ Main Selected' : 'Set as Main'}
-                      </button>
-                      <button 
-                        className={isAssistantDriver ? styles.selectedDriverButton : ''}
-                        onClick={() => handleSelectDriver(driver, 'assistant')}
-                        style={{
-                          backgroundColor: isAssistantDriver ? '#10b981' : '#961C1E',
-                          borderColor: isAssistantDriver ? '#10b981' : '#961C1E',
-                          color: 'white',
-                          padding: '8px 14px',
-                          borderRadius: '6px',
-                          fontWeight: 500,
-                          fontSize: '0.875rem',
-                          transition: 'all 0.2s ease',
-                          whiteSpace: 'nowrap',
-                          minWidth: '140px',
-                          cursor: 'pointer',
-                          border: 'none',
-                        }}
-                      >
-                        {isAssistantDriver ? '✓ Assistant Selected' : 'Set as Assistant'}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
         <div className={styles.footer}>
           <small className="text-muted">{currentTime}</small>
-          <Button text="Assign Selected Drivers" onClick={handleSave} />
+          {loading || drivers.length === 0 ? (
+            <button
+              style={{
+                backgroundColor: '#ccc',
+                color: '#666',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                fontWeight: 500,
+                cursor: 'not-allowed',
+                border: 'none',
+              }}
+              disabled
+            >
+              {loading ? 'Loading...' : 'No Drivers Available'}
+            </button>
+          ) : (
+            <Button text="Assign Selected Drivers" onClick={handleSave} />
+          )}
         </div>
       </div>
 

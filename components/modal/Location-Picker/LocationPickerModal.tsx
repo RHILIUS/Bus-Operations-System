@@ -8,6 +8,18 @@ import { MapPin, Plus, Edit2, Trash2, ChevronDown, ChevronUp } from "lucide-reac
 
 const LocationMapPicker = dynamic(() => import("@/components/ui/MapPicker"), { ssr: false });
 
+// Unified interface to handle both formats
+interface UnifiedLocation {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  type?: 'pickup' | 'destination' | 'both';
+  isActive?: boolean;
+  source: 'database' | 'api'; // Track the source
+  canEdit: boolean; // Whether this location can be edited/deleted
+}
+
 interface LocationPickerModalProps {
   show: boolean;
   onClose: () => void;
@@ -38,8 +50,8 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
     new Date().toLocaleString('en-US', { hour12: true })
   );
 
-  // Bus locations state
-  const [busLocations, setBusLocations] = useState<BusLocation[]>([]);
+  // Unified locations state (combines both formats)
+  const [unifiedLocations, setUnifiedLocations] = useState<UnifiedLocation[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState<string>("");
   const [loadingLocations, setLoadingLocations] = useState(false);
 
@@ -49,7 +61,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
   // CRUD modal state
   const [showCrudModal, setShowCrudModal] = useState(false);
   const [crudMode, setCrudMode] = useState<'create' | 'edit'>('create');
-  const [editingLocation, setEditingLocation] = useState<BusLocation | null>(null);
+  const [editingLocation, setEditingLocation] = useState<UnifiedLocation | null>(null);
   const [crudForm, setCrudForm] = useState({
     name: '',
     latitude: '',
@@ -62,7 +74,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
     setName(initialName);
     setLatitude(initialLat);
     setLongitude(initialLng);
-    loadBusLocations();
+    loadAllLocations();
   }, [show, initialName, initialLat, initialLng]);
 
   useEffect(() => {
@@ -73,16 +85,82 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
     return () => clearInterval(interval);
   }, [show]);
 
-  const loadBusLocations = async () => {
+  // Helper function to normalize API data (StopID/StopName format) to UnifiedLocation
+  const normalizeApiLocation = (apiLocation: any): UnifiedLocation => {
+    // Handle both formats: {StopID, StopName, latitude, longitude} OR {id, name, latitude, longitude}
+    const id = apiLocation.StopID || apiLocation.id || `api_${Date.now()}_${Math.random()}`;
+    const name = apiLocation.StopName || apiLocation.name || 'Unnamed Stop';
+    const lat = parseFloat(apiLocation.latitude);
+    const lng = parseFloat(apiLocation.longitude);
+    
+    return {
+      id: id,
+      name: name,
+      latitude: lat,
+      longitude: lng,
+      type: 'both', // API locations are available for both
+      isActive: true,
+      source: 'api',
+      canEdit: false, // API locations cannot be edited
+    };
+  };
+
+  // Helper function to normalize database BusLocation to UnifiedLocation
+  const normalizeDatabaseLocation = (dbLocation: BusLocation): UnifiedLocation => {
+    return {
+      id: dbLocation.id,
+      name: dbLocation.name,
+      latitude: dbLocation.latitude,
+      longitude: dbLocation.longitude,
+      type: dbLocation.type,
+      isActive: dbLocation.isActive,
+      source: 'database',
+      canEdit: true, // Database locations can be edited
+    };
+  };
+
+  const loadAllLocations = async () => {
     setLoadingLocations(true);
     try {
-      const locations = await fetchBusLocations();
-      const filtered = locationType
-        ? locations.filter(loc => loc.isActive && (loc.type === locationType || loc.type === 'both'))
-        : locations.filter(loc => loc.isActive);
-      setBusLocations(filtered);
+      // Fetch from existing bus-location API (this already uses STOPS_URL internally)
+      const apiData = await fetchBusLocations();
+      console.log('Fetched bus locations (raw data):', apiData);
+
+      let unified: UnifiedLocation[] = [];
+
+      // Check if data has StopID field (API format) or regular id field (database format)
+      if (apiData && apiData.length > 0) {
+        const firstItem = apiData[0];
+        
+        if (firstItem.StopID) {
+          // This is API format with StopID/StopName
+          console.log('Detected API format (StopID/StopName)');
+          unified = apiData
+            .map((stop: any) => normalizeApiLocation(stop))
+            .filter((loc: UnifiedLocation) => !isNaN(loc.latitude) && !isNaN(loc.longitude));
+        } else if (firstItem.id) {
+          // This is database format with id/name
+          console.log('Detected database format (id/name)');
+          unified = apiData.map((loc: any) => normalizeDatabaseLocation(loc));
+        }
+      }
+
+      console.log('Unified locations (before filtering):', unified);
+
+      // Filter by type if needed
+      if (locationType) {
+        unified = unified.filter(loc => 
+          loc.isActive !== false && (loc.type === locationType || loc.type === 'both')
+        );
+      } else {
+        unified = unified.filter(loc => loc.isActive !== false);
+      }
+
+      console.log('Unified locations (after filtering):', unified);
+      setUnifiedLocations(unified);
     } catch (error) {
-      console.error('Error loading bus locations:', error);
+      console.error('Error loading locations:', error);
+      setUnifiedLocations([]);
     } finally {
       setLoadingLocations(false);
     }
@@ -90,7 +168,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
 
   const handleLocationSelect = (locationId: string) => {
     setSelectedLocationId(locationId);
-    const location = busLocations.find(loc => loc.id === locationId);
+    const location = unifiedLocations.find(loc => loc.id === locationId);
     if (location) {
       setName(location.name);
       setLatitude(location.latitude.toString());
@@ -98,7 +176,17 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
     }
   };
 
-  const handleOpenCrudModal = (mode: 'create' | 'edit', location?: BusLocation) => {
+  const handleOpenCrudModal = (mode: 'create' | 'edit', location?: UnifiedLocation) => {
+    // Only allow editing database locations
+    if (mode === 'edit' && location && location.source === 'api') {
+      Swal.fire({
+        icon: 'info',
+        title: 'Cannot Edit',
+        text: 'This location comes from the system and cannot be edited. You can create a new custom location instead.',
+      });
+      return;
+    }
+
     setCrudMode(mode);
     if (mode === 'edit' && location) {
       setEditingLocation(location);
@@ -106,7 +194,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
         name: location.name,
         latitude: location.latitude.toString(),
         longitude: location.longitude.toString(),
-        type: location.type,
+        type: location.type || 'both',
       });
     } else {
       setEditingLocation(null);
@@ -157,7 +245,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
           text: 'Location created successfully.',
           timer: 1500,
         });
-      } else if (crudMode === 'edit' && editingLocation) {
+      } else if (crudMode === 'edit' && editingLocation && editingLocation.source === 'database') {
         const updateData: UpdateBusLocationDTO = {
           id: editingLocation.id,
           name: crudForm.name.trim(),
@@ -174,7 +262,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
         });
       }
       handleCloseCrudModal();
-      await loadBusLocations();
+      await loadAllLocations();
     } catch (error) {
       console.error('Error saving bus location:', error);
       await Swal.fire({
@@ -185,7 +273,17 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
     }
   };
 
-  const handleDeleteLocation = async (location: BusLocation) => {
+  const handleDeleteLocation = async (location: UnifiedLocation) => {
+    // Only allow deleting database locations
+    if (location.source === 'api') {
+      await Swal.fire({
+        icon: 'info',
+        title: 'Cannot Delete',
+        text: 'This location comes from the system and cannot be deleted.',
+      });
+      return;
+    }
+
     const result = await Swal.fire({
       icon: 'warning',
       title: 'Delete Location?',
@@ -206,7 +304,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
           text: 'Location deleted successfully.',
           timer: 1500,
         });
-        await loadBusLocations();
+        await loadAllLocations();
         if (selectedLocationId === location.id) {
           setSelectedLocationId('');
         }
@@ -258,6 +356,9 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
 
   if (!show) return null;
 
+  const selectedLocation = unifiedLocations.find(loc => loc.id === selectedLocationId);
+  const canEditSelected = selectedLocation?.canEdit ?? false;
+
   return (
     <>
       {/* Main Location Selection Modal */}
@@ -283,18 +384,17 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                     type="button"
                     className={styles.crudBtn}
                     onClick={() => handleOpenCrudModal('create')}
-                    title="Add new location"
+                    title="Add new custom location"
                   >
                     <Plus size={16} />
                   </button>
-                  {selectedLocationId && (
+                  {selectedLocationId && canEditSelected && (
                     <>
                       <button
                         type="button"
                         className={styles.crudBtn}
                         onClick={() => {
-                          const location = busLocations.find(loc => loc.id === selectedLocationId);
-                          if (location) handleOpenCrudModal('edit', location);
+                          if (selectedLocation) handleOpenCrudModal('edit', selectedLocation);
                         }}
                         title="Edit selected location"
                       >
@@ -304,8 +404,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                         type="button"
                         className={`${styles.crudBtn} ${styles.crudBtnDelete}`}
                         onClick={() => {
-                          const location = busLocations.find(loc => loc.id === selectedLocationId);
-                          if (location) handleDeleteLocation(location);
+                          if (selectedLocation) handleDeleteLocation(selectedLocation);
                         }}
                         title="Delete selected location"
                       >
@@ -321,17 +420,41 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                 onChange={(e) => handleLocationSelect(e.target.value)}
                 disabled={loadingLocations}
               >
-                <option value="">-- Select a predefined location --</option>
-                {busLocations.map((loc) => (
+                <option value="">
+                  {loadingLocations ? "Loading locations..." : "-- Select a location --"}
+                </option>
+                {unifiedLocations.map((loc) => (
                   <option key={loc.id} value={loc.id}>
-                    {loc.name}
+                    {loc.name} {loc.source === 'api' ? '🗺️' : '📍'}
                   </option>
                 ))}
               </select>
               <small className={styles.inputHint}>
-                Choose from saved locations or add a new one using the + button.
+                🗺️ = System locations | 📍 = Custom locations (editable)
               </small>
             </div>
+
+            {/* Show source info for selected location */}
+            {selectedLocation && (
+              <div style={{ 
+                padding: '0.75rem', 
+                backgroundColor: selectedLocation.source === 'api' ? '#eff6ff' : '#f0fdf4',
+                borderRadius: '6px',
+                marginBottom: '1rem',
+                fontSize: '0.875rem',
+                border: selectedLocation.source === 'api' ? '1px solid #bfdbfe' : '1px solid #bbf7d0'
+              }}>
+                <strong>
+                  {selectedLocation.source === 'api' ? '🗺️ System Location' : '📍 Custom Location'}
+                </strong>
+                <p style={{ margin: '0.25rem 0 0 0', color: '#6b7280' }}>
+                  {selectedLocation.source === 'api' 
+                    ? 'This location is managed by the system and cannot be edited.'
+                    : 'You can edit or delete this custom location using the buttons above.'
+                  }
+                </p>
+              </div>
+            )}
 
             {/* Toggle Map Section Button */}
             <button
@@ -404,7 +527,7 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
           <div className={styles.crudModal}>
             <div className={styles.header}>
               <h2 className={styles.title}>
-                {crudMode === 'create' ? 'Add New Location' : 'Edit Location'}
+                {crudMode === 'create' ? 'Add New Custom Location' : 'Edit Custom Location'}
               </h2>
               <button className={styles.closeBtn} onClick={handleCloseCrudModal} aria-label="Close">
                 ×

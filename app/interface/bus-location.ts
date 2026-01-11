@@ -1,4 +1,5 @@
 export interface BusLocation {
+  StopID: any;
   id: string;
   name: string;
   latitude: number;
