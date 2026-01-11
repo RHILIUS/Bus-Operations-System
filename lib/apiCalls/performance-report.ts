@@ -1,20 +1,16 @@
 import { authenticatedFetch } from '@/lib/authenticatedFetch';
-import { TICKET_TYPES_URL } from '@/lib/urls';
+import { PERFORMANCE_REPORT_URL } from '@/lib/urls';
 
-export async function fetchAllTicketTypes(): Promise<any[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
+const Backend_BaseURL = process.env.NEXT_PUBLIC_Backend_BaseURL;
 
-  if (!baseUrl) {
-    throw new Error("Base URL is not defined in environment variables.");
-  }
+if (!Backend_BaseURL) {
+  throw new Error("NEXT_PUBLIC_Backend_BaseURL is not defined");
+}
 
-  const response = await authenticatedFetch(TICKET_TYPES_URL, {
-    method: 'GET',
-  });
-
+export async function fetchPerformanceDetails(): Promise<any> {
+  const response = await authenticatedFetch(PERFORMANCE_REPORT_URL);
   if (!response.ok) {
-    throw new Error(`Failed to fetch ticket types: ${response.statusText}`);
+    throw new Error(`Failed to fetch assignment details: ${response.statusText}`);
   }
-
-  return await response.json();
+  return response.json();
 }
