@@ -8,7 +8,7 @@ export default function Token_Generation() {
     async function initializeAuth() {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_Backend_BaseURL}/api/auth/refresh`,
+         `${process.env.NEXT_PUBLIC_Backend_BaseURL}/api/Refresh-Token`,
           {
             method: 'POST',
             credentials: 'include', // Sends the refreshToken cookie
