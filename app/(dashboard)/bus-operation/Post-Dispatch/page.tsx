@@ -312,7 +312,17 @@ const BusOperationPage: React.FC = () => {
       <div className={styles.cardBody}>
         <h2 className={styles.stopTitle}>Post-Dispatch Bus Operation</h2>
 
+        {/* Segmented Control Tab Navigation */}
         <div className={styles.tabContainer}>
+          {/* Sliding Indicator */}
+          <div 
+            className={styles.tabIndicator}
+            style={{
+              transform: `translateX(${activeTab === 'vehicle-check' ? '0' : 'calc(100% + 4px)'})`,
+              width: 'calc(50% - 2px)'
+            }}
+          />
+          
           <button
             className={`${styles.tabButton} ${activeTab === 'vehicle-check' ? styles.tabActive : ''}`}
             onClick={() => {
@@ -320,7 +330,7 @@ const BusOperationPage: React.FC = () => {
               setCurrentPage(1);
             }}
           >
-            <i className="ri-bus-line" style={{ marginRight: '6px' }}></i>
+            <i className="ri-bus-line"></i>
             Vehicle Check
           </button>
           <button
@@ -330,7 +340,7 @@ const BusOperationPage: React.FC = () => {
               setCurrentPage(1);
             }}
           >
-            <i className="ri-money-dollar-circle-line" style={{ marginRight: '6px' }}></i>
+            <i className="ri-money-dollar-circle-line"></i>
             Sales Entry
           </button>
         </div>
