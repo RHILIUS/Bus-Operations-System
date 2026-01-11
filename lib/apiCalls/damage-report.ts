@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { getBackendBaseURL } from '@/lib/backend';
 
 const DAMAGE_REPORT_URL = `${getBackendBaseURL()}/api/damage-report`;
@@ -11,8 +12,7 @@ export const fetchDamageReports = async (status?: string) => {
       ? `${DAMAGE_REPORT_URL}?status=${encodeURIComponent(status)}`
       : DAMAGE_REPORT_URL;
     
-    const res = await fetch(url, {
-      credentials: 'include',
+    const res = await authenticatedFetch(url, {
       cache: 'no-store',
     });
 
@@ -37,12 +37,11 @@ export const updateDamageReportStatus = async (
   status: 'Accepted' | 'Rejected'
 ) => {
   try {
-    const res = await fetch(`${DAMAGE_REPORT_URL}/${damageReportId}`, {
+    const res = await authenticatedFetch(`${DAMAGE_REPORT_URL}/${damageReportId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
       body: JSON.stringify({ status }),
     });
 
@@ -63,9 +62,8 @@ export const updateDamageReportStatus = async (
  */
 export const deleteDamageReport = async (damageReportId: string) => {
   try {
-    const res = await fetch(`${DAMAGE_REPORT_URL}/${damageReportId}`, {
+    const res = await authenticatedFetch(`${DAMAGE_REPORT_URL}/${damageReportId}`, {
       method: 'DELETE',
-      credentials: 'include',
     });
 
     if (!res.ok) {
@@ -84,7 +82,7 @@ export const deleteDamageReport = async (damageReportId: string) => {
  * Create a new damage report
  */
 export const createDamageReport = async (
-  token: string,
+  token: string, // Kept for backward compatibility, but not used
   data: {
     RentalRequestID: string;
     RentalBusAssignmentID: string;
@@ -94,13 +92,11 @@ export const createDamageReport = async (
   }
 ) => {
   try {
-    const res = await fetch(DAMAGE_REPORT_URL, {
+    const res = await authenticatedFetch(DAMAGE_REPORT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -124,8 +120,7 @@ export const fetchDamageReportsByRentalRequest = async (
 ) => {
   try {
     const url = `${DAMAGE_REPORT_URL}?rentalRequestId=${encodeURIComponent(rentalRequestId)}`;
-    const res = await fetch(url, {
-      credentials: 'include',
+    const res = await authenticatedFetch(url, {
       cache: 'no-store',
     });
 

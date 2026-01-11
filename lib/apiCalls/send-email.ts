@@ -1,35 +1,118 @@
-import { Send_EMAIL_URL } from '@/lib/urls';
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
+import { ROUTE_MANAGEMENT_FULL_URL, ROUTE_MANAGEMENT_URL } from '@/lib/urls';
 
-interface SendEmailParams {
-  to: string;
-  subject: string;
-  text?: string;
-  html?: string;
+export async function fetchRoutesWithToken(): Promise<any[]> {
+  const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
+
+  if (!baseUrl) {
+    throw new Error("Base URL is not defined in environment variables.");
+  }
+
+  const response = await authenticatedFetch(ROUTE_MANAGEMENT_FULL_URL);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch routes: ${response.statusText}`);
+  }
+
+  return await response.json();
 }
 
-/**
- * Send an email via the backend email service
- */
-export const sendEmail = async (token: string, params: SendEmailParams) => {
-  try {
-    const res = await fetch(Send_EMAIL_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: 'include',
-      body: JSON.stringify(params),
-    });
+export async function createRouteWithToken(route: {
+  RouteName: string;
+  StartStopID: string;
+  EndStopID: string;
+  RouteStops: { StopID: string; StopOrder: number }[];
+}): Promise<boolean> {
+  const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Failed to send email');
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error('Error sending email:', error);
-    throw error;
+  if (!baseUrl) {
+    throw new Error("Base URL is not defined in environment variables.");
   }
-};
+
+  const response = await authenticatedFetch(ROUTE_MANAGEMENT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(route),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || `Failed to create route: ${response.statusText}`);
+  }
+
+  return true;
+}
+
+export async function updateRouteWithToken(route: {
+  RouteID: string;
+  RouteName: string;
+  StartStopID: string;
+  EndStopID: string;
+  RouteStops: { StopID: string; StopOrder: number }[];
+}): Promise<boolean> {
+  const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
+
+  if (!baseUrl) {
+    throw new Error("Base URL is not defined in environment variables.");
+  }
+
+  const response = await authenticatedFetch(`${ROUTE_MANAGEMENT_URL}/${route.RouteID}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(route),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || `Failed to update route: ${response.statusText}`);
+  }
+
+  return true;
+}
+
+export async function deleteRouteWithToken(routeID: string): Promise<boolean> {
+  const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
+
+  if (!baseUrl) {
+    throw new Error("Base URL is not defined in environment variables.");
+  }
+
+  const response = await authenticatedFetch(`${ROUTE_MANAGEMENT_URL}/${routeID}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ IsDeleted: true }),
+  });
+
+  if (!response.ok) {
+    try {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Failed to delete route: ${response.statusText}`);
+    } catch {
+      throw new Error(`Failed to delete route: ${response.statusText}`);
+    }
+  }
+
+  return true;
+}
+
+export async function fetchRoutesModalWithToken(): Promise<any[]> {
+  const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
+
+  if (!baseUrl) {
+    throw new Error("Base URL is not defined in environment variables.");
+  }
+
+  const response = await authenticatedFetch(ROUTE_MANAGEMENT_URL);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch routes: ${response.statusText}`);
+  }
+
+  return await response.json();
+}

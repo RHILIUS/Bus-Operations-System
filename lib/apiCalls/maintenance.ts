@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { getBackendBaseURL } from '@/lib/backend';
 
 const MAINTENANCE_WORK_URL = `${getBackendBaseURL()}/api/maintenance-work`;
@@ -15,8 +16,7 @@ export const fetchMaintenanceWorks = async (status?: string, priority?: string) 
       ? `${MAINTENANCE_WORK_URL}?${params.toString()}`
       : MAINTENANCE_WORK_URL;
     
-    const res = await fetch(url, {
-      credentials: 'include',
+    const res = await authenticatedFetch(url, {
       cache: 'no-store',
     });
 
@@ -51,12 +51,11 @@ export const updateMaintenanceWork = async (
   }
 ) => {
   try {
-    const res = await fetch(`${MAINTENANCE_WORK_URL}/${maintenanceWorkId}`, {
+    const res = await authenticatedFetch(`${MAINTENANCE_WORK_URL}/${maintenanceWorkId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -80,12 +79,11 @@ export const createMaintenanceWork = async (data: {
   priority?: string;
 }) => {
   try {
-    const res = await fetch(MAINTENANCE_WORK_URL, {
+    const res = await authenticatedFetch(MAINTENANCE_WORK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
       body: JSON.stringify(data),
     });
 

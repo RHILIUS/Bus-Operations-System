@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { STOPS_URL } from '@/lib/urls';
 
 export async function fetchStopsWithToken(): Promise<any[]> {
@@ -7,9 +8,7 @@ export async function fetchStopsWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(STOPS_URL, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(STOPS_URL);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch stops: ${response.statusText}`);
@@ -35,12 +34,11 @@ export async function createStopWithToken(stop: {
     latitude: stop.latitude,
   };
 
-  const response = await fetch(STOPS_URL, {
+  const response = await authenticatedFetch(STOPS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include',
     body: JSON.stringify(newStop),
   });
 
@@ -70,12 +68,11 @@ export async function updateStopWithToken(stop: {
     longitude: stop.longitude,
   };
 
-  const response = await fetch(`${STOPS_URL}/${stop.id}`, {
+  const response = await authenticatedFetch(`${STOPS_URL}/${stop.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include',
     body: JSON.stringify(updatedStop),
   });
 
@@ -94,12 +91,11 @@ export async function softDeleteStopWithToken(stopID: string): Promise<boolean> 
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(`${STOPS_URL}/${stopID}`, {
+  const response = await authenticatedFetch(`${STOPS_URL}/${stopID}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include',
     body: JSON.stringify({ IsDeleted: true }),
   });
 

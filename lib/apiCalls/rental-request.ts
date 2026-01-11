@@ -1,10 +1,10 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { RENTAL_REQUESTS_URL } from '@/lib/urls';
 
 // ✅ Fetch all rental requests
 export const fetchAllRentalRequests = async () => {
   try {
-    const res = await fetch(RENTAL_REQUESTS_URL, {
-      credentials: 'include',
+    const res = await authenticatedFetch(RENTAL_REQUESTS_URL, {
       cache: 'no-store',
     });
 
@@ -24,8 +24,7 @@ export const fetchAllRentalRequests = async () => {
 export const fetchRentalRequestsByStatus = async (status: string) => {
   try {
     const url = `${RENTAL_REQUESTS_URL}?status=${encodeURIComponent(status)}`;
-    const res = await fetch(url, {
-      credentials: 'include', // sends jwt cookie automatically
+    const res = await authenticatedFetch(url, {
       cache: 'no-store',
     });
 
@@ -44,13 +43,11 @@ export const fetchRentalRequestsByStatus = async (status: string) => {
 // ✅ Create a new rental request
 export const createRentalRequest = async (token: string, data: any) => {
   try {
-    const res = await fetch(RENTAL_REQUESTS_URL, {
+    const res = await authenticatedFetch(RENTAL_REQUESTS_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
-      credentials: 'include', // <-- include cookies/session credentials
       body: JSON.stringify(data),
     });
 
@@ -82,13 +79,11 @@ export const updateRentalRequest = async (
     // 🔍 DEBUG: Log the payload BEFORE sending
     console.log('🚀 Sending payload to backend:', JSON.stringify(payload, null, 2));
     
-    const res = await fetch(`${RENTAL_REQUESTS_URL}/${rentalRequestId}`, {
+    const res = await authenticatedFetch(`${RENTAL_REQUESTS_URL}/${rentalRequestId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
-      credentials: 'include',
       body: JSON.stringify(payload),
     });
 

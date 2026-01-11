@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { DASHBOARD_URL } from '@/lib/urls';
 
 export interface MonthlyData {
@@ -40,9 +41,8 @@ export async function fetchDashboardSummary(): Promise<DashboardSummary> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(DASHBOARD_URL, {
+  const response = await authenticatedFetch(DASHBOARD_URL, {
     method: "GET",
-    credentials: "include",
   });
 
   if (!response.ok) {

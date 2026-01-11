@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { TICKET_TYPES_URL } from '@/lib/urls';
 
 export async function fetchAllTicketTypes(): Promise<any[]> {
@@ -7,9 +8,8 @@ export async function fetchAllTicketTypes(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(TICKET_TYPES_URL, {
+  const response = await authenticatedFetch(TICKET_TYPES_URL, {
     method: 'GET',
-    credentials: 'include',
   });
 
   if (!response.ok) {
