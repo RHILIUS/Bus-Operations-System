@@ -11,22 +11,44 @@ import { Loading, FilterDropdown, PaginationComponent, Swal, LoadingModal, Image
 import type { FilterSection } from '@/shared/imports';
 
 const BASE_URL = process.env.NEXT_PUBLIC_Backend_BaseURL?.replace(/['"]/g, "");
-const MAINTENANCE_WORK_URL = `${BASE_URL}/api/maintenance-work`;
-const TASKS_URL = `${BASE_URL}/api/tasks`;
+const TASK_MANAGEMENT_URL = `${BASE_URL}/api/task-management`;
+
+interface TaskTool {
+  TaskToolID?: string;
+  ToolID?: string | null;
+  QuantityUsed?: number | null;
+  Unit?: string | null;
+  SourceType?: string | null;
+  CostPerUnit?: number | null;
+  TotalCost?: number | null;
+  Notes?: string | null;
+}
+
+interface Task {
+  TaskID?: string;
+  TaskName: string;
+  TaskType: 'Inspection' | 'Repair' | 'Replacement' | 'Cleaning' | 'Testing' | 'Documentation' | null;
+  TaskDescription?: string | null;
+  AssignedTo: string;
+  Status: 'Pending' | 'InProgress' | 'Completed' | 'Cancelled';
+  StartDate?: string | null;
+  CompletedDate?: string | null;
+  EstimatedHours?: number | null;
+  ActualHours?: number | null;
+  Notes?: string | null;
+  ToolsUsed?: TaskTool[];
+  isNew?: boolean;
+}
 
 interface MaintenanceRecord {
-  id: string;
-  work_no?: string;
-  work_title?: string;
-  bus_no: string;
-  priority?: string;
-  start_date?: string;
-  due_date?: string;
-  status?: string;
-  assignedTo?: string;
-  workRemarks?: string;
-  estimatedCost?: number;
-  actualCost?: number;
+  MaintenanceWorkID: string;
+  WorkTitle: string;
+  Priority: string;
+  Status: string;
+  WorkNotes: string;
+  DamageReportedBy: string | null;
+  BusPlateNumber: string | null;
+  Tasks: Task[];
 }
 
 const TaskManagementPage: React.FC = () => {
@@ -43,7 +65,7 @@ const TaskManagementPage: React.FC = () => {
     priorityFilter?: string;
     statusFilter?: string;
   }>({
-    sortBy: 'work_no_asc'
+    sortBy: 'work_title_asc'
   });
 
   // Modal states
@@ -56,43 +78,44 @@ const TaskManagementPage: React.FC = () => {
       title: 'Sort By',
       type: 'radio',
       options: [
-        { id: 'work_no_asc', label: 'Work No. (A-Z)' },
-        { id: 'work_no_desc', label: 'Work No. (Z-A)' },
         { id: 'work_title_asc', label: 'Work Title (A-Z)' },
         { id: 'work_title_desc', label: 'Work Title (Z-A)' },
-        { id: 'bus_no_asc', label: 'Bus No. (A-Z)' },
-        { id: 'bus_no_desc', label: 'Bus No. (Z-A)' }
+        { id: 'bus_plate_asc', label: 'Bus Plate (A-Z)' },
+        { id: 'bus_plate_desc', label: 'Bus Plate (Z-A)' },
+        { id: 'priority_asc', label: 'Priority (Low to High)' },
+        { id: 'priority_desc', label: 'Priority (High to Low)' }
       ],
-      defaultValue: 'work_no_asc'
+      defaultValue: 'work_title_asc'
     },
     {
       id: 'priorityFilter',
       title: 'Priority',
       type: 'radio',
       options: [
-        { id: 'High', label: 'High' },
-        { id: 'Medium', label: 'Medium' },
         { id: 'Low', label: 'Low' },
-        { id: 'Emergency', label: 'Emergency' }
+        { id: 'Medium', label: 'Medium' },
+        { id: 'High', label: 'High' },
+        { id: 'Critical', label: 'Critical' }
       ]
     },
     {
       id: 'statusFilter',
-      title: 'Overall Status',
+      title: 'Status',
       type: 'radio',
       options: [
         { id: 'Pending', label: 'Pending' },
-        { id: 'In Progress', label: 'In Progress' },
-        { id: 'Done', label: 'Done' }
+        { id: 'InProgress', label: 'In Progress' },
+        { id: 'Completed', label: 'Completed' },
+        { id: 'Cancelled', label: 'Cancelled' }
       ]
     }
   ];
 
-  // Fetch maintenance works function
+  // Fetch maintenance works from task-management endpoint
   const fetchMaintenanceWorks = async () => {
     setLoading(true);
     try {
-      const response = await fetch(MAINTENANCE_WORK_URL, {
+      const response = await fetch(TASK_MANAGEMENT_URL, {
         credentials: 'include',
       });
 
@@ -100,25 +123,8 @@ const TaskManagementPage: React.FC = () => {
         throw new Error('Failed to fetch maintenance works');
       }
 
-      const data = await response.json();
-
-      // Transform API data to match frontend interface
-      const transformedData: MaintenanceRecord[] = data.map((item: any) => ({
-        id: item.MaintenanceWorkID,
-        work_no: item.WorkNo,
-        work_title: item.WorkTitle || '',
-        bus_no: item.BusID,
-        priority: item.Priority,
-        start_date: item.ScheduledDate || item.CreatedAt,
-        due_date: item.DueDate || '',
-        status: item.Status,
-        assignedTo: item.AssignedTo || '',
-        workRemarks: item.WorkNotes || '',
-        estimatedCost: item.EstimatedCost,
-        actualCost: item.ActualCost
-      }));
-
-      setMaintenanceData(transformedData);
+      const data: MaintenanceRecord[] = await response.json();
+      setMaintenanceData(data);
     } catch (error) {
       console.error('Error fetching maintenance works:', error);
       await Swal.fire({
@@ -137,10 +143,20 @@ const TaskManagementPage: React.FC = () => {
 
   const handleApplyFilters = (filterValues: Record<string, any>) => {
     setActiveFilters({
-      sortBy: filterValues.sortBy || 'work_no_asc',
+      sortBy: filterValues.sortBy || 'work_title_asc',
       priorityFilter: filterValues.priorityFilter,
       statusFilter: filterValues.statusFilter
     });
+  };
+
+  const getPriorityValue = (priority: string): number => {
+    const priorityMap: Record<string, number> = {
+      'Low': 1,
+      'Medium': 2,
+      'High': 3,
+      'Critical': 4
+    };
+    return priorityMap[priority] || 0;
   };
 
   useEffect(() => {
@@ -150,44 +166,43 @@ const TaskManagementPage: React.FC = () => {
     if (searchQuery) {
       const lower = searchQuery.toLowerCase();
       filtered = filtered.filter(record =>
-        record.work_no?.toLowerCase().includes(lower) ||
-        record.work_title?.toLowerCase().includes(lower) ||
-        record.bus_no.toLowerCase().includes(lower) ||
-        record.priority?.toLowerCase().includes(lower) ||
-        record.status?.toLowerCase().includes(lower) ||
-        record.assignedTo?.toLowerCase().includes(lower)
+        record.WorkTitle?.toLowerCase().includes(lower) ||
+        record.BusPlateNumber?.toLowerCase().includes(lower) ||
+        record.Priority?.toLowerCase().includes(lower) ||
+        record.Status?.toLowerCase().includes(lower) ||
+        record.DamageReportedBy?.toLowerCase().includes(lower)
       );
     }
 
     // Priority filter
     if (activeFilters.priorityFilter) {
-      filtered = filtered.filter(record => record.priority === activeFilters.priorityFilter);
+      filtered = filtered.filter(record => record.Priority === activeFilters.priorityFilter);
     }
 
     // Status filter
     if (activeFilters.statusFilter) {
-      filtered = filtered.filter(record => record.status === activeFilters.statusFilter);
+      filtered = filtered.filter(record => record.Status === activeFilters.statusFilter);
     }
 
     // Sorting
     switch (activeFilters.sortBy) {
-      case 'work_no_asc':
-        filtered.sort((a, b) => (a.work_no || '').localeCompare(b.work_no || ''));
-        break;
-      case 'work_no_desc':
-        filtered.sort((a, b) => (b.work_no || '').localeCompare(a.work_no || ''));
-        break;
       case 'work_title_asc':
-        filtered.sort((a, b) => (a.work_title || '').localeCompare(b.work_title || ''));
+        filtered.sort((a, b) => (a.WorkTitle || '').localeCompare(b.WorkTitle || ''));
         break;
       case 'work_title_desc':
-        filtered.sort((a, b) => (b.work_title || '').localeCompare(a.work_title || ''));
+        filtered.sort((a, b) => (b.WorkTitle || '').localeCompare(a.WorkTitle || ''));
         break;
-      case 'bus_no_asc':
-        filtered.sort((a, b) => a.bus_no.localeCompare(b.bus_no));
+      case 'bus_plate_asc':
+        filtered.sort((a, b) => (a.BusPlateNumber || '').localeCompare(b.BusPlateNumber || ''));
         break;
-      case 'bus_no_desc':
-        filtered.sort((a, b) => b.bus_no.localeCompare(a.bus_no));
+      case 'bus_plate_desc':
+        filtered.sort((a, b) => (b.BusPlateNumber || '').localeCompare(a.BusPlateNumber || ''));
+        break;
+      case 'priority_asc':
+        filtered.sort((a, b) => getPriorityValue(a.Priority) - getPriorityValue(b.Priority));
+        break;
+      case 'priority_desc':
+        filtered.sort((a, b) => getPriorityValue(b.Priority) - getPriorityValue(a.Priority));
         break;
       default:
         break;
@@ -210,84 +225,57 @@ const TaskManagementPage: React.FC = () => {
     setShowViewTasksModal(true);
   };
 
-  const handleUpdateTasks = async (tasks: any[]) => {
+  const handleUpdateTasks = async (tasks: Task[]) => {
     if (!selectedRecord) return;
 
     try {
       setLoadingModal(true);
 
-      // Separate new tasks from existing tasks
-      const newTasks = tasks.filter(task => task.isNew);
-      const existingTasks = tasks.filter(task => !task.isNew && task.id);
+      console.log('Updating tasks for MaintenanceWorkID:', selectedRecord.MaintenanceWorkID);
+      console.log('Tasks payload:', tasks);
 
-      console.log('Selected Record ID:', selectedRecord.id);
-      console.log('New tasks to create:', newTasks);
-      console.log('Existing tasks to update:', existingTasks);
+      // Prepare tasks for backend API
+      const tasksPayload = tasks.map(task => ({
+        TaskID: task.TaskID,
+        TaskName: task.TaskName,
+        TaskType: task.TaskType,
+        TaskDescription: task.TaskDescription,
+        AssignedTo: task.AssignedTo,
+        Status: task.Status,
+        StartDate: task.StartDate,
+        CompletedDate: task.CompletedDate,
+        EstimatedHours: task.EstimatedHours,
+        ActualHours: task.ActualHours,
+        Notes: task.Notes,
+        ToolsUsed: task.ToolsUsed || []
+      }));
 
-      // Create new tasks in batch
-      if (newTasks.length > 0) {
-        const tasksToCreate = newTasks.map(task => ({
-          taskName: task.task_name,
-          taskType: task.task_type,
-          taskDescription: task.task_description,
-          assignee: task.assignee,
-          status: task.status,
-          priority: task.priority,
-          estimatedHours: task.estimated_hours
-        }));
+      console.log('Sending PUT request with payload:', {
+        Tasks: tasksPayload
+      });
 
-        console.log('Creating tasks with payload:', {
-          maintenanceWorkId: selectedRecord.id,
-          tasks: tasksToCreate
-        });
+      // Use PUT endpoint to update tasks by maintenance work
+      const updateResponse = await fetch(`${TASK_MANAGEMENT_URL}/${selectedRecord.MaintenanceWorkID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          Tasks: tasksPayload
+        }),
+      });
 
-        const createResponse = await fetch(TASKS_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            maintenanceWorkId: selectedRecord.id,
-            tasks: tasksToCreate
-          }),
-        });
-
-        console.log('Create response status:', createResponse.status);
-        
-        if (!createResponse.ok) {
-          const errorData = await createResponse.json();
-          console.error('Create error response:', errorData);
-          throw new Error(errorData.error || 'Failed to create tasks');
-        }
-
-        const createResult = await createResponse.json();
-        console.log('Tasks created successfully:', createResult);
+      console.log('Update response status:', updateResponse.status);
+      
+      if (!updateResponse.ok) {
+        const errorData = await updateResponse.json();
+        console.error('Update error response:', errorData);
+        throw new Error(errorData.error || 'Failed to update tasks');
       }
 
-      // Update existing tasks
-      for (const task of existingTasks) {
-        const updateResponse = await fetch(`${TASKS_URL}?taskId=${task.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            taskName: task.task_name,
-            taskType: task.task_type,
-            taskDescription: task.task_description,
-            assignedTo: task.assignee,
-            status: task.status,
-            priority: task.priority,
-            estimatedHours: task.estimated_hours
-          }),
-        });
-
-        if (!updateResponse.ok) {
-          throw new Error(`Failed to update task ${task.id}`);
-        }
-      }
+      const result = await updateResponse.json();
+      console.log('Tasks updated successfully:', result);
 
       // Refresh maintenance data
       await fetchMaintenanceWorks();
@@ -304,6 +292,7 @@ const TaskManagementPage: React.FC = () => {
       setSelectedRecord(null);
     } catch (error) {
       setLoadingModal(false);
+      console.error('Error updating tasks:', error);
       await Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -312,10 +301,33 @@ const TaskManagementPage: React.FC = () => {
     }
   };
 
-  const handleAddTask = async (task: any) => {
-    // This is called when adding a single task immediately
-    // For now, we'll just return as we're using batch save
+  const handleAddTask = async (task: Omit<Task, 'TaskID'>) => {
     console.log('Add task called:', task);
+  };
+
+  const getStatusBadgeClass = (status: string) => {
+    switch (status) {
+      case 'Completed':
+        return styles.statusCompleted;
+      case 'InProgress':
+        return styles.statusInProgress;
+      case 'Cancelled':
+        return styles.statusCancelled;
+      default:
+        return styles.statusPending;
+    }
+  };
+
+  const getPriorityBadgeClass = (priority: string) => {
+    switch (priority) {
+      case 'Critical':
+      case 'High':
+        return styles.priorityHigh;
+      case 'Medium':
+        return styles.priorityMedium;
+      default:
+        return styles.priorityLow;
+    }
   };
 
   return (
@@ -329,7 +341,7 @@ const TaskManagementPage: React.FC = () => {
             <input
               type="text"
               className={styles.searchInput}
-              placeholder="Search work orders..."
+              placeholder="Search maintenance works..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -354,51 +366,35 @@ const TaskManagementPage: React.FC = () => {
             <table className={styles.styledTable}>
               <thead>
                 <tr>
-                  <th>Work No.</th>
                   <th>Work Title</th>
-                  <th>Bus No.</th>
+                  <th>Bus Plate Number</th>
                   <th>Priority</th>
-                  <th>Assigned To</th>
                   <th>Status</th>
+                  <th>Damage Reported By</th>
+                  <th>Total Tasks</th>
                   <th className={styles.centeredColumn}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {displayedData.length > 0 ? (
                   displayedData.map((record) => (
-                    <tr key={record.id}>
-                      <td>{record.work_no || '—'}</td>
-                      <td>{record.work_title || '—'}</td>
-                      <td>{record.bus_no}</td>
+                    <tr key={record.MaintenanceWorkID}>
+                      <td>{record.WorkTitle || '—'}</td>
+                      <td>{record.BusPlateNumber || '—'}</td>
                       <td>
-                        {record.priority ? (
-                          <span
-                            className={
-                              record.priority === 'High' || record.priority === 'Critical'
-                                ? styles.priorityHigh
-                                : record.priority === 'Medium'
-                                ? styles.priorityMedium
-                                : styles.priorityLow
-                            }
-                          >
-                            {record.priority}
-                          </span>
-                        ) : (
-                          '—'
-                        )}
+                        <span className={getPriorityBadgeClass(record.Priority)}>
+                          {record.Priority}
+                        </span>
                       </td>
-                      <td>{record.assignedTo || '—'}</td>
                       <td>
-                        <span
-                          className={
-                            record.status === 'Completed'
-                              ? styles.statusDone
-                              : record.status === 'InProgress'
-                              ? styles.statusInProgress
-                              : styles.statusPending
-                          }
-                        >
-                          {record.status === 'InProgress' ? 'In Progress' : record.status || 'Pending'}
+                        <span className={getStatusBadgeClass(record.Status)}>
+                          {record.Status === 'InProgress' ? 'In Progress' : record.Status}
+                        </span>
+                      </td>
+                      <td>{record.DamageReportedBy || '—'}</td>
+                      <td>
+                        <span className={styles.taskCount}>
+                          {record.Tasks?.length || 0}
                         </span>
                       </td>
                       <td className={styles.centeredColumn}>
@@ -414,8 +410,8 @@ const TaskManagementPage: React.FC = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className={styles.noRecords}>
-                      No work orders found.
+                    <td colSpan={7} className={styles.noRecords}>
+                      No maintenance works found.
                     </td>
                   </tr>
                 )}
@@ -435,7 +431,7 @@ const TaskManagementPage: React.FC = () => {
           }}
         />
 
-        {/* View Tasks Modal - Fully functional */}
+        {/* View Tasks Modal */}
         {selectedRecord && (
           <ViewTasksModal
             show={showViewTasksModal}
@@ -444,14 +440,18 @@ const TaskManagementPage: React.FC = () => {
               setSelectedRecord(null);
             }}
             workOrder={{
-              id: parseInt(selectedRecord.id) || 0,
-              work_no: selectedRecord.work_no || '',
-              work_title: selectedRecord.work_title || '',
-              bus_no: selectedRecord.bus_no,
-              priority: selectedRecord.priority || 'Medium',
-              overall_status: selectedRecord.status === 'InProgress' ? 'In Progress' : (selectedRecord.status === 'Completed' ? 'Done' : 'Pending'),
-              tasks: [], // Tasks will be fetched in the modal
-              maintenanceWorkId: selectedRecord.id // Pass the actual ID
+              id: 0,
+              work_no: selectedRecord.MaintenanceWorkID,
+              work_title: selectedRecord.WorkTitle,
+              bus_no: selectedRecord.BusPlateNumber || '',
+              priority: selectedRecord.Priority,
+              overall_status: selectedRecord.Status === 'InProgress' 
+                ? 'In Progress' 
+                : selectedRecord.Status === 'Completed' 
+                ? 'Done' 
+                : 'Pending',
+              tasks: selectedRecord.Tasks || [],
+              maintenanceWorkId: selectedRecord.MaintenanceWorkID
             }}
             onUpdateTasks={handleUpdateTasks}
             onAddTask={handleAddTask}

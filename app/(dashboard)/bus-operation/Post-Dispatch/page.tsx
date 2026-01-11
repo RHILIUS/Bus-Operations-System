@@ -25,7 +25,7 @@ const BusOperationPage: React.FC = () => {
     conductorName?: string;
     busLicensePlate?: string;
     busType?: string;
-    hasVehicleCheck?: boolean; // Track if vehicle check is completed
+    hasVehicleCheck?: boolean;
   })[]>([]);
   const [displayedAssignments, setDisplayedAssignments] = useState<typeof assignments>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -80,17 +80,17 @@ const BusOperationPage: React.FC = () => {
       setLoading(true);
       const data = await fetchBusAssignmentsWithStatus('InOperation');
 
-      
       const sorted = data.sort((a, b) =>
         new Date(b.CreatedAt).getTime() - new Date(a.CreatedAt).getTime()
       );
 
       setAssignments(sorted);
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.error || error?.message || 'Failed to load assignments.';
       await Swal.fire({
         icon: 'error',
         title: 'Fetch Failed',
-        text: 'Failed to load assignments.',
+        text: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -111,14 +111,12 @@ const BusOperationPage: React.FC = () => {
   useEffect(() => {
     let filtered = [...assignments];
 
-    // Filter by tab: Vehicle Check shows buses WITHOUT vehicle check, Sales Entry shows WITH
     if (activeTab === 'vehicle-check') {
       filtered = filtered.filter(a => !a.hasVehicleCheck);
     } else {
       filtered = filtered.filter(a => a.hasVehicleCheck);
     }
 
-    // Search filter
     if (searchQuery) {
       const lower = searchQuery.toLowerCase();
       filtered = filtered.filter(a => {
@@ -191,7 +189,6 @@ const BusOperationPage: React.FC = () => {
     }
   };
 
-  // SWITCH 2: DISPLAY TEXT SWITCH  // changes by Y 6/18/2025
   const renderBusTypeLabel = (busType?: string) => {
     switch (busType) {
       case 'Aircon':
@@ -222,25 +219,36 @@ const BusOperationPage: React.FC = () => {
     try {
       setLoadingModal(true);
 
-      // Call API to create damage report for vehicle check
-      await createVehicleCheckDamageReport(formData);
+      console.log('[Page] Calling createVehicleCheckDamageReport with:', formData);
+      const result = await createVehicleCheckDamageReport(formData);
+      console.log('[Page] Vehicle check created successfully, result:', result);
+
+      console.log('[Page] Waiting 1 second before refetching...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       setLoadingModal(false);
       await Swal.fire({
         icon: 'success',
         title: 'Vehicle Check Completed',
-        text: 'Vehicle condition has been recorded. You can now proceed to Sales Entry.',
+        text: result?.message || 'Vehicle condition has been recorded. You can now proceed to Sales Entry.',
       });
 
-      fetchAssignments();
+      console.log('[Page] Refetching assignments...');
+      await fetchAssignments();
+      console.log('[Page] Assignments refetched');
+
       setShowVehicleCheckModal(false);
       setSelectedBusInfo(null);
     } catch (error: any) {
+      console.error('[Page] Vehicle check failed:', error);
       setLoadingModal(false);
+      
+      const errorMessage = error?.response?.data?.error || error?.message || 'Failed to save vehicle check. Please try again.';
+      
       await Swal.fire({
         icon: 'error',
         title: 'Vehicle Check Failed',
-        text: 'Failed to save vehicle check. Please try again.',
+        text: errorMessage,
       });
     }
   };
@@ -256,7 +264,6 @@ const BusOperationPage: React.FC = () => {
     try {
       setLoadingModal(true);
 
-      // Prepare TicketBusTrips array with all required fields
       const ticketBusTrips =
         selectedBusInfo?.RegularBusAssignment?.LatestBusTrip?.TicketBusTrips?.map((tbt: any, idx: number) => ({
           TicketBusTripID: tbt.TicketBusTripID,
@@ -266,7 +273,6 @@ const BusOperationPage: React.FC = () => {
           OverallEndingID: tbt.OverallEndingID,
         })) ?? [];
 
-      // Prepare the data to send to the backend
       const dataToSend = {
         TripExpense: formData.tripExpense,
         Payment_Method: formData.paymentMethod === 'companycash' ? 'Company_Cash' : 'Reimbursement',
@@ -276,12 +282,13 @@ const BusOperationPage: React.FC = () => {
         TicketBusTrips: ticketBusTrips,
       };
 
-      await updateBusAssignmentData(formData.busAssignmentID, dataToSend);
+      const result = await updateBusAssignmentData(formData.busAssignmentID, dataToSend);
       setLoadingModal(false);
+      
       await Swal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Bus readiness updated successfully!',
+        text: result?.message || 'Bus readiness updated successfully!',
       });
 
       fetchAssignments();
@@ -289,10 +296,13 @@ const BusOperationPage: React.FC = () => {
       setSelectedBusInfo(null);
     } catch (error: any) {
       setLoadingModal(false);
+      
+      const errorMessage = error?.response?.data?.error || error?.message || 'Failed to finalize bus trip and record sales.';
+      
       await Swal.fire({
         icon: 'error',
         title: 'Finalization Failed',
-        text: 'Failed to finalize bus trip and record sales.',
+        text: errorMessage,
       });
     }
   };
@@ -441,7 +451,7 @@ const BusOperationPage: React.FC = () => {
               setSelectedBusInfo(null);
             }}
             busInfo={selectedBusInfo}
-            onSave={handleSavePostDispatch} // <-- pass the handler as a prop
+            onSave={handleSavePostDispatch}
           />
         )}
 

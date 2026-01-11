@@ -28,12 +28,16 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
   busInfo,
   onSave,
 }) => {
-  const conditionItems = [
-    "Battery", "Air",
-    "Lights", "Gas",
-    "Oil", "Engine",
-    "Water", "Tire Condition",
-    "Brake"
+  const conditionMapping = [
+    { label: "Battery", field: "Battery" },
+    { label: "Air", field: "Air" },
+    { label: "Lights", field: "Lights" },
+    { label: "Gas", field: "Gas" },
+    { label: "Oil", field: "Oil" },
+    { label: "Engine", field: "Engine" },
+    { label: "Water", field: "Water" },
+    { label: "Tire Condition", field: "TireCondition" },
+    { label: "Brake", field: "Brake" }
   ];
 
   const [vehicleCondition, setVehicleCondition] = useState<Record<string, boolean>>({});
@@ -54,16 +58,17 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
 
   useEffect(() => {
     if (show) {
-      // Default all conditions to true (no damage)
-      setVehicleCondition(
-        conditionItems.reduce((acc, item) => ({ ...acc, [item]: true }), {})
+      const initialConditions = conditionMapping.reduce(
+        (acc, item) => ({ ...acc, [item.field]: true }),
+        {}
       );
+      setVehicleCondition(initialConditions);
       setNote("");
     }
   }, [show]);
 
-  const toggleVehicleCondition = (item: string) => {
-    setVehicleCondition((prev) => ({ ...prev, [item]: !prev[item] }));
+  const toggleVehicleCondition = (field: string) => {
+    setVehicleCondition((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
   const handleSave = async () => {
@@ -75,9 +80,8 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
         vehicleCondition,
         note,
       });
-      onClose();
     } catch (error) {
-      // Error handling is done in parent
+      console.error('[VehicleCheckModal] Save error:', error);
     } finally {
       setSaving(false);
     }
@@ -85,17 +89,10 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
 
   if (!show) return null;
 
-  // Check if any damage was reported (any condition is false)
   const hasDamage = Object.values(vehicleCondition).some(v => !v);
-  const damageItems = Object.entries(vehicleCondition)
-    .filter(([_, ok]) => !ok)
-    .map(([item]) => item);
-
-  // Group items into rows of 2
-  const gridRows = [];
-  for (let i = 0; i < conditionItems.length; i += 2) {
-    gridRows.push(conditionItems.slice(i, i + 2));
-  }
+  const damageItems = conditionMapping
+    .filter(item => !vehicleCondition[item.field])
+    .map(item => item.label);
 
   return (
     <div className={styles.overlay}>
@@ -136,14 +133,14 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
               ✓ Check = OK (No damage) | ☐ Unchecked = Damage/Issue found
             </p>
             <div className={styles.conditionGrid}>
-              {conditionItems.map((item) => (
-                <div key={item} className={styles.conditionRow}>
-                  <span className={styles.conditionLabel}>{item}</span>
+              {conditionMapping.map((item) => (
+                <div key={item.field} className={styles.conditionRow}>
+                  <span className={styles.conditionLabel}>{item.label}</span>
                   <input
                     type="checkbox"
                     className={styles.checkbox}
-                    checked={vehicleCondition[item] ?? true}
-                    onChange={() => toggleVehicleCondition(item)}
+                    checked={vehicleCondition[item.field] ?? true}
+                    onChange={() => toggleVehicleCondition(item.field)}
                   />
                 </div>
               ))}
@@ -176,7 +173,9 @@ const VehicleCheckModal: React.FC<VehicleCheckModalProps> = ({
         </div>
 
         <div className={styles.footer}>
-          <div className={styles.currentTime}>{currentTime}</div>
+          <button className={styles.cancelBtn} onClick={onClose} disabled={saving}>
+            Cancel
+          </button>
           <button
             className={styles.completeBtn}
             onClick={handleSave}

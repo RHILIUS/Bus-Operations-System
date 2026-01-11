@@ -6,77 +6,96 @@ import html2canvas from 'html2canvas';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Bus, MapPin, Award, Download, DollarSign, Activity } from 'lucide-react';
 import styles from './performance-report.module.css';
+import { fetchPerformanceDetails } from '@/lib/apiCalls/performance-report';
+
+interface Driver {
+  name: string;
+  trips: number;
+  revenue: number;
+  avgRevenue: number;
+}
+
+interface Conductor {
+  name: string;
+  trips: number;
+  revenue: number;
+  avgRevenue: number;
+}
+
+interface Route {
+  name: string;
+  trips: number;
+  revenue: number;
+}
+
+interface Team {
+  driver: string;
+  conductor: string;
+  trips: number;
+  revenue: number;
+}
+
+interface MonthlyTrend {
+  month: string;
+  revenue: number;
+  trips: number;
+}
+
+interface RouteRevenue {
+  route: string;
+  revenue: number;
+}
+
+interface PerformanceData {
+  overview: {
+    totalTrips: number;
+    totalRevenue: number;
+    avgRevenuePerTrip: number;
+    activeRoutes: number;
+    revenueGrowth: string;
+    tripGrowth: string;
+  };
+  topRoutes: Route[];
+  lowRoutes: Route[];
+  topDrivers: Driver[];
+  lowDrivers: Driver[];
+  topConductors: Conductor[];
+  lowConductors: Conductor[];
+  topTeams: Team[];
+  revenueByRoute: RouteRevenue[];
+  monthlyTrends: MonthlyTrend[];
+}
 
 const PerformanceDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [dateRange, setDateRange] = useState('last_30_days');
   const [busType, setBusType] = useState('all');
   const [routeFilter, setRouteFilter] = useState('all');
-
-  // === SAMPLE DATA ===
-  const topDrivers = [
-    { name: 'Juan Cruz', trips: 145, revenue: 87500, punctuality: 96 },
-    { name: 'Maria Santos', trips: 138, revenue: 82800, punctuality: 94 },
-    { name: 'Pedro Reyes', trips: 132, revenue: 79200, punctuality: 92 }
-  ];
-
-  const lowDrivers = [
-    { name: 'Carlos Diaz', trips: 45, revenue: 27000, punctuality: 78 },
-    { name: 'Luis Torres', trips: 52, revenue: 31200, punctuality: 81 }
-  ];
-
-  const topConductors = [
-    { name: 'Ana Garcia', trips: 150, revenue: 90000, punctuality: 98 },
-    { name: 'Rosa Mendoza', trips: 142, revenue: 85200, punctuality: 95 },
-    { name: 'Elena Cruz', trips: 135, revenue: 81000, punctuality: 93 }
-  ];
-
-  const lowConductors = [
-    { name: 'Mario Reyes', trips: 48, revenue: 28800, punctuality: 79 },
-    { name: 'Jose Santos', trips: 55, revenue: 33000, punctuality: 82 }
-  ];
-
-  const topRoutes = [
-    { name: 'Manila - Quezon City', trips: 456, revenue: 273600 },
-    { name: 'Makati - Pasig', trips: 423, revenue: 253800 },
-    { name: 'BGC - Ortigas', trips: 398, revenue: 238800 }
-  ];
-
-  const lowRoutes = [
-    { name: 'Taguig - Paranaque', trips: 89, revenue: 53400 },
-    { name: 'Mandaluyong - Pasay', trips: 95, revenue: 57000 }
-  ];
-
-  const mlTopPairs = [
-    { driver: 'Juan Cruz', conductor: 'Ana Garcia', tripsAsTeam: 98, revenueAsTeam: 58800 },
-    { driver: 'Maria Santos', conductor: 'Rosa Mendoza', tripsAsTeam: 92, revenueAsTeam: 55200 },
-    { driver: 'Pedro Reyes', conductor: 'Elena Cruz', tripsAsTeam: 87, revenueAsTeam: 52200 }
-  ];
-
-  const monthlyTrend = [
-    { month: 'Apr', revenue: 450000, trips: 750 },
-    { month: 'May', revenue: 520000, trips: 867 },
-    { month: 'Jun', revenue: 480000, trips: 800 },
-    { month: 'Jul', revenue: 590000, trips: 983 },
-    { month: 'Aug', revenue: 620000, trips: 1033 },
-    { month: 'Sep', revenue: 680000, trips: 1133 }
-  ];
-
-  const revenueByRoute = [
-    { route: 'Route 1', revenue: 273600 },
-    { route: 'Route 3', revenue: 253800 },
-    { route: 'Route 5', revenue: 238800 },
-    { route: 'Route 7', revenue: 186500 },
-    { route: 'Route 2', revenue: 165200 }
-  ];
+  const [data, setData] = useState<PerformanceData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1000);
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const result = await fetchPerformanceDetails();
+        setData(result);
+      } catch (err) {
+        setError('Failed to load performance data. Please try again.');
+        console.error('Error fetching data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
   }, [dateRange, busType, routeFilter]);
 
   // === PDF EXPORT FUNCTION ===
   const handleExport = async () => {
+    if (!data) return;
+
     try {
       const pdf = new jsPDF("p", "mm", "a4");
       const pageWidth = pdf.internal.pageSize.getWidth();
@@ -84,7 +103,6 @@ const PerformanceDashboard = () => {
       const margin = 15;
       let yPosition = margin;
 
-      // Helper function to check if we need a new page
       const checkPageBreak = (requiredHeight: number) => {
         if (yPosition + requiredHeight > pageHeight - margin - 10) {
           pdf.addPage();
@@ -94,16 +112,14 @@ const PerformanceDashboard = () => {
         return false;
       };
 
-      // === HEADER (Red background like modal) ===
-      pdf.setFillColor(150, 28, 30); // #961c1e
+      // === HEADER ===
+      pdf.setFillColor(150, 28, 30);
       pdf.rect(0, 0, pageWidth, 35, 'F');
       
-      // Logo in the center
       const logoSize = 40;
       const logoX = pageWidth / 2;
       const logoY = 17.5;
       
-      // Load and add logo image
       try {
         const logoImg = await new Promise<HTMLImageElement>((resolve, reject) => {
           const img = new Image();
@@ -117,13 +133,11 @@ const PerformanceDashboard = () => {
         console.log('Logo could not be loaded, continuing without it');
       }
       
-      // Title on the left
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(18);
       pdf.setFont('helvetica', 'bold');
       pdf.text('Performance Report', margin, 14);
       
-      // Generated and Period info on the left, stacked
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'normal');
       pdf.text(`Generated: ${new Date().toLocaleDateString()}`, margin, 22);
@@ -131,246 +145,244 @@ const PerformanceDashboard = () => {
       
       yPosition = 45;
 
-    // === OVERVIEW SECTION ===
-    pdf.setFillColor(248, 249, 250); // Light gray background like modal sections
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 35, 'F');
-    pdf.setDrawColor(233, 236, 239);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 35, 'S');
-    
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(73, 80, 87);
-    pdf.text('Overview', margin + 3, yPosition + 6);
-    
-    // Stats in simple boxes
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(73, 80, 87);
-    
-    const stats = [
-      ['Total Trips', '1,133', '+12.5%'],
-      ['Total Revenue', '₱680,000', '+9.7%'],
-      ['Avg Punctuality', '92%', '+3%'],
-      ['Active Routes', '12', 'All operational']
-    ];
-
-    stats.forEach((stat, idx) => {
-      const xPos = margin + 5 + (idx % 2) * 85;
-      const yPos = yPosition + 12 + Math.floor(idx / 2) * 10;
+      // === OVERVIEW SECTION ===
+      pdf.setFillColor(248, 249, 250);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 35, 'F');
+      pdf.setDrawColor(233, 236, 239);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 35, 'S');
       
+      pdf.setFontSize(11);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(`${stat[0]}:`, xPos, yPos);
-      pdf.setFont('helvetica', 'normal');
-      const displayValue = stat[1].replace('₱', 'PHP ');
-      pdf.text(displayValue, xPos + 35, yPos);
-      pdf.setTextColor(5, 150, 105);
-      pdf.text(stat[2], xPos + 60, yPos);
       pdf.setTextColor(73, 80, 87);
-    });
-
-    yPosition += 40;
-
-    // === TOP PERFORMING DRIVERS ===
-    checkPageBreak(65);
-    
-    pdf.setFillColor(248, 249, 250);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'F');
-    pdf.setDrawColor(233, 236, 239);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'S');
-    
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(73, 80, 87);
-    pdf.text('Top Performing Drivers', margin + 3, yPosition + 6);
-    
-    yPosition += 12;
-    
-    // Table header (Red background like modal)
-    pdf.setFillColor(150, 28, 30);
-    pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 8, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Name', margin + 6, yPosition + 5.5);
-    pdf.text('Trips', margin + 70, yPosition + 5.5);
-    pdf.text('Revenue', margin + 100, yPosition + 5.5);
-    pdf.text('Punctuality', margin + 150, yPosition + 5.5);
-    
-    yPosition += 8;
-    
-    // Table rows
-    pdf.setFontSize(8);
-    topDrivers.forEach((driver, idx) => {
-      if (idx % 2 === 0) {
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 7, 'F');
-      }
+      pdf.text('Overview', margin + 3, yPosition + 6);
       
+      pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(73, 80, 87);
-      pdf.text(driver.name, margin + 6, yPosition + 5);
-      pdf.text(driver.trips.toString(), margin + 70, yPosition + 5);
       
+      const stats = [
+        ['Total Trips', data.overview.totalTrips.toString(), data.overview.tripGrowth],
+        ['Total Revenue', `PHP ${data.overview.totalRevenue.toLocaleString()}`, data.overview.revenueGrowth],
+        ['Avg Revenue/Trip', `PHP ${data.overview.avgRevenuePerTrip.toLocaleString()}`, ''],
+        ['Active Routes', data.overview.activeRoutes.toString(), 'All operational']
+      ];
+
+      stats.forEach((stat, idx) => {
+        const xPos = margin + 5 + (idx % 2) * 85;
+        const yPos = yPosition + 12 + Math.floor(idx / 2) * 10;
+        
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`${stat[0]}:`, xPos, yPos);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(stat[1], xPos + 35, yPos);
+        if (stat[2]) {
+          pdf.setTextColor(5, 150, 105);
+          pdf.text(stat[2], xPos + 60, yPos);
+          pdf.setTextColor(73, 80, 87);
+        }
+      });
+
+      yPosition += 40;
+
+      // === TOP PERFORMING DRIVERS ===
+      checkPageBreak(65);
+      
+      pdf.setFillColor(248, 249, 250);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'F');
+      pdf.setDrawColor(233, 236, 239);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'S');
+      
+      pdf.setFontSize(11);
       pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(150, 28, 30);
-      pdf.text(`PHP ${driver.revenue.toLocaleString()}`, margin + 100, yPosition + 5);
-      
-      pdf.setTextColor(5, 150, 105);
-      pdf.text(`${driver.punctuality}%`, margin + 150, yPosition + 5);
-      
-      yPosition += 7;
-    });
-
-    yPosition += 10;
-
-    // === TOP PERFORMING CONDUCTORS ===
-    checkPageBreak(65);
-    
-    pdf.setFillColor(248, 249, 250);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'F');
-    pdf.setDrawColor(233, 236, 239);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'S');
-    
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(73, 80, 87);
-    pdf.text('Top Performing Conductors', margin + 3, yPosition + 6);
-    
-    yPosition += 12;
-    
-    pdf.setFillColor(150, 28, 30);
-    pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 8, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Name', margin + 6, yPosition + 5.5);
-    pdf.text('Trips', margin + 70, yPosition + 5.5);
-    pdf.text('Revenue', margin + 100, yPosition + 5.5);
-    pdf.text('Punctuality', margin + 150, yPosition + 5.5);
-    
-    yPosition += 8;
-    
-    pdf.setFontSize(8);
-    topConductors.forEach((conductor, idx) => {
-      if (idx % 2 === 0) {
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 7, 'F');
-      }
-      
-      pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(73, 80, 87);
-      pdf.text(conductor.name, margin + 6, yPosition + 5);
-      pdf.text(conductor.trips.toString(), margin + 70, yPosition + 5);
+      pdf.text('Top Performing Drivers', margin + 3, yPosition + 6);
       
+      yPosition += 12;
+      
+      pdf.setFillColor(150, 28, 30);
+      pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 8, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(9);
       pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(150, 28, 30);
-      pdf.text(`PHP ${conductor.revenue.toLocaleString()}`, margin + 100, yPosition + 5);
+      pdf.text('Name', margin + 6, yPosition + 5.5);
+      pdf.text('Trips', margin + 70, yPosition + 5.5);
+      pdf.text('Revenue', margin + 100, yPosition + 5.5);
+      pdf.text('Avg Revenue', margin + 145, yPosition + 5.5);
       
-      pdf.setTextColor(5, 150, 105);
-      pdf.text(`${conductor.punctuality}%`, margin + 150, yPosition + 5);
+      yPosition += 8;
       
-      yPosition += 7;
-    });
+      pdf.setFontSize(8);
+      data.topDrivers.forEach((driver, idx) => {
+        if (idx % 2 === 0) {
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 7, 'F');
+        }
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(73, 80, 87);
+        pdf.text(driver.name, margin + 6, yPosition + 5);
+        pdf.text(driver.trips.toString(), margin + 70, yPosition + 5);
+        
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(150, 28, 30);
+        pdf.text(`PHP ${driver.revenue.toLocaleString()}`, margin + 100, yPosition + 5);
+        
+        pdf.setTextColor(5, 150, 105);
+        pdf.text(`PHP ${driver.avgRevenue.toLocaleString()}`, margin + 145, yPosition + 5);
+        
+        yPosition += 7;
+      });
 
-    yPosition += 10;
+      yPosition += 10;
 
-    // === TOP PERFORMING ROUTES ===
-    checkPageBreak(65);
-    
-    pdf.setFillColor(248, 249, 250);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'F');
-    pdf.setDrawColor(233, 236, 239);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'S');
-    
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(73, 80, 87);
-    pdf.text('Top Performing Routes', margin + 3, yPosition + 6);
-    
-    yPosition += 12;
-    
-    pdf.setFillColor(150, 28, 30);
-    pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 8, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Route', margin + 6, yPosition + 5.5);
-    pdf.text('Trips', margin + 110, yPosition + 5.5);
-    pdf.text('Revenue', margin + 145, yPosition + 5.5);
-    
-    yPosition += 8;
-    
-    pdf.setFontSize(8);
-    topRoutes.forEach((route, idx) => {
-      if (idx % 2 === 0) {
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 7, 'F');
-      }
+      // === TOP PERFORMING CONDUCTORS ===
+      checkPageBreak(65);
       
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFillColor(248, 249, 250);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'F');
+      pdf.setDrawColor(233, 236, 239);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'S');
+      
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(73, 80, 87);
-      pdf.text(route.name, margin + 6, yPosition + 5);
-      pdf.text(route.trips.toString(), margin + 110, yPosition + 5);
+      pdf.text('Top Performing Conductors', margin + 3, yPosition + 6);
       
+      yPosition += 12;
+      
+      pdf.setFillColor(150, 28, 30);
+      pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 8, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(9);
       pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(150, 28, 30);
-      pdf.text(`PHP ${route.revenue.toLocaleString()}`, margin + 145, yPosition + 5);
+      pdf.text('Name', margin + 6, yPosition + 5.5);
+      pdf.text('Trips', margin + 70, yPosition + 5.5);
+      pdf.text('Revenue', margin + 100, yPosition + 5.5);
+      pdf.text('Avg Revenue', margin + 145, yPosition + 5.5);
       
-      yPosition += 7;
-    });
-
-    yPosition += 10;
-
-    // === ML INSIGHTS ===
-    checkPageBreak(65);
-    
-    pdf.setFillColor(248, 249, 250);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 50, 'F');
-    pdf.setDrawColor(233, 236, 239);
-    pdf.rect(margin, yPosition, pageWidth - 2 * margin, 50, 'S');
-    
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(73, 80, 87);
-    pdf.text('ML Insights - Top Driver-Conductor Pairs', margin + 3, yPosition + 6);
-    
-    yPosition += 12;
-    
-    pdf.setFillColor(150, 28, 30);
-    pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 8, 'F');
-    
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Driver', margin + 6, yPosition + 5.5);
-    pdf.text('Conductor', margin + 60, yPosition + 5.5);
-    pdf.text('Team Trips', margin + 115, yPosition + 5.5);
-    pdf.text('Team Revenue', margin + 145, yPosition + 5.5);
-    
-    yPosition += 8;
-    
-    pdf.setFontSize(8);
-    mlTopPairs.forEach((pair, idx) => {
-      if (idx % 2 === 0) {
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 7, 'F');
-      }
+      yPosition += 8;
       
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      data.topConductors.forEach((conductor, idx) => {
+        if (idx % 2 === 0) {
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 7, 'F');
+        }
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(73, 80, 87);
+        pdf.text(conductor.name, margin + 6, yPosition + 5);
+        pdf.text(conductor.trips.toString(), margin + 70, yPosition + 5);
+        
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(150, 28, 30);
+        pdf.text(`PHP ${conductor.revenue.toLocaleString()}`, margin + 100, yPosition + 5);
+        
+        pdf.setTextColor(5, 150, 105);
+        pdf.text(`PHP ${conductor.avgRevenue.toLocaleString()}`, margin + 145, yPosition + 5);
+        
+        yPosition += 7;
+      });
+
+      yPosition += 10;
+
+      // === TOP PERFORMING ROUTES ===
+      checkPageBreak(65);
+      
+      pdf.setFillColor(248, 249, 250);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'F');
+      pdf.setDrawColor(233, 236, 239);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 60, 'S');
+      
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(73, 80, 87);
-      pdf.text(pair.driver, margin + 6, yPosition + 5);
-      pdf.text(pair.conductor, margin + 60, yPosition + 5);
-      pdf.text(pair.tripsAsTeam.toString(), margin + 115, yPosition + 5);
+      pdf.text('Top Performing Routes', margin + 3, yPosition + 6);
       
+      yPosition += 12;
+      
+      pdf.setFillColor(150, 28, 30);
+      pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 8, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(9);
       pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(150, 28, 30);
-      pdf.text(`PHP ${pair.revenueAsTeam.toLocaleString()}`, margin + 145, yPosition + 5);
+      pdf.text('Route', margin + 6, yPosition + 5.5);
+      pdf.text('Trips', margin + 110, yPosition + 5.5);
+      pdf.text('Revenue', margin + 145, yPosition + 5.5);
       
-      yPosition += 7;
-    });
+      yPosition += 8;
+      
+      pdf.setFontSize(8);
+      data.topRoutes.forEach((route, idx) => {
+        if (idx % 2 === 0) {
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 7, 'F');
+        }
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(73, 80, 87);
+        pdf.text(route.name, margin + 6, yPosition + 5);
+        pdf.text(route.trips.toString(), margin + 110, yPosition + 5);
+        
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(150, 28, 30);
+        pdf.text(`PHP ${route.revenue.toLocaleString()}`, margin + 145, yPosition + 5);
+        
+        yPosition += 7;
+      });
+
+      yPosition += 10;
+
+      // === ML INSIGHTS ===
+      checkPageBreak(65);
+      
+      pdf.setFillColor(248, 249, 250);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 50, 'F');
+      pdf.setDrawColor(233, 236, 239);
+      pdf.rect(margin, yPosition, pageWidth - 2 * margin, 50, 'S');
+      
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(73, 80, 87);
+      pdf.text('ML Insights - Top Driver-Conductor Pairs', margin + 3, yPosition + 6);
+      
+      yPosition += 12;
+      
+      pdf.setFillColor(150, 28, 30);
+      pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 8, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Driver', margin + 6, yPosition + 5.5);
+      pdf.text('Conductor', margin + 60, yPosition + 5.5);
+      pdf.text('Team Trips', margin + 115, yPosition + 5.5);
+      pdf.text('Team Revenue', margin + 145, yPosition + 5.5);
+      
+      yPosition += 8;
+      
+      pdf.setFontSize(8);
+      data.topTeams.forEach((pair, idx) => {
+        if (idx % 2 === 0) {
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(margin + 3, yPosition, pageWidth - 2 * margin - 6, 7, 'F');
+        }
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(73, 80, 87);
+        pdf.text(pair.driver, margin + 6, yPosition + 5);
+        pdf.text(pair.conductor, margin + 60, yPosition + 5);
+        pdf.text(pair.trips.toString(), margin + 115, yPosition + 5);
+        
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(150, 28, 30);
+        pdf.text(`PHP ${pair.revenue.toLocaleString()}`, margin + 145, yPosition + 5);
+        
+        yPosition += 7;
+      });
 
       // === FOOTER ===
       pdf.setFillColor(248, 249, 250);
@@ -393,7 +405,6 @@ const PerformanceDashboard = () => {
     }
   };
 
-
   const LoadingSkeleton = () => (
     <div className={styles.statsGrid}>
       {[1, 2, 3, 4].map((i) => (
@@ -406,6 +417,22 @@ const PerformanceDashboard = () => {
     </div>
   );
 
+  if (error) {
+    return (
+      <div className={styles.wideCard}>
+        <div style={{ padding: '40px', textAlign: 'center', color: '#dc2626' }}>
+          <p>{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            style={{ marginTop: '20px', padding: '10px 20px', cursor: 'pointer' }}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.wideCard} id="performance-dashboard">
       {/* === HEADER === */}
@@ -414,7 +441,7 @@ const PerformanceDashboard = () => {
           <h1 className={styles.heading}>Performance Report</h1>
           <p className={styles.subheading}>Overview of drivers, conductors, and routes with ML insights</p>
         </div>
-        <button onClick={handleExport} className={styles.exportButton}>
+        <button onClick={handleExport} className={styles.exportButton} disabled={!data}>
           <Download className={styles.icon} />
           Export Report
         </button>
@@ -444,7 +471,7 @@ const PerformanceDashboard = () => {
 
       {/* === OVERVIEW === */}
       <h2 className={styles.sectionTitle}>Overview</h2>
-      {isLoading ? (
+      {isLoading || !data ? (
         <LoadingSkeleton />
       ) : (
         <>
@@ -454,8 +481,8 @@ const PerformanceDashboard = () => {
                 <span className={styles.cardTitle}>Total Trips</span>
                 <Bus className={styles.cardIcon} style={{ color: '#3b82f6' }} />
               </div>
-              <p className={styles.amount}>1,133</p>
-              <p className={`${styles.trend} ${styles.trendUp}`}>+12.5% from last period</p>
+              <p className={styles.amount}>{data.overview.totalTrips.toLocaleString()}</p>
+              <p className={`${styles.trend} ${styles.trendUp}`}>{data.overview.tripGrowth}</p>
             </div>
 
             <div className={styles.reportCard}>
@@ -463,17 +490,17 @@ const PerformanceDashboard = () => {
                 <span className={styles.cardTitle}>Total Revenue</span>
                 <DollarSign className={styles.cardIcon} style={{ color: '#10b981' }} />
               </div>
-              <p className={styles.amount}>₱680,000</p>
-              <p className={`${styles.trend} ${styles.trendUp}`}>+9.7% from last period</p>
+              <p className={styles.amount}>₱{data.overview.totalRevenue.toLocaleString()}</p>
+              <p className={`${styles.trend} ${styles.trendUp}`}>{data.overview.revenueGrowth}</p>
             </div>
 
             <div className={styles.reportCard}>
               <div className={styles.cardHeader}>
-                <span className={styles.cardTitle}>Avg Punctuality</span>
+                <span className={styles.cardTitle}>Avg Revenue/Trip</span>
                 <Activity className={styles.cardIcon} style={{ color: '#8b5cf6' }} />
               </div>
-              <p className={styles.amount}>92%</p>
-              <p className={`${styles.trend} ${styles.trendUp}`}>+3% from last period</p>
+              <p className={styles.amount}>₱{data.overview.avgRevenuePerTrip.toLocaleString()}</p>
+              <p className={styles.cardSubtext}>Per trip average</p>
             </div>
 
             <div className={styles.reportCard}>
@@ -481,7 +508,7 @@ const PerformanceDashboard = () => {
                 <span className={styles.cardTitle}>Active Routes</span>
                 <MapPin className={styles.cardIcon} style={{ color: '#f59e0b' }} />
               </div>
-              <p className={styles.amount}>12</p>
+              <p className={styles.amount}>{data.overview.activeRoutes}</p>
               <p className={styles.cardSubtext}>All operational</p>
             </div>
           </div>
@@ -490,7 +517,7 @@ const PerformanceDashboard = () => {
             <div className={styles.chartContainer}>
               <h3 className={styles.chartTitle}>Monthly Trends</h3>
               <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={monthlyTrend}>
+                <LineChart data={data.monthlyTrends}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -505,7 +532,7 @@ const PerformanceDashboard = () => {
             <div className={styles.chartContainer}>
               <h3 className={styles.chartTitle}>Revenue by Route</h3>
               <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={revenueByRoute}>
+                <BarChart data={data.revenueByRoute}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="route" />
                   <YAxis />
@@ -519,196 +546,200 @@ const PerformanceDashboard = () => {
       )}
 
       {/* === ML INSIGHTS === */}
-      <h2 className={styles.sectionTitle}>ML Insights</h2>
-      <div className={styles.mlInsightsCard}>
-        <div className={styles.mlHeader}>
-          <Award className={styles.mlIcon} />
-          <div>
-            <h2 className={styles.mlTitle}>Top Earning Driver-Conductor Pairs</h2>
-            <p className={styles.mlSubtitle}>Based on trips worked together and team revenue</p>
-          </div>
-        </div>
-
-        <div className={styles.pairsGrid}>
-          {mlTopPairs.map((pair, idx) => (
-            <div key={idx} className={styles.pairCard}>
-              <div className={styles.pairRank}>#{idx + 1}</div>
-              <div className={styles.pairMembers}>
-                <div className={styles.pairMember}>
-                  <span className={styles.memberDot} style={{ background: '#3b82f6' }}></span>
-                  <span className={styles.memberName}>{pair.driver}</span>
-                </div>
-                <div className={styles.pairMember}>
-                  <span className={styles.memberDot} style={{ background: '#10b981' }}></span>
-                  <span className={styles.memberName}>{pair.conductor}</span>
-                </div>
-              </div>
-              <div className={styles.pairStats}>
-                <div className={styles.pairStat}>
-                  <span className={styles.statLabel}>Trips as Team:</span>
-                  <span className={styles.statValue}>{pair.tripsAsTeam}</span>
-                </div>
-                <div className={styles.pairStat}>
-                  <span className={styles.statLabel}>Team Revenue:</span>
-                  <span className={`${styles.statValue} ${styles.statRevenue}`}>₱{pair.revenueAsTeam.toLocaleString()}</span>
-                </div>
+      {!isLoading && data && (
+        <>
+          <h2 className={styles.sectionTitle}>ML Insights</h2>
+          <div className={styles.mlInsightsCard}>
+            <div className={styles.mlHeader}>
+              <Award className={styles.mlIcon} />
+              <div>
+                <h2 className={styles.mlTitle}>Top Earning Driver-Conductor Pairs</h2>
+                <p className={styles.mlSubtitle}>Based on trips worked together and team revenue</p>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* === TABLES === */}
-      <h2 className={styles.sectionTitle}>Drivers</h2>
-      <div className={styles.tablesGrid}>
-        <div className={styles.tableCard}>
-          <h3 className={styles.tableTitle}>Top Performing Drivers</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Trips</th>
-                <th>Revenue</th>
-                <th>Punctuality</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topDrivers.map((d, i) => (
-                <tr key={i}>
-                  <td>{d.name}</td>
-                  <td>{d.trips}</td>
-                  <td className={styles.revenue}>₱{d.revenue.toLocaleString()}</td>
-                  <td><span className={`${styles.badge} ${styles.badgeSuccess}`}>{d.punctuality}%</span></td>
-                </tr>
+            <div className={styles.pairsGrid}>
+              {data.topTeams.map((pair, idx) => (
+                <div key={idx} className={styles.pairCard}>
+                  <div className={styles.pairRank}>#{idx + 1}</div>
+                  <div className={styles.pairMembers}>
+                    <div className={styles.pairMember}>
+                      <span className={styles.memberDot} style={{ background: '#3b82f6' }}></span>
+                      <span className={styles.memberName}>{pair.driver}</span>
+                    </div>
+                    <div className={styles.pairMember}>
+                      <span className={styles.memberDot} style={{ background: '#10b981' }}></span>
+                      <span className={styles.memberName}>{pair.conductor}</span>
+                    </div>
+                  </div>
+                  <div className={styles.pairStats}>
+                    <div className={styles.pairStat}>
+                      <span className={styles.statLabel}>Trips as Team:</span>
+                      <span className={styles.statValue}>{pair.trips}</span>
+                    </div>
+                    <div className={styles.pairStat}>
+                      <span className={styles.statLabel}>Team Revenue:</span>
+                      <span className={`${styles.statValue} ${styles.statRevenue}`}>₱{pair.revenue.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          </div>
 
-        <div className={styles.tableCard}>
-          <h3 className={styles.tableTitle}>Low Performing Drivers</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Trips</th>
-                <th>Revenue</th>
-                <th>Punctuality</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lowDrivers.map((d, i) => (
-                <tr key={i}>
-                  <td>{d.name}</td>
-                  <td>{d.trips}</td>
-                  <td className={styles.revenue}>₱{d.revenue.toLocaleString()}</td>
-                  <td><span className={`${styles.badge} ${styles.badgeWarning}`}>{d.punctuality}%</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+          {/* === TABLES === */}
+          <h2 className={styles.sectionTitle}>Drivers</h2>
+          <div className={styles.tablesGrid}>
+            <div className={styles.tableCard}>
+              <h3 className={styles.tableTitle}>Top Performing Drivers</h3>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Trips</th>
+                    <th>Revenue</th>
+                    <th>Avg Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.topDrivers.map((d, i) => (
+                    <tr key={i}>
+                      <td>{d.name}</td>
+                      <td>{d.trips}</td>
+                      <td className={styles.revenue}>₱{d.revenue.toLocaleString()}</td>
+                      <td><span className={`${styles.badge} ${styles.badgeSuccess}`}>₱{d.avgRevenue.toLocaleString()}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-      {/* === CONDUCTORS === */}
-      <h2 className={styles.sectionTitle}>Conductors</h2>
-      <div className={styles.tablesGrid}>
-        <div className={styles.tableCard}>
-          <h3 className={styles.tableTitle}>Top Performing Conductors</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Trips</th>
-                <th>Revenue</th>
-                <th>Punctuality</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topConductors.map((c, i) => (
-                <tr key={i}>
-                  <td>{c.name}</td>
-                  <td>{c.trips}</td>
-                  <td className={styles.revenue}>₱{c.revenue.toLocaleString()}</td>
-                  <td><span className={`${styles.badge} ${styles.badgeSuccess}`}>{c.punctuality}%</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            <div className={styles.tableCard}>
+              <h3 className={styles.tableTitle}>Low Performing Drivers</h3>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Trips</th>
+                    <th>Revenue</th>
+                    <th>Avg Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.lowDrivers.map((d, i) => (
+                    <tr key={i}>
+                      <td>{d.name}</td>
+                      <td>{d.trips}</td>
+                      <td className={styles.revenue}>₱{d.revenue.toLocaleString()}</td>
+                      <td><span className={`${styles.badge} ${styles.badgeWarning}`}>₱{d.avgRevenue.toLocaleString()}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-        <div className={styles.tableCard}>
-          <h3 className={styles.tableTitle}>Low Performing Conductors</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Trips</th>
-                <th>Revenue</th>
-                <th>Punctuality</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lowConductors.map((c, i) => (
-                <tr key={i}>
-                  <td>{c.name}</td>
-                  <td>{c.trips}</td>
-                  <td className={styles.revenue}>₱{c.revenue.toLocaleString()}</td>
-                  <td><span className={`${styles.badge} ${styles.badgeWarning}`}>{c.punctuality}%</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+          {/* === CONDUCTORS === */}
+          <h2 className={styles.sectionTitle}>Conductors</h2>
+          <div className={styles.tablesGrid}>
+            <div className={styles.tableCard}>
+              <h3 className={styles.tableTitle}>Top Performing Conductors</h3>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Trips</th>
+                    <th>Revenue</th>
+                    <th>Avg Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.topConductors.map((c, i) => (
+                    <tr key={i}>
+                      <td>{c.name}</td>
+                      <td>{c.trips}</td>
+                      <td className={styles.revenue}>₱{c.revenue.toLocaleString()}</td>
+                      <td><span className={`${styles.badge} ${styles.badgeSuccess}`}>₱{c.avgRevenue.toLocaleString()}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-      {/* === ROUTES === */}
-      <h2 className={styles.sectionTitle}>Routes</h2>
-      <div className={styles.tablesGrid}>
-        <div className={styles.tableCard}>
-          <h3 className={styles.tableTitle}>Top Performing Routes</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Route</th>
-                <th>Trips</th>
-                <th>Revenue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topRoutes.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.name}</td>
-                  <td>{r.trips}</td>
-                  <td className={styles.revenue}>₱{r.revenue.toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            <div className={styles.tableCard}>
+              <h3 className={styles.tableTitle}>Low Performing Conductors</h3>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Trips</th>
+                    <th>Revenue</th>
+                    <th>Avg Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.lowConductors.map((c, i) => (
+                    <tr key={i}>
+                      <td>{c.name}</td>
+                      <td>{c.trips}</td>
+                      <td className={styles.revenue}>₱{c.revenue.toLocaleString()}</td>
+                      <td><span className={`${styles.badge} ${styles.badgeWarning}`}>₱{c.avgRevenue.toLocaleString()}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-        <div className={styles.tableCard}>
-          <h3 className={styles.tableTitle}>Low Performing Routes</h3>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Route</th>
-                <th>Trips</th>
-                <th>Revenue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lowRoutes.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.name}</td>
-                  <td>{r.trips}</td>
-                  <td className={styles.revenue}>₱{r.revenue.toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+          {/* === ROUTES === */}
+          <h2 className={styles.sectionTitle}>Routes</h2>
+          <div className={styles.tablesGrid}>
+            <div className={styles.tableCard}>
+              <h3 className={styles.tableTitle}>Top Performing Routes</h3>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Route</th>
+                    <th>Trips</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.topRoutes.map((r, i) => (
+                    <tr key={i}>
+                      <td>{r.name}</td>
+                      <td>{r.trips}</td>
+                      <td className={styles.revenue}>₱{r.revenue.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className={styles.tableCard}>
+              <h3 className={styles.tableTitle}>Low Performing Routes</h3>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Route</th>
+                    <th>Trips</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.lowRoutes.map((r, i) => (
+                    <tr key={i}>
+                      <td>{r.name}</td>
+                      <td>{r.trips}</td>
+                      <td className={styles.revenue}>₱{r.revenue.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

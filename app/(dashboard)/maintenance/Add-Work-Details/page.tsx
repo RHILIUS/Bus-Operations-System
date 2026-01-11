@@ -15,7 +15,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_Backend_BaseURL?.replace(/['"]/g, "");
 const MAINTENANCE_WORK_URL = `${BASE_URL}/api/maintenance-work`;
 
 interface MaintenanceRecord {
-  id: string; // Changed to string to match MaintenanceWorkID
+  id: string;
   work_no?: string;
   work_title?: string;
   bus_no: string;
@@ -43,6 +43,7 @@ interface MaintenanceRecord {
   assignedTo?: string;
   estimatedCost?: number;
   actualCost?: number;
+  completedDate?: string;
 }
 
 const MaintenancePage: React.FC = () => {
@@ -97,7 +98,7 @@ const MaintenancePage: React.FC = () => {
         { id: 'High', label: 'High' },
         { id: 'Medium', label: 'Medium' },
         { id: 'Low', label: 'Low' },
-        { id: 'Emergency', label: 'Emergency' }
+        { id: 'Critical', label: 'Critical' }
       ]
     },
     {
@@ -106,13 +107,14 @@ const MaintenancePage: React.FC = () => {
       type: 'radio',
       options: [
         { id: 'Pending', label: 'Pending' },
-        { id: 'In Progress', label: 'In Progress' },
-        { id: 'Completed', label: 'Completed' }
+        { id: 'InProgress', label: 'In Progress' },
+        { id: 'Completed', label: 'Completed' },
+        { id: 'Cancelled', label: 'Cancelled' }
       ]
     }
   ];
   
-  // Fetch maintenance works function (moved outside useEffect for reusability)
+  // Fetch maintenance works function
   const fetchMaintenanceWorks = async () => {
     setLoading(true);
     try {
@@ -127,35 +129,36 @@ const MaintenancePage: React.FC = () => {
       const data = await response.json();
 
       // Transform API data to match frontend interface
-      const transformedData: MaintenanceRecord[] = data.map((item: any, index: number) => ({
-        id: item.MaintenanceWorkID, // Use actual ID instead of index
-        work_no: item.WorkNo,
-        work_title: item.WorkTitle || '', // New field from schema
-        bus_no: item.BusID,
+      const transformedData: MaintenanceRecord[] = data.map((item: any) => ({
+        id: item.MaintenanceWorkID,
+        work_no: item.WorkNo || `MW-${item.MaintenanceWorkID.slice(0, 8)}`,
+        work_title: item.WorkTitle || '',
+        bus_no: item.BusID || item.BusPlateNumber || 'N/A',
         priority: item.Priority,
-        start_date: item.ScheduledDate || item.CreatedAt,
-        due_date: item.DueDate || '', // New field from schema
-        status: item.Status,
+        start_date: item.ScheduledDate,
+        due_date: item.DueDate || '',
+        status: item.Status === 'InProgress' ? 'In Progress' : item.Status,
         damageReport: {
-          damageReportId: item.DamageReport.DamageReportID,
-          battery: item.DamageReport.Battery,
-          lights: item.DamageReport.Lights,
-          oil: item.DamageReport.Oil,
-          water: item.DamageReport.Water,
-          brake: item.DamageReport.Brake,
-          air: item.DamageReport.Air,
-          gas: item.DamageReport.Gas,
-          engine: item.DamageReport.Engine,
-          tireCondition: item.DamageReport.TireCondition,
-          notes: item.DamageReport.Note || '',
-          checkDate: item.DamageReport.CheckDate,
-          reportedBy: item.DamageReport.CreatedBy || 'System'
+          damageReportId: item.DamageReportID,
+          battery: item.Battery ?? false,
+          lights: item.Lights ?? false,
+          oil: item.Oil ?? false,
+          water: item.Water ?? false,
+          brake: item.Brake ?? false,
+          air: item.Air ?? false,
+          gas: item.Gas ?? false,
+          engine: item.Engine ?? false,
+          tireCondition: item.TireCondition ?? false,
+          notes: item.DamageNote || '',
+          checkDate: item.CheckDate || '',
+          reportedBy: item.CreatedBy || 'System'
         },
-        reportedBy: item.DamageReport.CreatedBy || 'System',
+        reportedBy: item.CreatedBy || 'System',
         workRemarks: item.WorkNotes || '',
         assignedTo: item.AssignedTo || '',
         estimatedCost: item.EstimatedCost,
-        actualCost: item.ActualCost
+        actualCost: item.ActualCost,
+        completedDate: item.CompletedDate
       }));
 
       setMaintenanceData(transformedData);
@@ -190,12 +193,10 @@ const MaintenancePage: React.FC = () => {
   useEffect(() => {
     let filtered = [...maintenanceData];
 
-    // Tab filter - separate records by whether they have user-defined details
+    // Tab filter
     if (activeTab === 'with-details') {
-      // Work that has user-defined details (work_title and due_date)
       filtered = filtered.filter(record => record.work_title && record.due_date);
     } else {
-      // Work that doesn't have user-defined details yet
       filtered = filtered.filter(record => !record.work_title || !record.due_date);
     }
 
@@ -218,7 +219,14 @@ const MaintenancePage: React.FC = () => {
 
     // Status filter
     if (activeFilters.statusFilter) {
-      filtered = filtered.filter(record => record.status === activeFilters.statusFilter);
+      const statusMap: Record<string, string> = {
+        'Pending': 'Pending',
+        'InProgress': 'In Progress',
+        'Completed': 'Completed',
+        'Cancelled': 'Cancelled'
+      };
+      const filterStatus = statusMap[activeFilters.statusFilter] || activeFilters.statusFilter;
+      filtered = filtered.filter(record => record.status === filterStatus);
     }
 
     // Sorting
@@ -276,10 +284,9 @@ const MaintenancePage: React.FC = () => {
   };
 
   const handleViewDetails = (record: MaintenanceRecord) => {
-  setViewRecord(record);
-  setShowViewModal(true);
+    setViewRecord(record);
+    setShowViewModal(true);
   };
-
 
   const handleSaveWorkDetails = async (data: {
     workNo: string;
@@ -297,23 +304,23 @@ const MaintenancePage: React.FC = () => {
         throw new Error('No record selected');
       }
 
-      // Call the backend API to update maintenance work
+      // Update maintenance work using PUT method with path parameter
       const response = await fetch(
-        `${MAINTENANCE_WORK_URL}?maintenanceWorkId=${selectedRecord.id}`,
+        `${MAINTENANCE_WORK_URL}/${selectedRecord.id}`,
         {
-          method: 'PATCH',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include', // Use cookies for authentication
+          credentials: 'include',
           body: JSON.stringify({
-            workTitle: data.workTitle,
-            priority: data.priority,
-            scheduledDate: data.startDate,
-            dueDate: data.dueDate,
-            workNotes: data.workRemarks,
-            assignedTo: data.assignedTo,
-            status: 'InProgress', // Update status when work details are added
+            WorkTitle: data.workTitle,
+            Priority: data.priority,
+            ScheduledDate: data.startDate,
+            DueDate: data.dueDate,
+            WorkNotes: data.workRemarks,
+            AssignedTo: data.assignedTo,
+            Status: 'InProgress', // Update status when work details are added
           }),
         }
       );
@@ -372,7 +379,6 @@ const MaintenancePage: React.FC = () => {
 
         {/* Tab Navigation */}
         <div className={styles.tabContainer}>
-          {/* Sliding indicator background */}
           <div 
             className={styles.tabIndicator}
             style={{
@@ -430,14 +436,14 @@ const MaintenancePage: React.FC = () => {
                 {displayedData.length > 0 ? (
                   displayedData.map((record) => (
                     <tr key={record.id}>
-                      <td>{record.work_no || '-'}</td>
+                      <td>{record.work_no || '—'}</td>
                       <td>{record.work_title || '—'}</td>
                       <td>{record.bus_no}</td>
                       <td>
                         {record.priority ? (
                           <span
                             className={
-                              record.priority === 'High' || record.priority === 'Emergency'
+                              record.priority === 'High' || record.priority === 'Critical'
                                 ? styles.priorityHigh
                                 : record.priority === 'Medium'
                                 ? styles.priorityMedium
@@ -468,7 +474,6 @@ const MaintenancePage: React.FC = () => {
                       <td className={styles.centeredColumn}>
                         <div className={styles.actionButtons}>
                           {!record.work_title ? (
-                            // No work details yet - show Add button
                             <button
                               className={`${styles.actionBtn} ${styles.addBtn}`}
                               onClick={() => handleAddWorkDetails(record)}
@@ -477,7 +482,6 @@ const MaintenancePage: React.FC = () => {
                               <Image src="/assets/images/add-line.png" alt="Add" width={20} height={20} />
                             </button>
                           ) : record.status === 'Completed' ? (
-                            // Completed - only show View button
                             <button
                               className={`${styles.actionBtn} ${styles.viewBtn}`}
                               onClick={() => handleViewDetails(record)}
@@ -486,7 +490,6 @@ const MaintenancePage: React.FC = () => {
                               <Image src="/assets/images/eye-line.png" alt="View" width={20} height={20} />
                             </button>
                           ) : (
-                            // Pending or In Progress - show Update and View buttons
                             <>
                               <button
                                 className={`${styles.actionBtn} ${styles.updateBtn}`}
@@ -557,21 +560,21 @@ const MaintenancePage: React.FC = () => {
         )}
 
         {/* View Work Details Modal */}
-                {viewRecord && (
-                  <ViewWorkDetailsModal
-                    show={showViewModal}
-                    onClose={() => {
-                      setShowViewModal(false);
-                      setViewRecord(null);
-                    }}
-                    record={viewRecord}
-                  />
-                )}
+        {viewRecord && (
+          <ViewWorkDetailsModal
+            show={showViewModal}
+            onClose={() => {
+              setShowViewModal(false);
+              setViewRecord(null);
+            }}
+            record={viewRecord}
+          />
+        )}
 
-                {loadingModal && <LoadingModal />}
-              </div>
-            </div>
-          );
-        };
+        {loadingModal && <LoadingModal />}
+      </div>
+    </div>
+  );
+};
 
 export default MaintenancePage;

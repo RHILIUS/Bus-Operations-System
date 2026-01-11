@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { BarChart, PieChart } from "@mui/x-charts";
 import styles from "./dashboard.module.css";
 import ThisMonthGraph from "./ThisMonthGraph";
-import { fetchDashboardSummary } from "@/lib/apiCalls/dashboard";
+import { fetchDashboardSummary, DashboardSummary } from "@/lib/apiCalls/dashboard";
 import { fetchTripHistory, TripHistoryItem, TripHistoryResponse } from "@/lib/apiCalls/bus-operation";
 import LoadingModal from "@/components/modal/LoadingModal";
 
@@ -28,30 +28,7 @@ const DashboardPage: React.FC = () => {
   const tabs = ["Bus Earnings", "Trip History", "Bus Status", "Top Performing Routes"];
   const activeTabIndex = tabs.indexOf(selectedTab);
 
-  const [dashboard, setDashboard] = useState<{
-    earnings: {
-      month: number;
-      year: number;
-      data: number[];
-      previous?: {
-        month: number;
-        year: number;
-        data: number[];
-      };
-    };
-    rentalEarnings?: {
-      month: number;
-      year: number;
-      data: number[];
-      previous?: {
-        month: number;
-        year: number;
-        data: number[];
-      };
-    };
-    busStatus: { NotStarted: number; NotReady: number; InOperation: number; InRental?: number };
-    topRoutes: { [routeName: string]: number };
-  } | null>(null);
+  const [dashboard, setDashboard] = useState<DashboardSummary | null>(null);
 
   useEffect(() => {
     setIsLoading(true);

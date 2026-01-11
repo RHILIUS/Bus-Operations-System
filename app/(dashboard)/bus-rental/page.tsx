@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import styles from "./bus-rental.module.css";
 import { getBackendBaseURL, fetchBackendToken } from "@/lib/backend";
 import { fetchAllRentalRequests } from "@/lib/apiCalls/rental-request";
+import { fetchRentBusesWithToken } from "@/lib/apiCalls/external"; // Import the new function
 import LocationPickerModal from "@/components/modal/Location-Picker/LocationPickerModal";
 import SuccessPageModal from "@/components/modal/Success-Page-Modal/SuccessPageModal";
 import ValidIdModal from "@/components/modal/Valid-ID-Modal/ValidIdModal";
@@ -52,7 +53,8 @@ export default function BusRentalPage() {
   const [homeAddress, setHomeAddress] = useState("");
   const [validIdType, setValidIdType] = useState("");
   const [validIdNumber, setValidIdNumber] = useState("");
-  const [validIdImage, setValidIdImage] = useState<string | null>(null);
+  const [validIdImage, setValidIdImage] = useState<File | null>(null);
+  const [validIdImagePreview, setValidIdImagePreview] = useState<string | null>(null);
   const [showValidIdModal, setShowValidIdModal] = useState(false);
   const [busType, setBusType] = useState<BusType | "">("");
   const [selectedBusId, setSelectedBusId] = useState("");
@@ -81,6 +83,7 @@ export default function BusRentalPage() {
 
   // local buses - starts empty, will be populated from API
   const [buses, setBuses] = useState<Bus[]>([]);
+  const [loadingBuses, setLoadingBuses] = useState(false);
 
   // Booked dates state for routing checker
   const [bookedDates, setBookedDates] = useState<Array<{ startDate: string; endDate: string }>>([]);
@@ -221,41 +224,61 @@ export default function BusRentalPage() {
     }
   }, [rentalDate, endDate]);
 
-  // Fetch real buses from backend API
+  // Fetch available rental buses from API when busType, rentalDate, or duration changes
   useEffect(() => {
-    const fetchBusesFromAPI = async () => {
+    const fetchAvailableBuses = async () => {
+      // Only fetch if we have the minimum required data
+      if (!busType) {
+        setBuses([]);
+        return;
+      }
+
+      setLoadingBuses(true);
       try {
-        const baseURL = getBackendBaseURL();
-        const response = await fetch(`${baseURL}/api/external/buses/full`, {
-          credentials: 'include'
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch buses');
+        const token = await fetchBackendToken();
+        if (!token) {
+          throw new Error('Authentication failed');
         }
-        
-        const result = await response.json();
-        
+
+        // Call the rental buses API with filters
+        const fetchedBuses = await fetchRentBusesWithToken(
+          token,
+          busType, // busType filter
+          rentalDate || undefined, // startDate (optional)
+          duration ? parseInt(duration, 10) : undefined // duration (optional)
+        );
+
+        console.log('Fetched rental buses:', fetchedBuses);
+
         // Map API response to Bus interface
-        const mappedBuses: Bus[] = (result.data || []).map((bus: any) => ({
+        const mappedBuses: Bus[] = (fetchedBuses || []).map((bus: any) => ({
           id: bus.busId || bus.id,
-          name: bus.license_plate || `Bus ${bus.busId}`,
+          name: bus.license_plate || bus.body_number || `Bus ${bus.busId}`,
           type: bus.type as BusType,
-          capacity: bus.capacity,
+          capacity: bus.capacity || 0,
           available: true // All fetched buses are considered available for rental
         }));
+
+        setBuses(mappedBuses);
         
-        if (mappedBuses.length > 0) {
-          setBuses(mappedBuses);
+        // Clear selected bus if it's no longer in the list
+        if (selectedBusId && !mappedBuses.find(b => b.id === selectedBusId)) {
+          setSelectedBusId("");
         }
       } catch (error) {
-        console.error('Error fetching buses:', error);
-        console.log('Using initial buses as fallback');
+        console.error('Error fetching rental buses:', error);
+        setNotification({
+          type: 'error',
+          message: 'Failed to load available buses. Please try again.'
+        });
+        setBuses([]);
+      } finally {
+        setLoadingBuses(false);
       }
     };
 
-    fetchBusesFromAPI();
-  }, []);
+    fetchAvailableBuses();
+  }, [busType, rentalDate, duration]); // Re-fetch when these change
 
   // Fetch booked dates for selected bus (Routing Checker)
   useEffect(() => {
@@ -326,11 +349,8 @@ export default function BusRentalPage() {
     setter(e.target.value);
   };
 
-  // Filter buses by selected type only - keep all buses visible
-  // Date validation will prevent double-booking
-  const filteredBuses = useMemo(() => {
-    return buses.filter((b) => (!busType || b.type === busType));
-  }, [buses, busType]);
+  // No need to filter buses - already filtered by API
+  const filteredBuses = buses;
 
   // Get selected bus details
   const selectedBus = useMemo(() => {
@@ -596,6 +616,7 @@ export default function BusRentalPage() {
     setValidIdType("");
     setValidIdNumber("");
     setValidIdImage(null);
+    setValidIdImagePreview(null);
     setBusType("");
     setSelectedBusId("");
     setRentalDate("");
@@ -672,108 +693,58 @@ export default function BusRentalPage() {
               confirmButtonColor: '#dc2626'
             });
             
-            // Still save to database with auto-rejected status
-            const token = await fetchBackendToken();
-            if (token) {
-              const rentalData = {
-                CustomerName: customerName.trim(),
-                CustomerContact: contact.trim(),
-                CustomerEmail: email.trim(),
-                CustomerAddress: homeAddress.trim(),
-                ValidIDType: validIdType.trim(),
-                ValidIDNumber: validIdNumber.trim(),
-                ValidIDImage: validIdImage,
-                PickupLocation: pickupLocation.trim(),
-                DropoffLocation: destination.trim(),
-                NumberOfPassengers: parseInt(passengers, 10),
-                RentalDate: new Date(rentalDate).toISOString(),
-                Duration: parseInt(duration, 10),
-                DistanceKM: parseInt(distance, 10),
-                RentalPrice: price,
-                BusID: selectedBusId,
-                SpecialRequirements: `Bus Type: ${busType}, Note: ${note}. AUTO-REJECTED: ${vicinityValidation.reasons.join('; ')}`,
-                PickupLatitude: pickupLat || null,
-                PickupLongitude: pickupLng || null,
-                DropoffLatitude: destLat || null,
-                DropoffLongitude: destLng || null,
-                Status: 'Rejected',
-                RejectionReason: `Auto-Rejected (Outside Vicinity): ${vicinityValidation.reasons.join('; ')}`
-              };
-
-              const baseURL = getBackendBaseURL();
-              await fetch(`${baseURL}/api/rental-request`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(rentalData)
-              });
-            }
-            
             return;
           }
         } catch (error) {
           console.error('Vicinity validation error:', error);
-          // Continue with submission if validation fails (allow manual review)
         } finally {
           setLoading(false);
         }
       }
     }
 
-    // recompute price server-side-style to prevent tampered price submission
-    const recomputedPrice =
-      (busType === "Aircon" ? 5000 : 3000) +
-      (parseInt(duration || "0", 10) || 0) * 1000 +
-      (parseInt(distance || "0", 10) || 0) * 10 +
-      ((parseInt(passengers || "0", 10) || 0) > 40 ? 500 : 0);
-
-    if (recomputedPrice !== price) {
-      setErrors({ price: "Price mismatch. Please recalculate." });
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // Authenticate and get token
       const token = await fetchBackendToken();
       if (!token) {
         throw new Error('Authentication failed');
       }
 
-      // Prepare rental request data
-      const rentalData = {
-        CustomerName: customerName.trim(),
-        CustomerContact: contact.trim(),
-        CustomerEmail: email.trim(),
-        CustomerAddress: homeAddress.trim(),
-        ValidIDType: validIdType.trim(),
-        ValidIDNumber: validIdNumber.trim(),
-        ValidIDImage: validIdImage,
-        PickupLocation: pickupLocation.trim(),
-        DropoffLocation: destination.trim(),
-        NumberOfPassengers: parseInt(passengers, 10),
-        RentalDate: new Date(rentalDate).toISOString(),
-        Duration: parseInt(duration, 10),
-        DistanceKM: parseInt(distance, 10),
-        RentalPrice: price,
-        BusID: selectedBusId,
-        SpecialRequirements: `Bus Type: ${busType}, Note: ${note}`,
-        PickupLatitude: pickupLat || null,
-        PickupLongitude: pickupLng || null,
-        DropoffLatitude: destLat || null,
-        DropoffLongitude: destLng || null,
-      };
+      const formData = new FormData();
+      
+      formData.append('CustomerName', customerName.trim());
+      formData.append('CustomerContact', contact.trim());
+      formData.append('CustomerEmail', email.trim());
+      formData.append('HomeAddress', homeAddress.trim());
+      formData.append('IDType', validIdType.trim());
+      formData.append('IDNumber', validIdNumber.trim());
+      
+      if (validIdImage) {
+        formData.append('IDImage', validIdImage);
+      }
+      
+      formData.append('PickupLocation', pickupLocation.trim());
+      formData.append('DropoffLocation', destination.trim());
+      formData.append('RouteName', `${pickupLocation.trim()} to ${destination.trim()}`);
+      formData.append('NumberOfPassengers', passengers);
+      formData.append('RentalDate', new Date(rentalDate).toISOString());
+      formData.append('Duration', duration);
+      formData.append('DistanceKM', distance);
+      formData.append('TotalRentalAmount', price.toString());
+      formData.append('BusID', selectedBusId);
+      formData.append('SpecialRequirements', `Bus Type: ${busType}, Note: ${note}`);
+      
+      if (pickupLat) formData.append('Pickuplatitude', pickupLat);
+      if (pickupLng) formData.append('Pickuplongitude', pickupLng);
+      if (destLat) formData.append('Dropofflatitude', destLat);
+      if (destLng) formData.append('Dropofflongitude', destLng);
 
-      // Make API call
       const baseURL = getBackendBaseURL();
       const response = await fetch(`${baseURL}/api/rental-request`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         credentials: 'include',
-        body: JSON.stringify(rentalData)
+        body: formData
       });
 
       if (!response.ok) {
@@ -783,10 +754,8 @@ export default function BusRentalPage() {
 
       const createdRequest = await response.json();
 
-      // Get selected bus details for summary
       const selectedBusData = buses.find((b) => b.id === selectedBusId);
 
-      // Prepare summary data
       const summary: RentalSummary = {
         requestId: createdRequest.RentalRequestID || 'N/A',
         customerName,
@@ -795,7 +764,7 @@ export default function BusRentalPage() {
         homeAddress,
         validIdType,
         validIdNumber,
-        validIdImage,
+        validIdImage: validIdImagePreview,
         busType,
         busName: selectedBusData?.name || 'N/A',
         rentalDate,
@@ -808,11 +777,8 @@ export default function BusRentalPage() {
         note: note || undefined,
       };
 
-      // Set summary and show success modal
       setRentalSummary(summary);
       setShowSuccessModal(true);
-
-      // Reset form
       resetForm();
       
     } catch (err) {
@@ -840,7 +806,6 @@ export default function BusRentalPage() {
     <div className={styles.wideCard}>
       <div className={styles.cardBody}>
 
-        {/* Notification Top-Right */}
         {notification.type && (
           <div
             style={{
@@ -861,7 +826,6 @@ export default function BusRentalPage() {
           </div>
         )}
 
-        {/* Valid ID Modal */}
         <ValidIdModal
           show={showValidIdModal}
           onClose={() => setShowValidIdModal(false)}
@@ -873,15 +837,14 @@ export default function BusRentalPage() {
         <p className={styles.description}>Fill out the form below to create a rental request.</p>
 
         <div className={styles.mainGrid}>
-          {/* ===== Left: Form ===== */}
           <form className={styles.formContainer} onSubmit={handleSubmit}>
+            {/* Customer Information Section - keeping existing code */}
             <div className={styles.sectionCard}>
               <h3 className={styles.sectionTitle}>
                 <User className={styles.sectionIcon} />
                 Customer Information
               </h3>
 
-              {/* Customer Name */}
               <div className={styles.fieldGrid}>
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Customer Name</label>
@@ -898,7 +861,6 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Contact Number */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Contact Number</label>
                   <input
@@ -916,7 +878,6 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Email */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Email</label>
                   <input
@@ -933,7 +894,6 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Valid ID */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Valid ID</label>
                   <div
@@ -961,7 +921,6 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Valid ID Number - shown only when ID type is selected */}
                 {validIdType && (
                   <>
                     <div className={styles.inputGroup} style={{ gridColumn: 'span 2' }}>
@@ -979,7 +938,6 @@ export default function BusRentalPage() {
                       )}
                     </div>
 
-                    {/* Valid ID Image Upload */}
                     <div className={styles.inputGroup} style={{ gridColumn: 'span 2' }}>
                       <label className={styles.inputLabel}>Upload ID Picture</label>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -989,20 +947,19 @@ export default function BusRentalPage() {
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
-                              // Validate file size (max 5MB)
                               if (file.size > 5 * 1024 * 1024) {
                                 setErrors({ ...errors, validIdImage: 'Image size must be less than 5MB' });
                                 return;
                               }
-                              // Validate file type
                               if (!file.type.startsWith('image/')) {
                                 setErrors({ ...errors, validIdImage: 'Please upload a valid image file' });
                                 return;
                               }
-                              // Convert to base64
+                              setValidIdImage(file);
+                              
                               const reader = new FileReader();
                               reader.onloadend = () => {
-                                setValidIdImage(reader.result as string);
+                                setValidIdImagePreview(reader.result as string);
                                 const newErrors = { ...errors };
                                 delete newErrors.validIdImage;
                                 setErrors(newErrors);
@@ -1018,7 +975,7 @@ export default function BusRentalPage() {
                             <AlertCircle className={styles.errorIcon} /> {errors.validIdImage}
                           </p>
                         )}
-                        {validIdImage && (
+                        {validIdImagePreview && (
                           <div style={{ 
                             position: 'relative', 
                             marginTop: '0.5rem',
@@ -1031,7 +988,10 @@ export default function BusRentalPage() {
                               <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#059669' }}>✓ Image Uploaded</span>
                               <button
                                 type="button"
-                                onClick={() => setValidIdImage(null)}
+                                onClick={() => {
+                                  setValidIdImage(null);
+                                  setValidIdImagePreview(null);
+                                }}
                                 style={{
                                   padding: '0.25rem 0.75rem',
                                   fontSize: '0.75rem',
@@ -1047,7 +1007,7 @@ export default function BusRentalPage() {
                               </button>
                             </div>
                             <img
-                              src={validIdImage}
+                              src={validIdImagePreview}
                               alt="Valid ID Preview"
                               style={{
                                 width: '100%',
@@ -1064,7 +1024,6 @@ export default function BusRentalPage() {
                   </>
                 )}
 
-                {/* Home Address */}
                 <div className={styles.inputGroup} style={{ gridColumn: 'span 2' }}>
                   <label className={styles.inputLabel}>Home Address</label>
                   <input
@@ -1088,7 +1047,6 @@ export default function BusRentalPage() {
                 Rental Details
               </h3>
 
-              {/* Date Conflict Warning */}
               {rentalDate && endDate && selectedBusId && isDateRangeBooked(rentalDate, endDate) && (
                 <div style={{
                   padding: '1rem',
@@ -1107,8 +1065,8 @@ export default function BusRentalPage() {
                 </div>
               )}
 
-              {/* Bus Type */}
               <div className={styles.fieldGrid}>
+                {/* Bus Type */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Bus Type</label>
                   <select
@@ -1130,30 +1088,40 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Available Bus */}
+                {/* Available Bus with Loading State */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Available Bus</label>
                   <select
                     className={`${styles.selectField} ${errors.selectedBusId ? styles.selectFieldError : ""}`}
                     value={selectedBusId}
                     onChange={(e) => setSelectedBusId(e.target.value)}
+                    disabled={loadingBuses || !busType}
                   >
-                    <option value="">-- Select Bus --</option>
-                    {filteredBuses.length === 0 && <option value="">No buses found for selected type</option>}
-                    {filteredBuses.map((b) => (
+                    <option value="">
+                      {loadingBuses ? "Loading buses..." : !busType ? "Select bus type first" : "-- Select Bus --"}
+                    </option>
+                    {!loadingBuses && filteredBuses.length === 0 && busType && (
+                      <option value="">No buses available for selected criteria</option>
+                    )}
+                    {!loadingBuses && filteredBuses.map((b) => (
                       <option key={b.id} value={b.id}>
-                        {b.name} — {b.capacity} seats
+                        {b.name} – {b.capacity} seats
                       </option>
                     ))}
                   </select>
+                  {loadingBuses && (
+                    <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', fontStyle: 'italic' }}>
+                      🔄 Loading available buses based on your filters...
+                    </p>
+                  )}
+                  {!loadingBuses && busType && rentalDate && duration && filteredBuses.length > 0 && (
+                    <p style={{ fontSize: '0.875rem', color: '#059669', marginTop: '0.5rem', fontWeight: 500 }}>
+                      ✓ {filteredBuses.length} bus{filteredBuses.length > 1 ? 'es' : ''} available for selected dates
+                    </p>
+                  )}
                   {selectedBusId && bookedDates.length > 0 && !loadingBookedDates && (
                     <p style={{ fontSize: '0.875rem', color: '#f59e0b', marginTop: '0.5rem', fontWeight: 500 }}>
                       ⚠️ This bus has existing bookings. Check available dates below.
-                    </p>
-                  )}
-                  {selectedBusId && bookedDates.length === 0 && !loadingBookedDates && (
-                    <p style={{ fontSize: '0.875rem', color: '#10b981', marginTop: '0.5rem', fontWeight: 500 }}>
-                      ✓ This bus is available for all dates
                     </p>
                   )}
                   {errors.selectedBusId && (
@@ -1163,7 +1131,9 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Rental Date Range */}
+                {/* Rest of the rental details fields remain the same */}
+                {/* Date range, distance, destination, pickup location, passengers */}
+                
                 <div className={styles.inputGroup} style={{ gridColumn: 'span 2' }}>
                   <label className={styles.inputLabel}>
                     <Calendar size={16} style={{ display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
@@ -1221,7 +1191,6 @@ export default function BusRentalPage() {
                       Duration: {duration} day{parseInt(duration) > 1 ? 's' : ''}
                     </p>
                   )}
-                  {/* Show booked date ranges */}
                   {selectedBusId && bookedDates.length > 0 && !loadingBookedDates && (
                     <div style={{ 
                       marginTop: '0.75rem', 
@@ -1231,7 +1200,7 @@ export default function BusRentalPage() {
                       border: '1px solid #fed7aa'
                     }}>
                       <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#9a3412', marginBottom: '0.5rem' }}>
-                        � Unavailable Dates (Already Booked):
+                        📅 Unavailable Dates (Already Booked):
                       </p>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                         {bookedDates.map((booking, idx) => (
@@ -1252,7 +1221,6 @@ export default function BusRentalPage() {
                       ✓ This bus has no existing bookings - all dates are available!
                     </p>
                   )}
-                  {/* Check if selected dates conflict with booked dates */}
                   {rentalDate && endDate && selectedBusId && isDateRangeBooked(rentalDate, endDate) && (
                     <div style={{ 
                       marginTop: '0.5rem', 
@@ -1273,7 +1241,6 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Distance (km) - Auto-calculated */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>
                     <MapPin size={16} style={{ display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
@@ -1309,7 +1276,6 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Destination */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Destination</label>
                   <input
@@ -1326,7 +1292,6 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Pickup Location */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Pickup Location</label>
                   <input
@@ -1343,7 +1308,6 @@ export default function BusRentalPage() {
                   )}
                 </div>
 
-                {/* Passengers */}
                 <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>Passengers</label>
                   <input
@@ -1376,7 +1340,6 @@ export default function BusRentalPage() {
               </div>
             </div>
 
-            {/* ===== Note Section ===== */}
             <div className={styles.sectionCard}>
               <h3 className={styles.sectionTitle}>
                 <Info className={styles.sectionIcon} />
@@ -1398,9 +1361,8 @@ export default function BusRentalPage() {
             </div>
           </form>
 
-          {/* ===== Right: Live Preview & Price Calculator ===== */}
+          {/* Price Calculator and Preview remain the same */}
           <div className={styles.priceCalculator}>
-            {/* Price Calculator Header */}
             <div className={styles.calculatorHeader}>
               <Calculator />
               <span className={styles.calculatorTitle}>
@@ -1408,7 +1370,6 @@ export default function BusRentalPage() {
                 {priceLoading && <span style={{ marginLeft: '8px', fontSize: '12px', opacity: 0.7 }}>Calculating...</span>}
               </span>
 
-              {/* Tooltip */}
               <div
                 className={styles.tooltipContainer}
                 onMouseEnter={() => setShowTooltip(true)}
@@ -1421,7 +1382,6 @@ export default function BusRentalPage() {
               </div>
             </div>
 
-            {/* Price Error Display */}
             {priceError && (
               <div style={{ 
                 padding: '8px 12px', 
@@ -1439,7 +1399,6 @@ export default function BusRentalPage() {
               </div>
             )}
 
-            {/* Price Breakdown */}
             {price > 0 ? (
               <div className={styles.priceBreakdown} style={{ opacity: priceLoading ? 0.6 : 1 }}>
                 <div className={styles.priceRow}>
@@ -1481,7 +1440,6 @@ export default function BusRentalPage() {
               </div>
             )}
 
-            {/* Live Preview Section */}
             <div className={styles.previewSection}>
               <div className={styles.previewHeader}>
                 <Receipt size={18} />
@@ -1489,7 +1447,6 @@ export default function BusRentalPage() {
               </div>
 
               <div className={styles.previewContent}>
-                {/* Customer Information */}
                 <div className={styles.previewRow}>
                   <span className={styles.previewLabel}>Customer Name</span>
                   <span className={styles.previewValue}>
@@ -1525,11 +1482,11 @@ export default function BusRentalPage() {
                   </span>
                 </div>
 
-                {validIdImage && (
+                {validIdImagePreview && (
                   <div className={styles.previewRow} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
                     <span className={styles.previewLabel} style={{ marginBottom: '0.5rem' }}>ID Image</span>
                     <img
-                      src={validIdImage}
+                      src={validIdImagePreview}
                       alt="Valid ID"
                       style={{
                         width: '100%',
@@ -1608,7 +1565,6 @@ export default function BusRentalPage() {
                 </div>
               </div>
 
-              {/* Status indicator - now as button when ready */}
               <div className={styles.previewStatus}>
                 {isFormReady ? (
                   <button
@@ -1639,7 +1595,7 @@ export default function BusRentalPage() {
           </div>
         </div>
 
-        {/* LocationPickerModal for Pickup Location */}
+        {/* Modals remain the same */}
         <LocationPickerModal
           show={showPickupModal}
           onClose={() => setShowPickupModal(false)}
@@ -1652,7 +1608,6 @@ export default function BusRentalPage() {
           locationType="pickup"
         />
 
-        {/* LocationPickerModal for Destination */}
         <LocationPickerModal
           show={showDestinationModal}
           onClose={() => setShowDestinationModal(false)}
@@ -1665,7 +1620,6 @@ export default function BusRentalPage() {
           locationType="destination"
         />
 
-        {/* Success Modal */}
         {rentalSummary && (
           <SuccessPageModal
             show={showSuccessModal}

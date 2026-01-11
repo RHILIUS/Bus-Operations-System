@@ -115,20 +115,19 @@ export async function fetchBusesFullWithToken(): Promise<any[]> {
 }
 
 export async function fetchRentDriversWithToken(token: string, startDate?: string, duration?: number): Promise<any[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
-  if (!baseUrl) throw new Error("Base URL is not defined in environment variables.");
-
   const query = new URLSearchParams();
   if (startDate && duration) {
     query.append('startDate', startDate);
     query.append('duration', String(duration));
   }
 
-  const response = await fetch(`${baseUrl}/api/external/drivers/rent?${query.toString()}`, {
+  const url = query.toString() ? `${DRIVERS_RENT_URL}?${query.toString()}` : DRIVERS_RENT_URL;
+
+  const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    credentials: 'include', // <-- include cookies/session credentials
+    credentials: 'include',
     cache: 'no-store',
   });
 
@@ -147,9 +146,6 @@ export async function fetchRentBusesWithToken(
   startDate?: string,
   duration?: number
 ): Promise<any[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
-  if (!baseUrl) throw new Error("Base URL is not defined in environment variables.");
-
   const query = new URLSearchParams();
   if (busType) query.append('busType', busType);
   if (startDate && duration) {
@@ -157,11 +153,13 @@ export async function fetchRentBusesWithToken(
     query.append('duration', String(duration));
   }
 
-  const response = await fetch(`${baseUrl}/api/external/buses/rent?${query.toString()}`, {
+  const url = query.toString() ? `${BUSES_RENT_URL}?${query.toString()}` : BUSES_RENT_URL;
+
+  const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    credentials: 'include', // <-- include cookies/session credentials
+    credentials: 'include',
     cache: 'no-store',
   });
 

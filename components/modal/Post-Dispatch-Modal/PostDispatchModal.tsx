@@ -64,7 +64,6 @@ const PostDispatchModal: React.FC<BusAssignmentModalProps> = ({
 
     const today = new Date();
 
-    // Find the quota policy for today
     const found = busInfo.RegularBusAssignment.QuotaPolicies.find(qp => {
       const start = new Date(qp.StartDate);
       const end = new Date(qp.EndDate);
@@ -94,9 +93,8 @@ const PostDispatchModal: React.FC<BusAssignmentModalProps> = ({
     return sum + sold * value;
   }, 0);
 
-  // Percentage Quota Calculations
-  const companyShareDecimal = activeQuota?.Percentage?.Percentage ?? 0; // use as-is for calculations
-  const companySharePercent = companyShareDecimal * 100; // for display
+  const companyShareDecimal = activeQuota?.Percentage?.Percentage ?? 0;
+  const companySharePercent = companyShareDecimal * 100;
   const totalSales = sales ?? 0;
   const pettyCash = busInfo.RegularBusAssignment?.LatestBusTrip?.PettyCash ?? 0;
   const tripExpenseValue = tripExpense ?? 0;
@@ -105,12 +103,10 @@ const PostDispatchModal: React.FC<BusAssignmentModalProps> = ({
   let remainingMoney = 0;
 
   if (activeQuota?.Percentage) {
-    // Always use: (TripSales × Quota%) + (PettyCash - TripExpenses)
     companyMoney = (totalSales * companyShareDecimal) + (pettyCash - tripExpenseValue);
     remainingMoney = (totalSales * (1 - companyShareDecimal));
   }
 
-  // Fixed Quota Calculation (unchanged)
   const fixedQuotaTotal = (activeQuota?.Fixed?.Quota ?? 0)
     + (busInfo.RegularBusAssignment?.LatestBusTrip?.PettyCash ?? 0)
     - (tripExpense ?? 0);
@@ -185,18 +181,50 @@ const PostDispatchModal: React.FC<BusAssignmentModalProps> = ({
                 <p className={styles['modern-info-value']}>{busInfo.conductorName}</p>
               </div>
             </div>
+
+            {/* Ticket Information Display */}
+            {ticketBusTrips && ticketBusTrips.length > 0 && (
+              <div style={{ marginBottom: '20px' }}>
+                <h4 className={styles.sectionTitle}>Ticket Information</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+                  {ticketBusTrips.map((ticket, index) => (
+                    <div 
+                      key={ticket.TicketBusTripID} 
+                      style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '12px 16px',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '8px',
+                        border: '1px solid #dee2e6',
+                        fontSize: '0.95rem'
+                      }}
+                    >
+                      <span style={{ fontWeight: '600', color: '#495057' }}>
+                        Ticket Type {index + 1} (₱{ticket.TicketType.Value})
+                      </span>
+                      <span style={{ color: '#6c757d' }}>
+                        Starting: <strong style={{ color: '#212529' }}>{ticket.StartingIDNumber}</strong>
+                        {' | '}
+                        Ending: <strong style={{ color: '#212529' }}>{ticket.EndingIDNumber}</strong>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className={styles['modern-quota-container']}>
               <div className={styles['modern-quota-header']}>
                 Quota to be Met
               </div>
               {activeQuota?.Fixed ? (
                 <div className={styles['modern-quota-content']}>
-                  {/* Base Quota on top */}
                   <div className={styles['modern-quota-total']}>
                     Base Quota: ₱ {activeQuota.Fixed.Quota.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </div>
                   <div className={styles['modern-share-grid']}>
-                    {/* Company Share */}
                     <div className={`${styles['modern-share-card']} ${styles['modern-share-company']}`}>
                       <div className={styles['modern-share-amount']}>
                         ₱ {fixedQuotaTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -206,7 +234,6 @@ const PostDispatchModal: React.FC<BusAssignmentModalProps> = ({
                         (Base Quota + Petty Cash (₱ {pettyCash.toLocaleString(undefined, { minimumFractionDigits: 2 })}) - Trip Expense (₱ {tripExpenseValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}))
                       </div>
                     </div>
-                    {/* Driver/Conductor Share */}
                     <div className={`${styles['modern-share-card']} ${styles['modern-share-remaining']}`}>
                       <div className={styles['modern-share-amount']}>
                         ₱ {(totalSales - fixedQuotaTotal).toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -309,7 +336,6 @@ const PostDispatchModal: React.FC<BusAssignmentModalProps> = ({
                           setTripExpense(0);
                         } else {
                           let num = Math.max(0, Number(val));
-                          // Limit to 2 decimal places
                           num = Math.floor(num * 100) / 100;
                           setTripExpense(num > 99999 ? 99999 : num);
                         }
@@ -359,7 +385,6 @@ const PostDispatchModal: React.FC<BusAssignmentModalProps> = ({
                           setSales(undefined);
                         } else {
                           let num = Math.max(0, Math.min(99999, Number(val)));
-                          // Limit to 2 decimal places
                           num = Math.floor(num * 100) / 100;
                           setSales(num);
                         }

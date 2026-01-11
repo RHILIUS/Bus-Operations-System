@@ -8,28 +8,30 @@ import '../../../../styles/globals.css';
 // --- Shared imports ---
 import { Loading, FilterDropdown, PaginationComponent, Swal } from '@/shared/imports';
 import type { FilterSection } from '@/shared/imports';
-
-const BASE_URL = process.env.NEXT_PUBLIC_Backend_BaseURL?.replace(/['"]/g, "");
-const DAMAGE_REPORTS_URL = `${BASE_URL}/api/damage-report`;
-const MAINTENANCE_WORK_URL = `${BASE_URL}/api/maintenance-work`;
+import { fetchDamageReports, updateDamageReportStatus, deleteDamageReport } from '@/lib/apiCalls/damage-report';
 
 interface DamageReport {
-  id: number;
   DamageReportID: string;
-  bus_no: string;
-  check_date: string;
-  battery: boolean;
-  lights: boolean;
-  oil: boolean;
-  water: boolean;
-  brake: boolean;
-  air: boolean;
-  gas: boolean;
-  engine: boolean;
-  tireCondition: boolean;
-  notes: string;
-  createdBy: string;
-  status: 'NA' | 'Pending' | 'Accepted' | 'Rejected';
+  BusAssignmentID: string | null;
+  BusID: string | null;
+  BusPlateNumber: string | null;
+  RouteName: string | null;
+  Status: 'NA' | 'Pending' | 'Accepted' | 'Rejected';
+  Note: string | null;
+  CheckDate: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+  CreatedBy: string | null;
+  UpdatedBy: string | null;
+  Battery: boolean;
+  Lights: boolean;
+  Oil: boolean;
+  Water: boolean;
+  Brake: boolean;
+  Air: boolean;
+  Gas: boolean;
+  Engine: boolean;
+  TireCondition: boolean;
 }
 
 const DamageReportsPage: React.FC = () => {
@@ -65,54 +67,25 @@ const DamageReportsPage: React.FC = () => {
     sortBy: 'date_newest',
   });
 
+  const loadDamageReports = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchDamageReports();
+      setDamageReports(data);
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.error || error?.message || 'Failed to load damage reports.';
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorMessage,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchDamageReports = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(DAMAGE_REPORTS_URL, {
-          credentials: 'include',
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch damage reports');
-        }
-
-        const data = await response.json();
-
-        // Transform API data to match frontend interface
-        const transformedData: DamageReport[] = data.map((item: any, index: number) => ({
-          id: index + 1,
-          DamageReportID: item.DamageReportID,
-          bus_no: item.RentalBusAssignment?.BusAssignment?.BusID || 'N/A',
-          check_date: item.CheckDate,
-          battery: item.Battery,
-          lights: item.Lights,
-          oil: item.Oil,
-          water: item.Water,
-          brake: item.Brake,
-          air: item.Air,
-          gas: item.Gas,
-          engine: item.Engine,
-          tireCondition: item.TireCondition,
-          notes: item.Note || '',
-          createdBy: item.CreatedBy || 'System',
-          status: item.Status || 'Pending',
-        }));
-
-        setDamageReports(transformedData);
-      } catch (error) {
-        console.error('Error fetching damage reports:', error);
-        await Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to load damage reports. Please try again.',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDamageReports();
+    loadDamageReports();
   }, []);
 
   const handleApplyFilters = (filterValues: Record<string, any>) => {
@@ -125,36 +98,33 @@ const DamageReportsPage: React.FC = () => {
     let filtered = [...damageReports];
 
     // Tab filter (status)
-    filtered = filtered.filter(record => record.status === activeTab);
+    filtered = filtered.filter(record => record.Status === activeTab);
 
     // Search filter
     if (searchQuery) {
       const lower = searchQuery.toLowerCase();
       filtered = filtered.filter(record =>
-        record.bus_no.toLowerCase().includes(lower) ||
-        record.notes.toLowerCase().includes(lower) ||
-        record.DamageReportID.toLowerCase().includes(lower)
+        (record.BusID?.toLowerCase().includes(lower)) ||
+        (record.BusPlateNumber?.toLowerCase().includes(lower)) ||
+        (record.Note?.toLowerCase().includes(lower)) ||
+        (record.DamageReportID?.toLowerCase().includes(lower)) ||
+        (record.RouteName?.toLowerCase().includes(lower))
       );
     }
-
-    // Status filter (removed since we're using tabs now)
-    // if (activeFilters.statusFilter && activeFilters.statusFilter !== 'all') {
-    //   filtered = filtered.filter(record => record.status === activeFilters.statusFilter);
-    // }
 
     // Sorting
     switch (activeFilters.sortBy) {
       case 'date_newest':
-        filtered.sort((a, b) => new Date(b.check_date).getTime() - new Date(a.check_date).getTime());
+        filtered.sort((a, b) => new Date(b.CheckDate).getTime() - new Date(a.CheckDate).getTime());
         break;
       case 'date_oldest':
-        filtered.sort((a, b) => new Date(a.check_date).getTime() - new Date(b.check_date).getTime());
+        filtered.sort((a, b) => new Date(a.CheckDate).getTime() - new Date(b.CheckDate).getTime());
         break;
       case 'bus_asc':
-        filtered.sort((a, b) => a.bus_no.localeCompare(b.bus_no));
+        filtered.sort((a, b) => (a.BusID || '').localeCompare(b.BusID || ''));
         break;
       case 'bus_desc':
-        filtered.sort((a, b) => b.bus_no.localeCompare(a.bus_no));
+        filtered.sort((a, b) => (b.BusID || '').localeCompare(a.BusID || ''));
         break;
       default:
         break;
@@ -174,15 +144,15 @@ const DamageReportsPage: React.FC = () => {
 
   const getDamageItems = (record: DamageReport) => {
     const damaged = [];
-    if (!record.battery) damaged.push('Battery');
-    if (!record.lights) damaged.push('Lights');
-    if (!record.oil) damaged.push('Oil');
-    if (!record.water) damaged.push('Water');
-    if (!record.brake) damaged.push('Brake');
-    if (!record.air) damaged.push('Air');
-    if (!record.gas) damaged.push('Gas');
-    if (!record.engine) damaged.push('Engine');
-    if (!record.tireCondition) damaged.push('Tire Condition');
+    if (!record.Battery) damaged.push('Battery');
+    if (!record.Lights) damaged.push('Lights');
+    if (!record.Oil) damaged.push('Oil');
+    if (!record.Water) damaged.push('Water');
+    if (!record.Brake) damaged.push('Brake');
+    if (!record.Air) damaged.push('Air');
+    if (!record.Gas) damaged.push('Gas');
+    if (!record.Engine) damaged.push('Engine');
+    if (!record.TireCondition) damaged.push('Tire Condition');
     
     return damaged.length > 0 ? damaged.join(', ') : 'No damage reported';
   };
@@ -200,6 +170,7 @@ const DamageReportsPage: React.FC = () => {
         return <span className={styles.statusPending}>Pending</span>;
     }
   };
+
   const handleAccept = async (damageReportId: string) => {
     const result = await Swal.fire({
       title: 'Accept Damage Report?',
@@ -214,37 +185,8 @@ const DamageReportsPage: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        // Step 1: Update damage report status to Accepted
-        const statusResponse = await fetch(`${DAMAGE_REPORTS_URL}?damageReportId=${damageReportId}`, {
-          method: 'PATCH',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status: 'Accepted' }),
-        });
-
-        if (!statusResponse.ok) {
-          throw new Error('Failed to update damage report status');
-        }
-
-        // Step 2: Create maintenance work
-        const maintenanceResponse = await fetch(MAINTENANCE_WORK_URL, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            damageReportId: damageReportId,
-            priority: 'Medium',
-          }),
-        });
-
-        if (!maintenanceResponse.ok) {
-          throw new Error('Failed to create maintenance work');
-        }
-
+        await updateDamageReportStatus(damageReportId, 'Accepted');
+        
         await Swal.fire({
           icon: 'success',
           title: 'Accepted',
@@ -253,20 +195,14 @@ const DamageReportsPage: React.FC = () => {
           showConfirmButton: false
         });
 
-        // Update the status in the local state
-        setDamageReports(prevReports =>
-          prevReports.map(report =>
-            report.DamageReportID === damageReportId
-              ? { ...report, status: 'Accepted' }
-              : report
-          )
-        );
-      } catch (error) {
-        console.error('Error accepting damage report:', error);
+        // Reload damage reports
+        await loadDamageReports();
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.error || error?.message || 'Failed to accept damage report.';
         await Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Failed to accept damage report. Please try again.',
+          text: errorMessage,
         });
       }
     }
@@ -275,44 +211,35 @@ const DamageReportsPage: React.FC = () => {
   const handleReject = async (damageReportId: string) => {
     const result = await Swal.fire({
       title: 'Reject Damage Report?',
-      text: 'This will permanently delete the damage report. This action cannot be undone.',
+      text: 'This will mark the damage report as rejected.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#dc3545',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, Delete',
+      confirmButtonText: 'Yes, Reject',
       cancelButtonText: 'Cancel'
     });
 
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`${DAMAGE_REPORTS_URL}?damageReportId=${damageReportId}`, {
-          method: 'DELETE',
-          credentials: 'include',
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to delete damage report');
-        }
+        await updateDamageReportStatus(damageReportId, 'Rejected');
 
         await Swal.fire({
           icon: 'success',
-          title: 'Deleted',
-          text: 'Damage report has been deleted.',
+          title: 'Rejected',
+          text: 'Damage report has been rejected.',
           timer: 2000,
           showConfirmButton: false
         });
 
-        // Refresh the data by removing the deleted report from state
-        setDamageReports(prevReports => 
-          prevReports.filter(report => report.DamageReportID !== damageReportId)
-        );
-      } catch (error) {
-        console.error('Error deleting damage report:', error);
+        // Reload damage reports
+        await loadDamageReports();
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.error || error?.message || 'Failed to reject damage report.';
         await Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Failed to delete damage report. Please try again.',
+          text: errorMessage,
         });
       }
     }
@@ -343,7 +270,6 @@ const DamageReportsPage: React.FC = () => {
 
         {/* Tab Navigation */}
         <div className={styles.tabContainer}>
-          {/* Sliding indicator background */}
           <div 
             className={styles.tabIndicator}
             style={{
@@ -361,7 +287,7 @@ const DamageReportsPage: React.FC = () => {
           >
             Pending
             <span className={styles.tabBadge}>
-              {damageReports.filter(r => r.status === 'Pending').length}
+              {damageReports.filter(r => r.Status === 'Pending').length}
             </span>
           </button>
           <button
@@ -373,7 +299,7 @@ const DamageReportsPage: React.FC = () => {
           >
             Accepted
             <span className={styles.tabBadge}>
-              {damageReports.filter(r => r.status === 'Accepted').length}
+              {damageReports.filter(r => r.Status === 'Accepted').length}
             </span>
           </button>
           <button
@@ -385,7 +311,7 @@ const DamageReportsPage: React.FC = () => {
           >
             Rejected
             <span className={styles.tabBadge}>
-              {damageReports.filter(r => r.status === 'Rejected').length}
+              {damageReports.filter(r => r.Status === 'Rejected').length}
             </span>
           </button>
         </div>
@@ -405,6 +331,8 @@ const DamageReportsPage: React.FC = () => {
                 <tr>
                   <th>Report ID</th>
                   <th>Bus No.</th>
+                  <th>Plate Number</th>
+                  <th>Route</th>
                   <th>Check Date</th>
                   <th>Damaged Items</th>
                   <th>Notes</th>
@@ -416,21 +344,23 @@ const DamageReportsPage: React.FC = () => {
               <tbody>
                 {displayedData.length > 0 ? (
                   displayedData.map((record) => (
-                    <tr key={record.id}>
+                    <tr key={record.DamageReportID}>
                       <td>{record.DamageReportID}</td>
-                      <td>{record.bus_no}</td>
-                      <td>{new Date(record.check_date).toLocaleDateString()}</td>
+                      <td>{record.BusID || 'N/A'}</td>
+                      <td>{record.BusPlateNumber || 'N/A'}</td>
+                      <td>{record.RouteName || 'N/A'}</td>
+                      <td>{new Date(record.CheckDate).toLocaleDateString()}</td>
                       <td>
                         <span className={getDamageItems(record) === 'No damage reported' ? styles.noDamage : styles.hasDamage}>
                           {getDamageItems(record)}
                         </span>
                       </td>
-                      <td>{record.notes || '—'}</td>
-                      <td>{record.createdBy}</td>
-                      <td>{getStatusBadge(record.status)}</td>
+                      <td>{record.Note || '—'}</td>
+                      <td>{record.CreatedBy || 'System'}</td>
+                      <td>{getStatusBadge(record.Status)}</td>
                       <td>
                         <div className={styles.actionButtons}>
-                          {record.status === 'NA' ? (
+                          {record.Status === 'NA' ? (
                             <span className={styles.noActionNeeded}>No Action Needed</span>
                           ) : (
                             <>
@@ -438,7 +368,7 @@ const DamageReportsPage: React.FC = () => {
                                 className={styles.acceptBtn}
                                 onClick={() => handleAccept(record.DamageReportID)}
                                 title="Accept Report"
-                                disabled={record.status !== 'Pending'}
+                                disabled={record.Status !== 'Pending'}
                               >
                                 Accept
                               </button>
@@ -446,7 +376,7 @@ const DamageReportsPage: React.FC = () => {
                                 className={styles.rejectBtn}
                                 onClick={() => handleReject(record.DamageReportID)}
                                 title="Reject Report"
-                                disabled={record.status !== 'Pending'}
+                                disabled={record.Status !== 'Pending'}
                               >
                                 Reject
                               </button>
@@ -458,7 +388,7 @@ const DamageReportsPage: React.FC = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className={styles.noRecords}>
+                    <td colSpan={10} className={styles.noRecords}>
                       No damage reports found.
                     </td>
                   </tr>

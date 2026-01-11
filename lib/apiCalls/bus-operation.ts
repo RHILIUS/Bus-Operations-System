@@ -44,9 +44,6 @@ export async function fetchBusAssignmentsWithStatus(status?: string): Promise<an
     const currentBusTripID = assignment.RegularBusAssignment?.LatestBusTrip?.BusTripID;
     const damageReports = assignment.RegularBusAssignment?.LatestBusTrip?.DamageReports ?? [];
     const hasVehicleCheck = damageReports.length > 0;
-    
-    // Debug logging
-    console.log(`Bus ${bus?.license_plate}: BusTripID=${currentBusTripID}, DamageReports=${damageReports.length}, hasVehicleCheck=${hasVehicleCheck}`);
 
     return {
       ...assignment,
@@ -63,7 +60,6 @@ export async function fetchBusAssignmentsWithStatus(status?: string): Promise<an
 
 export async function updateBusAssignmentData(BusAssignmentID: string, data: any): Promise<any> {
   const baseUrl = process.env.NEXT_PUBLIC_Backend_BaseURL;
-  console.log(BusAssignmentID, data);
 
   if (!baseUrl) throw new Error("Base URL is not defined in environment variables.");
 
@@ -74,7 +70,7 @@ export async function updateBusAssignmentData(BusAssignmentID: string, data: any
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: 'include', // Send token via cookie only
+    credentials: 'include',
     body: JSON.stringify(data),
   });
 
@@ -98,23 +94,19 @@ export async function createVehicleCheckDamageReport(data: {
 
   if (!baseUrl) throw new Error("Base URL is not defined in environment variables.");
 
-  // Convert vehicle condition to damage report format
-  // Find items that are NOT OK (value is false)
-  const damagedItems = Object.entries(data.vehicleCondition)
-    .filter(([_, isOk]) => !isOk)
-    .map(([item]) => item);
+  // Log the incoming data for debugging
+  console.log('[Frontend] Creating vehicle check with data:', data);
 
-  const hasDamage = damagedItems.length > 0;
-
+  // The vehicleCondition already has proper backend field names (Battery, TireCondition, etc.)
+  // from the VehicleCheckModal
   const reportData = {
+    BusAssignmentID: data.busAssignmentID,
     BusTripID: data.busTripID,
-    Description: hasDamage
-      ? `Vehicle Check - Issues found: ${damagedItems.join(', ')}`
-      : 'Vehicle Check - No issues found',
-    Status: hasDamage ? 'Pending' : 'NA', // NA for no damage, Pending for damage to be addressed
-    VehicleCondition: data.vehicleCondition,
+    VehicleCondition: data.vehicleCondition, // Send as-is with proper field names
     Notes: data.note,
   };
+
+  console.log('[Frontend] Sending to backend:', reportData);
 
   const response = await fetch(`${DAMAGE_REPORT_URL}/vehicle-check`, {
     method: "POST",
@@ -132,6 +124,7 @@ export async function createVehicleCheckDamageReport(data: {
   }
 
   const json = await response.json();
+  console.log('[Frontend] Vehicle check created successfully:', json);
   return json;
 }
 

@@ -5,9 +5,9 @@ import styles from './completed.module.css';
 import '../../../../styles/globals.css';
 import { Loading, FilterDropdown, PaginationComponent, Swal } from '@/shared/imports';
 import { FilterSection } from '@/components/ui/FilterDropDown/FilterDropdown';
-import ViewDamageModal from '@/components/modal/View-Damage-Modal/ViewDamageModal'; // import new modal
+import ViewDamageModal from '@/components/modal/View-Damage-Modal/ViewDamageModal';
 import CustomerInfoModal from '@/components/modal/Customer-Info-Modal/CustomerInfoModal';
-import { RiEyeLine } from 'react-icons/ri'; // eye icon
+import { RiEyeLine } from 'react-icons/ri';
 import { fetchRentalRequestsByStatus } from '@/lib/apiCalls/rental-request';
 
 interface BusRental {
@@ -53,78 +53,81 @@ const CompletedRentalPage: React.FC = () => {
     sortBy: 'created_newest',
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetchRentalRequestsByStatus('Completed');
 
-useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const res = await fetchRentalRequestsByStatus('Completed'); // cookie-based auth handled
+        if (!Array.isArray(res)) throw new Error('Invalid response from server');
 
-      if (!Array.isArray(res)) throw new Error('Invalid response from server');
+        const mappedData: BusRental[] = res.map((r: any) => {
+          // ✅ FIX: Access damage reports from the correct nested path
+          const damageReports = r.RentalBusAssignment?.BusAssignment?.DamageReports ?? [];
+          const latestDamageReport = damageReports.length > 0 
+            ? damageReports[damageReports.length - 1] 
+            : null;
 
-      const mappedData: BusRental[] = res.map((r: any) => {
-        // Get the most recent damage report if it exists
-        const latestDamageReport = r.DamageReports && r.DamageReports.length > 0
-          ? r.DamageReports[r.DamageReports.length - 1] // Get the last (most recent) damage report
-          : null;
+          // Get driver names
+          const drivers = r.RentalBusAssignment?.RentalDrivers ?? [];
+          const driverNames = drivers
+            .map((d: any) => d.Driver?.DriverName || d.DriverID)
+            .join(' / ');
 
-        return {
-          id: r.RentalRequestID ?? '',
-          customerName: r.CustomerName ?? 'N/A',
-          contactNo: r.CustomerContact ?? 'N/A',
-          email: r.CustomerEmail ?? 'N/A',
-          homeAddress: r.CustomerAddress ?? 'N/A',
-          validIdType: r.ValidIDType ?? 'N/A',
-          validIdNumber: r.ValidIDNumber ?? 'N/A',
-          validIdImage: r.ValidIDImage ?? null,
-          busType: r.BusType ?? 'N/A',
-          bus: r.PlateNumber ?? 'N/A',
-          rentalDate: r.RentalDate
-            ? new Date(r.RentalDate).toISOString().split('T')[0]
-            : '',
-          duration: r.Duration ? `${r.Duration} day${r.Duration > 1 ? 's' : ''}` : '',
-          distance: r.DistanceKM ? `${r.DistanceKM} km` : '',
-          destination: r.DropoffLocation ?? '',
-          pickupLocation: r.PickupLocation ?? '',
-          passengers: Number(r.NumberOfPassengers ?? 0),
-          price: Number(r.RentalPrice ?? 0),
-          note: r.SpecialRequirements ?? '',
-          status: r.Status ?? 'Completed',
-          driver: r.RentalBusAssignment?.RentalDrivers
-            ?.map((d: any) => d.DriverID)
-            .join(', ') ?? '',
-          damageData: latestDamageReport
-            ? {
-                vehicleCondition: {
-                  Battery: latestDamageReport.Battery ?? false,
-                  Lights: latestDamageReport.Lights ?? false,
-                  Oil: latestDamageReport.Oil ?? false,
-                  Water: latestDamageReport.Water ?? false,
-                  Brake: latestDamageReport.Brake ?? false,
-                  Air: latestDamageReport.Air ?? false,
-                  Gas: latestDamageReport.Gas ?? false,
-                  Engine: latestDamageReport.Engine ?? false,
-                  "Tire Condition": latestDamageReport.TireCondition ?? false,
-                },
-                note: latestDamageReport.Note ?? '',
-              }
-            : undefined,
-        };
-      });
+          return {
+            id: r.RentalRequestID ?? '',
+            customerName: r.CustomerName ?? 'N/A',
+            contactNo: r.CustomerContact ?? 'N/A',
+            email: r.CustomerEmail ?? 'N/A',
+            homeAddress: r.HomeAddress ?? 'N/A',
+            validIdType: r.IDType ?? 'N/A',
+            validIdNumber: r.IDNumber ?? 'N/A',
+            validIdImage: r.IDImageUrl ?? null,
+            busType: r.BusType ?? 'N/A',
+            bus: r.PlateNumber ?? 'N/A',
+            rentalDate: r.RentalDate
+              ? new Date(r.RentalDate).toISOString().split('T')[0]
+              : '',
+            duration: r.Duration ? `${r.Duration} day${r.Duration > 1 ? 's' : ''}` : '',
+            distance: r.DistanceKM ? `${r.DistanceKM} km` : '',
+            destination: r.RouteName?.split('→')[1]?.trim() ?? 'N/A',
+            pickupLocation: r.RouteName?.split('→')[0]?.trim() ?? 'N/A',
+            passengers: Number(r.NumberOfPassengers ?? 0),
+            price: Number(r.TotalRentalAmount ?? 0),
+            note: r.SpecialRequirements ?? '',
+            status: r.Status ?? 'Completed',
+            driver: driverNames || 'N/A',
+            damageData: latestDamageReport
+              ? {
+                  vehicleCondition: {
+                    Battery: latestDamageReport.Battery ?? false,
+                    Lights: latestDamageReport.Lights ?? false,
+                    Oil: latestDamageReport.Oil ?? false,
+                    Water: latestDamageReport.Water ?? false,
+                    Brake: latestDamageReport.Brake ?? false,
+                    Air: latestDamageReport.Air ?? false,
+                    Gas: latestDamageReport.Gas ?? false,
+                    Engine: latestDamageReport.Engine ?? false,
+                    'Tire Condition': latestDamageReport.TireCondition ?? false,
+                  },
+                  note: latestDamageReport.Note ?? '',
+                }
+              : undefined,
+          };
+        });
 
-      setRentals(mappedData);
-    } catch (err: any) {
-      console.error('Error fetching completed rentals:', err);
-      Swal.fire('Error', err.message || 'Failed to load completed rentals.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
+        setRentals(mappedData);
+      } catch (err: any) {
+        console.error('Error fetching completed rentals:', err);
+        Swal.fire('Error', err.message || 'Failed to load completed rentals.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchData();
-}, []);
+    fetchData();
+  }, []);
 
-  // --- FilterDropdown configuration ---
   const filterSections: FilterSection[] = [
     {
       id: 'sortBy',
@@ -147,12 +150,10 @@ useEffect(() => {
     setCurrentPage(1);
   };
 
-  // --- Handle search & filtering logic ---
   useEffect(() => {
     try {
       let filtered = [...rentals];
 
-      // Apply search query
       if (searchQuery) {
         const lower = searchQuery.toLowerCase();
         filtered = filtered.filter(
@@ -160,7 +161,6 @@ useEffect(() => {
         );
       }
 
-      // Apply sorting
       switch (activeFilters.sortBy) {
         case 'name_az':
           filtered.sort((a, b) => a.customerName.localeCompare(b.customerName));
@@ -172,7 +172,6 @@ useEffect(() => {
           break;
       }
 
-      // Apply pagination
       const start = (currentPage - 1) * pageSize;
       const end = start + pageSize;
       setDisplayedRentals(filtered.slice(start, end));
@@ -182,10 +181,6 @@ useEffect(() => {
       Swal.fire('Error', 'Failed to filter rentals.', 'error');
     }
   }, [rentals, searchQuery, activeFilters, currentPage, pageSize]);
-
-  const handleViewNote = (note: string) => {
-    Swal.fire({ title: 'Rental Note', text: note || 'No note provided.', icon: 'info' });
-  };
 
   const handleViewCustomerInfo = (rental: BusRental) => {
     setSelectedCustomer(rental);
@@ -252,7 +247,12 @@ useEffect(() => {
                         </button>
                       </td>
                       <td>
-                        <button className={styles.noteBtn} onClick={() => handleViewDamage(rental)}>
+                        <button 
+                          className={styles.noteBtn} 
+                          onClick={() => handleViewDamage(rental)}
+                          disabled={!rental.damageData}
+                          style={{ opacity: rental.damageData ? 1 : 0.5 }}
+                        >
                           <RiEyeLine size={18} />
                         </button>
                       </td>
@@ -284,7 +284,11 @@ useEffect(() => {
           <ViewDamageModal
             show={showDamageModal}
             onClose={() => setShowDamageModal(false)}
-            busInfo={{ rentalId: selectedRental.id, busNumber: selectedRental.bus, driver: selectedRental.driver }}
+            busInfo={{ 
+              rentalId: selectedRental.id, 
+              busNumber: selectedRental.bus, 
+              driver: selectedRental.driver 
+            }}
             damageData={selectedRental.damageData}
           />
         )}
