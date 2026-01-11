@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { DRIVERS_FULL_URL, CONDUCTORS_FULL_URL, DRIVERS_URL, CONDUCTORS_URL, DRIVERS_RENT_URL, BUSES_RENT_URL } from '@/lib/urls';
 
 export async function fetchDriversWithToken(): Promise<any[]> {
@@ -7,9 +8,7 @@ export async function fetchDriversWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(DRIVERS_URL, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(DRIVERS_URL);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch drivers: ${response.statusText}`);
@@ -26,9 +25,7 @@ export async function fetchConductorsWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(CONDUCTORS_URL, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(CONDUCTORS_URL);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch conductors: ${response.statusText}`);
@@ -45,9 +42,7 @@ export async function fetchBusesWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(`${baseUrl}/api/external/buses`, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(`${baseUrl}/api/external/buses`);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch buses: ${response.statusText}`);
@@ -64,9 +59,7 @@ export async function fetchDriversFullWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(DRIVERS_FULL_URL, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(DRIVERS_FULL_URL);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch drivers: ${response.statusText}`);
@@ -83,9 +76,7 @@ export async function fetchConductorsFullWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(CONDUCTORS_FULL_URL, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(CONDUCTORS_FULL_URL);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch conductors: ${response.statusText}`);
@@ -102,9 +93,7 @@ export async function fetchBusesFullWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(`${baseUrl}/api/external/buses/full`, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(`${baseUrl}/api/external/buses/full`);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch buses: ${response.statusText}`);
@@ -123,11 +112,7 @@ export async function fetchRentDriversWithToken(token: string, startDate?: strin
 
   const url = query.toString() ? `${DRIVERS_RENT_URL}?${query.toString()}` : DRIVERS_RENT_URL;
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    credentials: 'include',
+  const response = await authenticatedFetch(url, {
     cache: 'no-store',
   });
 
@@ -155,11 +140,7 @@ export async function fetchRentBusesWithToken(
 
   const url = query.toString() ? `${BUSES_RENT_URL}?${query.toString()}` : BUSES_RENT_URL;
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    credentials: 'include',
+  const response = await authenticatedFetch(url, {
     cache: 'no-store',
   });
 

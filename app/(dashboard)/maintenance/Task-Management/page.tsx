@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './task-management.module.css';
 import '../../../../styles/globals.css';
 import ViewTasksModal from '@/components/modal/View-Task-Modal/ViewTasksModal';
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 
 // --- Shared imports ---
 import { Loading, FilterDropdown, PaginationComponent, Swal, LoadingModal, Image } from '@/shared/imports';
@@ -115,9 +116,7 @@ const TaskManagementPage: React.FC = () => {
   const fetchMaintenanceWorks = async () => {
     setLoading(true);
     try {
-      const response = await fetch(TASK_MANAGEMENT_URL, {
-        credentials: 'include',
-      });
+      const response = await authenticatedFetch(TASK_MANAGEMENT_URL);
 
       if (!response.ok) {
         throw new Error('Failed to fetch maintenance works');
@@ -255,12 +254,11 @@ const TaskManagementPage: React.FC = () => {
       });
 
       // Use PUT endpoint to update tasks by maintenance work
-      const updateResponse = await fetch(`${TASK_MANAGEMENT_URL}/${selectedRecord.MaintenanceWorkID}`, {
+      const updateResponse = await authenticatedFetch(`${TASK_MANAGEMENT_URL}/${selectedRecord.MaintenanceWorkID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify({
           Tasks: tasksPayload
         }),

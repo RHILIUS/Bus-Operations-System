@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { ROUTE_MANAGEMENT_FULL_URL, ROUTE_MANAGEMENT_URL } from '@/lib/urls';
 
 export async function fetchRoutesWithToken(): Promise<any[]> {
@@ -7,9 +8,7 @@ export async function fetchRoutesWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(ROUTE_MANAGEMENT_FULL_URL, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(ROUTE_MANAGEMENT_FULL_URL);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch routes: ${response.statusText}`);
@@ -30,12 +29,11 @@ export async function createRouteWithToken(route: {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(ROUTE_MANAGEMENT_URL, {
+  const response = await authenticatedFetch(ROUTE_MANAGEMENT_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include',
     body: JSON.stringify(route),
   });
 
@@ -60,12 +58,11 @@ export async function updateRouteWithToken(route: {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(`${ROUTE_MANAGEMENT_URL}/${route.RouteID}`, {
+  const response = await authenticatedFetch(`${ROUTE_MANAGEMENT_URL}/${route.RouteID}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include',
     body: JSON.stringify(route),
   });
 
@@ -84,12 +81,11 @@ export async function deleteRouteWithToken(routeID: string): Promise<boolean> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(`${ROUTE_MANAGEMENT_URL}/${routeID}`, {
+  const response = await authenticatedFetch(`${ROUTE_MANAGEMENT_URL}/${routeID}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include',
     body: JSON.stringify({ IsDeleted: true }),
   });
 
@@ -112,9 +108,7 @@ export async function fetchRoutesModalWithToken(): Promise<any[]> {
     throw new Error("Base URL is not defined in environment variables.");
   }
 
-  const response = await fetch(ROUTE_MANAGEMENT_URL, {
-    credentials: 'include',
-  });
+  const response = await authenticatedFetch(ROUTE_MANAGEMENT_URL);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch routes: ${response.statusText}`);

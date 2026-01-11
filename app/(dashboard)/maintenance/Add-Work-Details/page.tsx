@@ -6,6 +6,7 @@ import styles from './add-work-details.module.css';
 import '../../../../styles/globals.css';
 import AddWorkDetailsModal from '@/components/modal/Add-Work-Details-Modal/AddWorkDetailsModal';
 import ViewWorkDetailsModal from '@/components/modal/View-Work-Details-Modal/ViewWorkDetailsModal';
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 
 // --- Shared imports ---
 import { Loading, FilterDropdown, PaginationComponent, Swal, LoadingModal, Image } from '@/shared/imports';
@@ -118,9 +119,7 @@ const MaintenancePage: React.FC = () => {
   const fetchMaintenanceWorks = async () => {
     setLoading(true);
     try {
-      const response = await fetch(MAINTENANCE_WORK_URL, {
-        credentials: 'include',
-      });
+      const response = await authenticatedFetch(MAINTENANCE_WORK_URL);
 
       if (!response.ok) {
         throw new Error('Failed to fetch maintenance works');
@@ -305,14 +304,13 @@ const MaintenancePage: React.FC = () => {
       }
 
       // Update maintenance work using PUT method with path parameter
-      const response = await fetch(
+      const response = await authenticatedFetch(
         `${MAINTENANCE_WORK_URL}/${selectedRecord.id}`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include',
           body: JSON.stringify({
             WorkTitle: data.workTitle,
             Priority: data.priority,

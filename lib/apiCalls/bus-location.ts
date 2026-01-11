@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { BusLocation, CreateBusLocationDTO, UpdateBusLocationDTO } from '@/app/interface/bus-location';
 import { STOPS_URL } from '@/lib/urls';
 
@@ -24,9 +25,7 @@ function saveLocalStorageLocations(locations: BusLocation[]): void {
 export async function fetchBusLocations(): Promise<any[]> {
   try {
     // Fetch from backend API (STOPS_URL returns StopID/StopName format)
-    const response = await fetch(STOPS_URL, {
-      credentials: 'include',
-    });
+    const response = await authenticatedFetch(STOPS_URL);
     
     if (response.ok) {
       const apiData = await response.json();
@@ -45,7 +44,7 @@ export async function fetchBusLocations(): Promise<any[]> {
 export async function createBusLocation(data: CreateBusLocationDTO): Promise<BusLocation> {
   try {
     // Backend API call would go here in the future
-    // const response = await fetch('/api/bus-locations', {
+    // const response = await authenticatedFetch('/api/bus-locations', {
     //   method: 'POST',
     //   headers: { 'Content-Type': 'application/json' },
     //   body: JSON.stringify(data),
@@ -77,7 +76,7 @@ export async function createBusLocation(data: CreateBusLocationDTO): Promise<Bus
 export async function updateBusLocation(data: UpdateBusLocationDTO): Promise<BusLocation> {
   try {
     // Backend API call would go here in the future
-    // const response = await fetch(`/api/bus-locations/${data.id}`, {
+    // const response = await authenticatedFetch(`/api/bus-locations/${data.id}`, {
     //   method: 'PATCH',
     //   headers: { 'Content-Type': 'application/json' },
     //   body: JSON.stringify(data),
@@ -109,7 +108,7 @@ export async function updateBusLocation(data: UpdateBusLocationDTO): Promise<Bus
 export async function deleteBusLocation(id: string): Promise<void> {
   try {
     // Backend API call would go here in the future
-    // const response = await fetch(`/api/bus-locations/${id}`, {
+    // const response = await authenticatedFetch(`/api/bus-locations/${id}`, {
     //   method: 'DELETE',
     // });
     // if (response.ok) return;

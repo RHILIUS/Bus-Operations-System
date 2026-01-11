@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { Send_EMAIL_URL } from '@/lib/urls';
 
 interface SendEmailParams {
@@ -10,15 +11,13 @@ interface SendEmailParams {
 /**
  * Send an email via the backend email service
  */
-export const sendEmail = async (token: string, params: SendEmailParams) => {
+export const sendEmail = async (params: SendEmailParams) => {
   try {
-    const res = await fetch(Send_EMAIL_URL, {
+    const res = await authenticatedFetch(Send_EMAIL_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
-      credentials: 'include',
       body: JSON.stringify(params),
     });
 

@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { fetchDriversFullWithToken, fetchConductorsFullWithToken, fetchBusesFullWithToken } from '@/lib/apiCalls/external';
 import { BUS_OPERATIONS_URL, DAMAGE_REPORT_URL } from '@/lib/urls';
 
@@ -9,9 +10,8 @@ export async function fetchBusAssignmentsWithStatus(status?: string): Promise<an
   const query = status ? `?status=${encodeURIComponent(status)}` : '';
   const url = `${BUS_OPERATIONS_URL}${query}`;
 
-  const response = await fetch(url, {
+  const response = await authenticatedFetch(url, {
     method: "GET",
-    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -65,12 +65,11 @@ export async function updateBusAssignmentData(BusAssignmentID: string, data: any
 
   const url = `${BUS_OPERATIONS_URL}/${BusAssignmentID}`;
 
-  const response = await fetch(url, {
+  const response = await authenticatedFetch(url, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: 'include',
     body: JSON.stringify(data),
   });
 
@@ -108,12 +107,11 @@ export async function createVehicleCheckDamageReport(data: {
 
   console.log('[Frontend] Sending to backend:', reportData);
 
-  const response = await fetch(`${DAMAGE_REPORT_URL}/vehicle-check`, {
+  const response = await authenticatedFetch(`${DAMAGE_REPORT_URL}/vehicle-check`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: 'include',
     body: JSON.stringify(reportData),
   });
 
@@ -175,9 +173,8 @@ export async function fetchTripHistory(page: number = 1, limit: number = 20): Pr
 
   const url = `${BUS_OPERATIONS_URL}/trip-history?page=${page}&limit=${limit}`;
 
-  const response = await fetch(url, {
+  const response = await authenticatedFetch(url, {
     method: "GET",
-    credentials: 'include',
   });
 
   if (!response.ok) {

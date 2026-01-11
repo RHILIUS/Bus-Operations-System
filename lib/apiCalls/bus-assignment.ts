@@ -1,3 +1,4 @@
+import { authenticatedFetch } from '@/lib/authenticatedFetch';
 import { fetchDriversFullWithToken, fetchConductorsFullWithToken, fetchBusesFullWithToken } from '@/lib/apiCalls/external';
 import { BUS_ASSIGNMENT_URL } from '@/lib/urls';
 
@@ -13,7 +14,7 @@ export async function fetchAssignmentDetails(): Promise<any[]> {
 
   // Fetch all in parallel
   const [assignmentsRes, drivers, conductors, buses] = await Promise.all([
-    fetch(BUS_ASSIGNMENT_URL, { credentials: 'include' }),
+    authenticatedFetch(BUS_ASSIGNMENT_URL),
     fetchDriversFullWithToken(),
     fetchConductorsFullWithToken(),
     fetchBusesFullWithToken(),
@@ -42,12 +43,11 @@ export async function createBusAssignment(data: any): Promise<any> {
 
   if (!baseUrl) throw new Error("Base URL is not defined in environment variables.");
 
-  const response = await fetch(BUS_ASSIGNMENT_URL, {
+  const response = await authenticatedFetch(BUS_ASSIGNMENT_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', // Send cookies (including token)
     body: JSON.stringify(data),
   });
 
@@ -66,12 +66,11 @@ export async function updateBusAssignment(BusAssignmentID: string, data: any): P
   if (!baseUrl) throw new Error("Base URL is not defined in environment variables.");
   if (!BusAssignmentID) throw new Error("BusAssignmentID is required.");
 
-  const response = await fetch(`${BUS_ASSIGNMENT_URL}/${BusAssignmentID}`, {
+  const response = await authenticatedFetch(`${BUS_ASSIGNMENT_URL}/${BusAssignmentID}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', // Send cookies (including token)
     body: JSON.stringify(data),
   });
 
@@ -94,12 +93,11 @@ export async function sofDeleteBusAssignment(
   if (!BusAssignmentID) throw new Error("BusAssignmentID is required.");
   if (typeof IsDeleted !== 'boolean') throw new Error("IsDeleted must be a boolean.");
 
-  const response = await fetch(`${BUS_ASSIGNMENT_URL}/${BusAssignmentID}`, {
+  const response = await authenticatedFetch(`${BUS_ASSIGNMENT_URL}/${BusAssignmentID}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', // Send cookies (including token)
     body: JSON.stringify({ IsDeleted }),
   });
 
