@@ -1,4 +1,4 @@
-// import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 // import { LOGIN_URL } from '@/lib/urls';
 
 // // --- Role and Page Access Definitions ---
@@ -113,3 +113,7 @@
 //     //'/bus-operation/:path*',
 //   ],
 // };
+
+export function middleware(request: NextRequest) {
+  return NextResponse.next()
+}
