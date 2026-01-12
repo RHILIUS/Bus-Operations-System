@@ -17,7 +17,7 @@ export default function Home() {
         router.push('/bus-assignment');
       } else {
         // No token - go to login
-        router.push('/login');
+        router.push('/dashboard');
       }
     });
   }, [router]);
