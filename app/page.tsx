@@ -14,7 +14,7 @@ export default function Home() {
       
       if (accessToken) {
         // User has valid token - go to dashboard
-        router.push('/dashboard');
+        router.push('/bus-assignment');
       } else {
         // No token - go to login
         router.push('/login');
