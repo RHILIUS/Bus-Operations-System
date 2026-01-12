@@ -1,42 +1,66 @@
-// app/page.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
-import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { authStore } from '@/lib/auth-store';
 
 export default function Home() {
-  const [isInitialized, setIsInitialized] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    // Wait a bit for Token_Generation to run
-    const timer = setTimeout(() => {
-      setIsInitialized(true);
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (isInitialized) {
+    // Wait for auth initialization to complete
+    authStore.onInitialized(() => {
       const { accessToken } = authStore.get();
       
       if (accessToken) {
-        redirect('/dashboard');
+        // User has valid token - go to dashboard
+        router.push('/dashboard');
       } else {
-        redirect('/login');
+        // No token - go to login
+        router.push('/login');
       }
-    }
-  }, [isInitialized]);
+    });
+  }, [router]);
 
   return (
     <div style={{ 
       display: 'flex', 
       justifyContent: 'center', 
       alignItems: 'center', 
-      height: '100vh' 
+      height: '100vh',
+      flexDirection: 'column',
+      gap: '20px',
+      backgroundColor: '#f5f5f5'
     }}>
-      <div>Loading...</div>
+      {/* Loading Spinner */}
+      <div 
+        className="spinner" 
+        style={{
+          border: '4px solid #f3f3f3',
+          borderTop: '4px solid #961c1e',
+          borderRadius: '50%',
+          width: '50px',
+          height: '50px',
+          animation: 'spin 1s linear infinite'
+        }}
+      />
+      
+      {/* Loading Text */}
+      <div style={{
+        fontSize: '18px',
+        color: '#333',
+        fontWeight: 500
+      }}>
+        Initializing...
+      </div>
+      
+      {/* Spinner Animation */}
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

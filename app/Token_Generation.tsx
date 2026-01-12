@@ -5,38 +5,36 @@ import { authStore } from '@/lib/auth-store';
 
 export default function Token_Generation() {
   useEffect(() => {
-    async function initializeAuth() {
+    async function refreshToken() {
       try {
-        const response = await fetch(
-         `${process.env.NEXT_PUBLIC_Backend_BaseURL}/api/Refresh-Token`,
-          {
-            method: 'POST',
-            credentials: 'include', // Sends the refreshToken cookie
-          }
-        );
-
+        const response = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+        
         if (response.ok) {
           const data = await response.json();
-          
-          // Check if refresh was successful
-          if (data.success && data.accessToken) {
-            // Store accessToken in memory
+          if (data.accessToken) {
             authStore.setAccessToken(data.accessToken);
-            
-            console.log('Access token initialized successfully');
-          } else {
-            console.log('Token refresh failed:', data.message);
+            // Optionally set role if returned
+            if (data.role) {
+              authStore.setRole(data.role);
+            }
           }
         } else {
           console.log('No active session - user needs to login');
         }
       } catch (error) {
-        console.error('Failed to initialize auth:', error);
+        console.error('Token refresh failed:', error);
+      } finally {
+        // ✅ CRITICAL: Always mark as initialized, even if refresh failed
+        // This ensures the app doesn't hang waiting for initialization
+        authStore.markInitialized();
       }
     }
-
-    initializeAuth();
+    
+    refreshToken();
   }, []);
-
+  
   return null;
 }

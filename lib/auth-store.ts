@@ -8,6 +8,7 @@
  * - Subscriber pattern for React integration
  * - Type-safe accessors
  * - Zero dependencies
+ * - Initialization tracking for app bootstrapping
  */
 type Listener = () => void;
 
@@ -15,15 +16,18 @@ interface AuthState {
   accessToken: string | null;
   role: string | null;
   tokenVersion: number;
+  isInitialized: boolean;
 }
 
 const state: AuthState = {
   accessToken: null,
   role: null,
   tokenVersion: 0,
+  isInitialized: false,
 };
 
 const listeners = new Set<Listener>();
+const initCallbacks: (() => void)[] = [];
 
 function notifyListeners() {
   listeners.forEach((listener) => listener());
@@ -34,14 +38,22 @@ function notifyListeners() {
  * 
  * Usage:
  * ```typescript
- * import { authStore } from '@/auth/auth-store';
+ * import { authStore } from '@/lib/auth-store';
  * 
  * // Get current state
- * const { accessToken, role } = authStore.get();
+ * const { accessToken, role, isInitialized } = authStore.get();
  * 
  * // Update state
  * authStore.setAccessToken('eyJhbGci...');
  * authStore.setRole('Admin');
+ * 
+ * // Mark initialization complete (called by Token_Generation)
+ * authStore.markInitialized();
+ * 
+ * // Wait for initialization before doing auth-dependent actions
+ * authStore.onInitialized(() => {
+ *   console.log('Auth system ready');
+ * });
  * 
  * // Subscribe to changes (for React hooks)
  * const unsubscribe = authStore.subscribe(() => {
@@ -85,6 +97,50 @@ export const authStore = {
     state.role = null;
     state.tokenVersion++;
     notifyListeners();
+  },
+
+  /**
+   * Mark authentication system as initialized.
+   * Should be called by Token_Generation after refresh attempt completes.
+   * Triggers all pending initialization callbacks.
+   */
+  markInitialized(): void {
+    state.isInitialized = true;
+    notifyListeners();
+    
+    // Execute all pending callbacks
+    initCallbacks.forEach((callback) => callback());
+    initCallbacks.length = 0; // Clear the array
+  },
+
+  /**
+   * Register a callback to be invoked when auth system is initialized.
+   * If already initialized, callback is invoked immediately.
+   * 
+   * Use this to delay navigation or data fetching until tokens are ready.
+   * 
+   * @param callback - Function to invoke on initialization
+   * 
+   * @example
+   * ```typescript
+   * authStore.onInitialized(() => {
+   *   const { accessToken } = authStore.get();
+   *   if (accessToken) {
+   *     router.push('/dashboard');
+   *   } else {
+   *     router.push('/login');
+   *   }
+   * });
+   * ```
+   */
+  onInitialized(callback: () => void): void {
+    if (state.isInitialized) {
+      // Already initialized - execute immediately
+      callback();
+    } else {
+      // Not yet initialized - queue for later
+      initCallbacks.push(callback);
+    }
   },
 
   /**
